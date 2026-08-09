@@ -22,6 +22,12 @@
 
 \usepackage[bitstream-charter]{mathdesign}
 \usepackage{orcidlink}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{keyval}
+\usepackage[outputdir=out,cachedir=minted]{minted}
 \urlstyle{same}
 
 % Fix \cal and \mathcal characters look (so it's not the same as \mathscr)
@@ -43,6 +49,52 @@
 \newcommand{\astar}{Agency for Science, Technology and Research (A*STAR), Singapore}
 \newcommand{\cqt}{Centre for Quantum Technologies, Singapore}
 \newcommand{\majulab}{MajuLab, CNRS-UNS-NUS-NTU International Joint Research Unit, Singapore}
+
+% Julia code highlighting via minted + custom ptjulia lexer/style:
+% keywords (Julia), builtins (ITensor), API (ProcessTensors.jl), types/structs, variables, numbers.
+\setminted{
+  style=ptjulia,
+  fontsize=\small,
+  frame=single,
+  framesep=2mm,
+  breaklines=true,
+  breakanywhere=false,
+  tabsize=4,
+  obeytabs=false,
+  baselinestretch=1.05,
+}
+\setmintedinline{style=ptjulia, fontsize=\small}
+\renewcommand{\listingscaption}{Listing}
+\newcommand{\jlinline}[1]{\mintinline{ptjulia}{#1}}
+
+% Figure-like Julia listing (minted details hidden):
+%   \begin{juliacode}[
+%     caption={...},
+%     label={lst:...},
+%   ]
+%   <julia source>
+%   \end{juliacode}
+\makeatletter
+\define@key{juliacode}{caption}{\def\juliacodeCaption{#1}}
+\define@key{juliacode}{label}{\def\juliacodeLabel{#1}}
+\newcommand{\juliacode@resetkeys}{%
+  \def\juliacodeCaption{}%
+  \def\juliacodeLabel{}%
+}
+\newenvironment{juliacode}[1][]{%
+  \juliacode@resetkeys
+  \setkeys{juliacode}{#1}%
+  \par\medskip
+  \captionsetup{type=listing}%
+  \VerbatimEnvironment
+  \begin{minted}{ptjulia}%
+}{%
+  \end{minted}%
+  \ifx\juliacodeCaption\empty\else\caption{\juliacodeCaption}\fi
+  \ifx\juliacodeLabel\empty\else\label{\juliacodeLabel}\fi
+  \par\medskip
+}
+\makeatother
 
 \begin{document}
 
