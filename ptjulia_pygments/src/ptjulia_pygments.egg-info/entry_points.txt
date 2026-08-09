@@ -1,0 +1,5 @@
+[pygments.lexers]
+ptjulia = ptjulia.lexer:ProcessTensorsJuliaLexer
+
+[pygments.styles]
+ptjulia = ptjulia.style:ProcessTensorsJuliaStyle

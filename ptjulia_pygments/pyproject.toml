@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ptjulia-pygments"
+version = "0.1.0"
+description = "Pygments lexer/style for ProcessTensors.jl paper listings"
+requires-python = ">=3.9"
+dependencies = ["Pygments>=2.17"]
+
+[project.entry-points."pygments.lexers"]
+ptjulia = "ptjulia.lexer:ProcessTensorsJuliaLexer"
+
+[project.entry-points."pygments.styles"]
+ptjulia = "ptjulia.style:ProcessTensorsJuliaStyle"
+
+[tool.setuptools.packages.find]
+where = ["src"]

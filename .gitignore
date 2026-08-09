@@ -1,5 +1,7 @@
 *.pyg
 .venv-minted/
-SciPostPhysCodeb_ProcessTensors_first_draft.pdf
+
+latex/
 out/
-out/minted/
+
+.DS_Store
