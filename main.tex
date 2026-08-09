@@ -7,7 +7,7 @@
 % INSTRUCTIONS: simply look for the `TODO:' tokens and adapt your file.
 % ========================================================================
 
-\documentclass{SciPost}
+\documentclass[submission, PhysCodeb]{SciPost}
 
 % Prevent all line breaks in inline equations.
 \binoppenalty=10000
@@ -21,6 +21,7 @@
 }
 
 \usepackage[bitstream-charter]{mathdesign}
+\usepackage{orcidlink}
 \urlstyle{same}
 
 % Fix \cal and \mathcal characters look (so it's not the same as \mathscr)
@@ -35,45 +36,55 @@
 \fancyfoot[C]{\textbf{\thepage}}
 }
 
+% Affiliation macros (reused in the affiliations block below)
+\newcommand{\sutd}{Singapore University of Technology and Design, Singapore}
+\newcommand{\tum}{Technical University of Munich, Munich, Germany}
+\newcommand{\monash}{Monash University, Melbourne, Australia}
+\newcommand{\astar}{Agency for Science, Technology and Research (A*STAR), Singapore}
+\newcommand{\cqt}{Centre for Quantum Technologies, Singapore}
+\newcommand{\majulab}{MajuLab, CNRS-UNS-NUS-NTU International Joint Research Unit, Singapore}
+
 \begin{document}
 
 \pagestyle{SPstyle}
 
 \begin{center}{\Large \textbf{\color{scipostdeepblue}{
-%%%%%%%%%% TODO: Write your article's title here
-Article Title, as descriptive as possible, ideally fitting in two lines (approximately 150 characters) or less\\
-%%%%%%%%%% END TODO: TITLE
+ProcessTensors.jl: An ITensor-native framework for non-Markovian open quantum dynamics
 }}}\end{center}
 
 \begin{center}\textbf{
-%%%%%%%%%% TODO: AUTHORS
-% Write the author list here. 
+% Write the author list here.
 % Use (full) first name (+ middle name initials) + surname format.
 % Separate subsequent authors by a comma, omit comma and use "and" for the last author.
 % Mark the corresponding author(s) with a superscript symbol in this order
 % \star, \dagger, \ddagger, \circ, \S, \P, \parallel, ...
-Aah B. Cee\textsuperscript{1$\star$},
-Dee E. Faa\textsuperscript{2} and
-Gee K. See\textsuperscript{3$\dagger$}
-%%%%%%%%%% END TODO: AUTHORS
+Gauthameshwar S.\,\orcidlink{0009-0005-9715-5758}\textsuperscript{1,2,$\star$},
+Aaron Sander\,\orcidlink{0009-0007-9166-6113}\textsuperscript{3},
+John F. Kam\,\orcidlink{0009-0008-7597-1094}\textsuperscript{4,5},
+Dario Poletti\,\orcidlink{0000-0001-5626-0176}\textsuperscript{1,2,6},
+and
+Kavan Modi\,\orcidlink{0000-0002-2054-9901}\textsuperscript{1,2,$\dagger$}
 }\end{center}
 
 \begin{center}
-%%%%%%%%%% TODO: AFFILIATIONS
 % Write all affiliations here.
 % Format: institute, city, country
-{\bf 1} Affiliation1
+
+{\bf 1} \sutd
 \\
-{\bf 2} Affiliation2
+{\bf 2} \cqt
 \\
-{\bf 3} Affiliation3
-%%%%%%%%%% END TODO: AFFILIATIONS
-%%%%%%%%%% TODO: EMAIL
+{\bf 3} \tum
+\\
+{\bf 4} \monash
+\\
+{\bf 5} \astar
+\\
+{\bf 6} \majulab
 % Provide email address of corresponding author(s)
 \\[\baselineskip]
-$\star$ \href{mailto:email1}{\small email1}\,,\quad
-$\dagger$ \href{mailto:email2}{\small email2}
-%%%%%%%%%% END TODO: EMAIL
+$\star$ \href{mailto:gauthameshwar_s@mymail.sutd.edu.sg}{\small gauthameshwar\_s@mymail.sutd.edu.sg}\,,\quad
+$\dagger$ \href{mailto:kavan_modi@sutd.edu.sg}{\small kavan\_modi@sutd.edu.sg}
 \end{center}
 
 
@@ -107,11 +118,8 @@ The abstract is in boldface, and should fit in 8 lines. It should be written in 
 %%%%%%%%%% BLOCK: Copyright information
 
 
-%%%%%%%%%% TODO: LINENO
 % For convenience during refereeing we turn on line numbers:
-\linenumbers
-% You should run LaTeX twice in order for the line numbers to appear.
-%%%%%%%%%% END TODO: LINENO
+%\linenumbers
 
 %%%%%%%%%% TODO: TOC 
 % Guideline: if your paper is longer that 6 pages, include a TOC
