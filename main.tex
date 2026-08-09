@@ -142,10 +142,8 @@ $\dagger$ \href{mailto:kavan_modi@sutd.edu.sg}{\small kavan\_modi@sutd.edu.sg}
 
 \section*{\color{scipostdeepblue}{Abstract}}
 \textbf{\boldmath{%
-%%%%%%%%%% TODO: ABSTRACT
 % Write your abstract here.
-The abstract is in boldface, and should fit in 8 lines. It should be written in a clear and accessible style, emphasizing the context, the problem(s) studied, the methods used, the results obtained, the conclusions reached, and the outlook. You can add a table contents, recommended if your paper is more than 6 pages long.
-%%%%%%%%%% END TODO: ABSTRACT
+DRAFT: Non-Markovian quantum dynamics cannot, in general, be specified by a sequence of single-time reduced density matrices alone: multi-time statistics depend on how a system is interrogated and controlled between observations. Process tensors provide an operational description of this temporal structure and admit compact matrix-product-operator representations when temporal correlations are compressible. We present ProcessTensors.jl, an ITensor-native framework in which process tensors are Matrix Product Operators that can be constructed, stored, contracted with physical instruments, and reused for reduced dynamics and multi-time observables. The package extends the ITensors.jl/ITensorMPS.jl ecosystem with explicit Hilbert- and Liouville-space types, system and environment abstractions, instrument schedules, and high-level process-evaluation routines. Small environments can be treated with a dense builder that serves as a reference implementation, while an automated-compression-of-environments (ACE) backend provides a scalable route to multimode environments. We describe the mathematical conventions, software architecture, validation strategy, and representative workflows, and outline the package as an extensible platform for future process-tensor algorithms and characterisation tools. \textbf{[TODO: insert one quantitative headline benchmark result before submission.]}
 }}
 
 \vspace{\baselineskip}
@@ -188,15 +186,28 @@ The abstract is in boldface, and should fit in 8 lines. It should be written in 
 % Write your article contents here, starting from first \section.
 % An example structure is given below.
 
+% =========================================================================
 \section{Introduction}
 \label{sec:intro}
+% =========================================================================
+
 % TODO: write your article here.
 The stage is yours. Write your article here.
 The bulk of the paper should be clearly divided into sections with short descriptive titles, including an introduction and a conclusion.
 
+\subsection{Existing software and the role of \texttt{ProcessTensors.jl}}
+\label{sec:software-landscape}
 
 
-\section{A Section}
+\subsection{Organisation of this paper}
+
+% =========================================================================
+\section{Liouville-space foundations}
+\label{sec:liouville}
+% =========================================================================
+
+\subsection{Vectorisation of operators}
+
 Use sections to structure your article's presentation.
 
 Equations should be centered; multi-line equations should be aligned.
@@ -208,17 +219,120 @@ In the list of references, cited papers \cite{1931_Bethe_ZP_71} should include a
 
 All equations and references should be hyperlinked to ensure ease of navigation. This also holds for [sub]sections: readers should be able to easily jump to Section \ref{sec:another}.
 
-\section{Another Section}
+\subsection{Superoperators, Liouvillians, and channels}
+
+\subsection{From spatial to temporal tensor networks}
+
+
+% =========================================================================
+\section{Software architecture}
+\label{sec:architecture}
+% =========================================================================
+
 \label{sec:another}
 There is no strict length limitation, but the authors are strongly encouraged to keep contents to the strict minimum necessary for peers to reproduce the research described in the paper.
 
-\subsection{A first subsection}
+\subsection{ITensor as the tensor-network substrate}
+
 You are free to use dividers as you see fit.
-\subsection{A note about figures}
+
+\subsection{Hilbert- and Liouville-space objects}
+
 Figures should only occupy the stricly necessary space, in any case individually fitting on a single page. Each figure item should be appropriately labeled and accompanied by a descriptive caption. {\bf SciPost does not accept creative or promotional figures or artist's impressions}; on the other hand, technical drawings and scientifically accurate representations are encouraged.
 
+\subsection{Systems and environments}
 
-\section{Conclusion}
+\subsection{A backend-oriented process-tensor API}
+
+
+% =========================================================================
+\section{Process tensors as first-class tensor-network objects}
+\label{sec:process-tensor}
+% =========================================================================
+
+\subsection{From a channel to a process}
+
+\subsection{Anatomy of \texttt{ProcessTensor}}
+
+\subsection{Building a small process tensor}
+
+\subsection{Construction backends: dense reference and ACE}
+\label{sec:builders}
+
+
+% =========================================================================
+\section{Quantum instruments}
+\label{sec:instruments}
+% =========================================================================
+
+\subsection{Operational meaning}
+
+\subsection{Instrument organisation in \texttt{ProcessTensors.jl}}
+
+\subsection{\texttt{InstrumentSeq}: a temporal analogue of \texttt{OpSum}}
+
+
+% =========================================================================
+\section{Contracting and evaluating processes}
+\label{sec:evaluation}
+% =========================================================================
+
+\subsection{General contraction with \texttt{evaluate\_process}}
+
+\subsection{Reduced dynamics with \texttt{evolve}}
+
+\subsection{Open process legs}
+
+
+====================================================================
+\section{Common process-tensor workflows}
+\label{sec:workflows}
+% =========================================================================
+
+\subsection{Final reduced density matrices}
+
+\subsection{Observable expectation values}
+
+\subsection{Probabilities and trace-non-preserving branches}
+
+\subsection{Multi-time correlation functions}
+
+
+% =========================================================================
+\section{Testers and enlarged interventions}
+\label{sec:testers}
+% =========================================================================
+
+\textbf{Status: planned for the paper release; API under development.}
+
+
+% =========================================================================
+\section{Characterising process tensors and quantum memory}
+\label{sec:characterisation}
+% =========================================================================
+
+\textbf{Section lead: Aaron Sander.  The text below is a structural placeholder and
+should not be read as claiming currently released package functionality.}
+
+
+% =========================================================================
+\section{Validation and ACE benchmarks}
+\label{sec:benchmarks}
+% =========================================================================
+
+\subsection{Correctness against dense and exact references}
+
+\subsection{Compression accuracy and temporal bond dimension}
+
+\subsection{Runtime and memory scaling}
+
+\subsection{Comparison with the C++ ACE toolkit}
+
+% =========================================================================
+\section{Conclusion and outlook}
+\label{sec:conclusion}
+% =========================================================================
+
 You must include a conclusion.
 
 \section*{Acknowledgements}
@@ -232,46 +346,31 @@ This is optional. If desired, contributions should be succinctly described in a 
 \paragraph{Funding information}
 Authors are required to provide funding information, including relevant agencies and grant numbers with linked author's initials. Correctly-provided data will be linked to funders listed in the \href{https://www.crossref.org/services/funder-registry/}{\sf Fundref registry}.
 
+\paragraph{Code and data availability}
+The development repository is available at
+\url{https://github.com/Gauthameshwar/ProcessTensors.jl} and the documentation at
+\url{https://gauthameshwar.github.io/ProcessTensors.jl/stable/}.  The final paper will
+cite an immutable release and archive the scripts/data used for all benchmark figures.
+\textbf{[TODO: insert release DOI/Zenodo or SciPost codebase DOI at submission.]}
+
 
 \begin{appendix}
 \numberwithin{equation}{section}
 
-\section{First appendix}
+\section{Broader Hilbert- and Liouville-space functionality}
+\label{app:broader}
+
 Add material which is better left outside the main text in a series of Appendices labeled by capital letters.
 
-\section{About references}
-Your references should start with the comma-separated author list (initials + last name), the publication title in italics, the journal reference with volume in bold, start page number, publication year in parenthesis, completed by the DOI link (linking must be implemented before publication). If using BiBTeX, please use the style files provided  on \url{https://scipost.org/submissions/author_guidelines}. If you are using our LaTeX template, simply add
-\begin{verbatim}
-\bibliography{your_bibtex_file}
-\end{verbatim}
-at the end of your document. If you are not using our LaTeX template, please still use our bibstyle as
-\begin{verbatim}
-\bibliographystyle{SciPost_bibstyle}
-\end{verbatim}
-in order to simplify the production of your paper.
+\section{Vectorisation conventions and index orientation}
+\label{app:conventions}
+
 \end{appendix}
 
 
-%%%%%%%%% END TODO: CONTENTS
-
-
-%%%%%%%%%% TODO: BIBLIOGRAPHY
-% Provide your bibliography here. You have two options:
-
-%%% FIRST OPTION
-% Write your entries here directly, following the example below, including:
-% Author(s), Title, Journal Ref. with year in parentheses at the end, followed by the DOI number.
-
-%\begin{thebibliography}{99}
-%\bibitem{1931_Bethe_ZP_71} H. A. Bethe, {\it Zur Theorie der Metalle. i. Eigenwerte und Eigenfunktionen der linearen Atomkette}, Zeit. f{\"u}r Phys. {\bf 71}, 205 (1931), \doi{10.1007\%2FBF01341708}.
-%\bibitem{arXiv:1108.2700} P. Ginsparg, {\it It was twenty years ago today... }, \url{http://arxiv.org/abs/1108.2700}.
-%\end{thebibliography}
-
-%%% SECOND OPTION
-% Use your bibtex library, formatted by the SciPost style file.
+% =========================================================================
+% Bibliography
+% =========================================================================
 \bibliography{main.bib}
-
-%%%%%%%%%% END TODO: BIBLIOGRAPHY
-
 
 \end{document}
