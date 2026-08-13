@@ -1,7 +1,16 @@
+# Python deps
 *.pyg
 .venv-minted/
 
+# PdfLaTeX deps
 latex/
 out/
 
+# MacOS deps
 .DS_Store
+
+# Internal planning
+*draft*
+*prompt*
+*todo*
+*TODO*

@@ -142,8 +142,7 @@ $\dagger$ \href{mailto:kavan_modi@sutd.edu.sg}{\small kavan\_modi@sutd.edu.sg}
 
 \section*{\color{scipostdeepblue}{Abstract}}
 \textbf{\boldmath{%
-% Write your abstract here.
-DRAFT: Non-Markovian quantum dynamics cannot, in general, be specified by a sequence of single-time reduced density matrices alone: multi-time statistics depend on how a system is interrogated and controlled between observations. Process tensors provide an operational description of this temporal structure and admit compact matrix-product-operator representations when temporal correlations are compressible. We present ProcessTensors.jl, an ITensor-native framework in which process tensors are Matrix Product Operators that can be constructed, stored, contracted with physical instruments, and reused for reduced dynamics and multi-time observables. The package extends the ITensors.jl/ITensorMPS.jl ecosystem with explicit Hilbert- and Liouville-space types, system and environment abstractions, instrument schedules, and high-level process-evaluation routines. Small environments can be treated with a dense builder that serves as a reference implementation, while an automated-compression-of-environments (ACE) backend provides a scalable route to multimode environments. We describe the mathematical conventions, software architecture, validation strategy, and representative workflows, and outline the package as an extensible platform for future process-tensor algorithms and characterisation tools. \textbf{[TODO: insert one quantitative headline benchmark result before submission.]}
+We present ProcessTensors.jl, a Julia package for learning, constructing, and using process tensors with ITensor. The paper introduces process tensors from the ground up and connects the equations to tensor diagrams, tagged ITensor indices, and working code. Through guided examples, users can build process tensors, apply different sequences of quantum instruments, use testers with ancillary systems, and inspect memory across the temporal bonds. We implement exact and compressed ACE constructions and benchmark them against established software. We also review the current process-tensor software landscape and explain how the package can be extended with further PT-MPO construction methods, including ideas based on TEMPO, TEDOPA, and periodic process tensors. Our goal is to make process tensors approachable for new users while providing a clear foundation for future development of this package.
 }}
 
 \vspace{\baselineskip}
@@ -171,7 +170,6 @@ DRAFT: Non-Markovian quantum dynamics cannot, in general, be specified by a sequ
 % For convenience during refereeing we turn on line numbers:
 %\linenumbers
 
-%%%%%%%%%% TODO: TOC 
 % Guideline: if your paper is longer that 6 pages, include a TOC
 % To remove the TOC, simply cut the following block
 \vspace{10pt}
@@ -179,27 +177,11 @@ DRAFT: Non-Markovian quantum dynamics cannot, in general, be specified by a sequ
 \tableofcontents
 \noindent\rule{\textwidth}{1pt}
 \vspace{10pt}
-%%%%%%%%%% END TODO: TOC
 
-
-%%%%%%%%% TODO: CONTENTS 
-% Write your article contents here, starting from first \section.
-% An example structure is given below.
 
 % =========================================================================
-\section{Introduction}
-\label{sec:intro}
+\input{01_intro}
 % =========================================================================
-
-% TODO: write your article here.
-The stage is yours. Write your article here.
-The bulk of the paper should be clearly divided into sections with short descriptive titles, including an introduction and a conclusion.
-
-\subsection{Existing software and the role of \texttt{ProcessTensors.jl}}
-\label{sec:software-landscape}
-
-
-\subsection{Organisation of this paper}
 
 % =========================================================================
 \section{Liouville-space foundations}
@@ -215,9 +197,7 @@ Equations should be centered; multi-line equations should be aligned.
 H = \sum_{j=1}^N \left[J (S^x_j S^x_{j+1} + S^y_j S^y_{j+1} + \Delta S^z_j S^z_{j+1}) - h S^z_j \right].
 \end{equation}
 
-In the list of references, cited papers \cite{1931_Bethe_ZP_71} should include authors, title, journal reference (journal name, volume number (in bold), start page) and most importantly a DOI link. For a preprint \cite{arXiv:1108.2700}, please include authors, title (please ensure proper capitalization) and arXiv link. If you use BiBTeX with our style file, the right format will be automatically implemented.
-
-All equations and references should be hyperlinked to ensure ease of navigation. This also holds for [sub]sections: readers should be able to easily jump to Section \ref{sec:another}.
+All equations and references should be hyperlinked to ensure ease of navigation. This also holds for [sub]sections: readers should be able to easily jump to Section~\ref{sec:architecture}.
 
 \subsection{Superoperators, Liouvillians, and channels}
 
@@ -229,7 +209,6 @@ All equations and references should be hyperlinked to ensure ease of navigation.
 \label{sec:architecture}
 % =========================================================================
 
-\label{sec:another}
 There is no strict length limitation, but the authors are strongly encouraged to keep contents to the strict minimum necessary for peers to reproduce the research described in the paper.
 
 \subsection{ITensor as the tensor-network substrate}
@@ -284,7 +263,7 @@ Figures should only occupy the stricly necessary space, in any case individually
 \subsection{Open process legs}
 
 
-====================================================================
+% =========================================================================
 \section{Common process-tensor workflows}
 \label{sec:workflows}
 % =========================================================================
@@ -371,6 +350,6 @@ Add material which is better left outside the main text in a series of Appendice
 % =========================================================================
 % Bibliography
 % =========================================================================
-\bibliography{main.bib}
+\bibliography{main}
 
 \end{document}
