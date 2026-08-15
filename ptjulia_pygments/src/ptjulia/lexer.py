@@ -4,15 +4,25 @@ from pygments.lexer import inherit, words
 from pygments.lexers.julia import JuliaLexer
 from pygments.token import Name
 
-# ITensor / base Julia tensor-network constructors appearing in the manuscript.
+# ITensor / ITensorMPS names that appear in the manuscript listings.
+# These render in teal (Name.Builtin), distinct from ProcessTensors.jl (violet).
 ITENSOR_BUILTINS = (
+    "Index",
+    "ITensor",
     "MPS",
     "MPO",
     "OpSum",
+    "apply",
+    "dag",
+    "delta",
+    "inner",
+    "op",
+    "prime",
+    "random_itensor",
     "siteinds",
 )
 
-# ProcessTensors.jl user-facing functions / methods.
+# ProcessTensors.jl user-facing functions / methods (violet).
 PT_FUNCTIONS = (
     "add!",
     "build_process_tensor",
@@ -20,6 +30,8 @@ PT_FUNCTIONS = (
     "evaluate_process",
     "evolve",
     "liouv_sites",
+    "liouvillian_mpo",
+    "liouvillian_propagator",
     "observable_measurement",
     "spin_bath",
     "spin_mode",
