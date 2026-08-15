@@ -1,0 +1,142 @@
+% Fig. 1: Hilbert-space graphical dictionary.
+% Requires pt_tikz_styles.tex in the preamble.
+% Each panel occupies an equal-width cell.  The (a)--(h) tag sits at the
+% top-left of that cell; the diagram and the equation are centred in it.
+\begin{tikzpicture}[PTPicture]
+  \def\cellW{3.70}%
+  \def\cellHtop{2.18}%
+  \def\cellHbot{2.52}%
+  \def\rowOneY{3.12}%  cellHbot + gap between the two rows
+  \tikzset{
+    g1lab/.style={
+      font=\small\bfseries,
+      text=PTLabel,
+      inner sep=1.0pt,
+      anchor=north west,
+    },
+    g1eq/.style={
+      font=\small,
+      text=PTLabel,
+      align=center,
+      inner sep=0.4pt,
+      anchor=north,
+    },
+  }
+
+  % =====================================================================
+  % Row 1
+  % =====================================================================
+
+  % (a) ket
+  \begin{scope}[shift={(0, \rowOneY)}]
+    \node[g1lab] at (0, \cellHtop) {(a)};
+    \begin{scope}[shift={(1.85, 0.98)}]
+      \PTKet{g1a}{(0.40,0.08)}{\(\psi\)}
+      \draw[PTHilbertKetLeg] (g1a.west) -- ++(-0.62,0) coordinate (g1a-s);
+      \PTIndexLabel[anchor=east, math={s}, xshift=-1.6pt]{g1a-s}
+      \node[g1eq, below=4.0pt] at (0,-0.42) {\(\lvert\psi\rangle=\psi_{s}\)};
+    \end{scope}
+  \end{scope}
+
+  % (b) bra
+  \begin{scope}[shift={(3.70, \rowOneY)}]
+    \node[g1lab] at (0, \cellHtop) {(b)};
+    \begin{scope}[shift={(1.85, 0.98)}]
+      \PTBra{g1b}{(-0.40,0.08)}{\(\psi\)}
+      \draw[PTHilbertBraLeg primed] (g1b.east) -- ++(0.62,0) coordinate (g1b-sp);
+      \PTIndexLabel[anchor=west, math={s'}, xshift=1.6pt]{g1b-sp}
+      \node[g1eq, below=4.0pt] at (0,-0.42) {\(\langle\psi\rvert=\psi_{s'}\)};
+    \end{scope}
+  \end{scope}
+
+  % (c) operator
+  \begin{scope}[shift={(7.40, \rowOneY)}]
+    \node[g1lab] at (0, \cellHtop) {(c)};
+    \begin{scope}[shift={(1.85, 0.98)}]
+      \PTOperator[minimum width=8.4mm,minimum height=8.4mm]{g1c}{(0,0.08)}{\(A\)}
+      \draw[PTHilbertKetLeg] (g1c.west) -- ++(-0.52,0) coordinate (g1c-s);
+      \draw[PTHilbertBraLeg primed] (g1c.east) -- ++(0.52,0) coordinate (g1c-sp);
+      \PTIndexLabel[anchor=east, math={s}, xshift=-1.6pt]{g1c-s}
+      \PTIndexLabel[anchor=west, math={s'}, xshift=1.6pt]{g1c-sp}
+      \node[g1eq, below=4.0pt] at (0,-0.48) {\(A=a_{ss'}\)};
+    \end{scope}
+  \end{scope}
+
+  % (d) A|psi>
+  \begin{scope}[shift={(11.10, \rowOneY)}]
+    \node[g1lab] at (0, \cellHtop) {(d)};
+    \begin{scope}[shift={(1.85, 0.98)}]
+      \PTOperator[minimum width=8.4mm,minimum height=8.4mm]{g1dA}{(-0.62,0.08)}{\(A\)}
+      \PTKet{g1dk}{(0.62,0.08)}{\(\psi\)}
+      \draw[PTHilbertKetLeg] (g1dA.west) -- ++(-0.50,0) coordinate (g1d-s);
+      \draw[PTHilbertBraLeg primed] (g1dA.east) -- (g1dk.west)
+        coordinate[midway] (g1d-sp);
+      \PTIndexLabel[anchor=east, math={s}, xshift=-1.6pt]{g1d-s}
+      \PTIndexLabel[anchor=south, math={s'}, yshift=1.6pt]{g1d-sp}
+      \node[g1eq, below=4.0pt] at (0,-0.48)
+        {\(A\lvert\psi\rangle=A_{ss'}\psi_{s'}\)};
+    \end{scope}
+  \end{scope}
+
+  % =====================================================================
+  % Row 2
+  % =====================================================================
+
+  % (e) AB
+  \begin{scope}[shift={(0, 0)}]
+    \node[g1lab] at (0, \cellHbot) {(e)};
+    \begin{scope}[shift={(1.85, 1.22)}]
+      \PTOperator[minimum width=8.4mm,minimum height=8.4mm]{g1eA}{(-0.80,0.12)}{\(A\)}
+      \PTOperator[minimum width=8.4mm,minimum height=8.4mm]{g1eB}{(0.80,0.12)}{\(B\)}
+      \draw[PTHilbertKetLeg] (g1eA.west) -- ++(-0.48,0) coordinate (g1e-i);
+      \draw[PTBondLeg] (g1eA.east) -- (g1eB.west) coordinate[midway] (g1e-k);
+      \draw[PTHilbertBraLeg primed] (g1eB.east) -- ++(0.48,0) coordinate (g1e-j);
+      \PTIndexLabel[anchor=east, math={i}, xshift=-1.6pt]{g1e-i}
+      \PTIndexLabel[anchor=south, math={k}, yshift=1.6pt]{g1e-k}
+      \PTIndexLabel[anchor=west, math={j}, xshift=1.6pt]{g1e-j}
+      \node[g1eq, below=4.0pt] at (0,-0.48) {\(AB=a_{ik}b_{kj}\)};
+    \end{scope}
+  \end{scope}
+
+  % (f) A \otimes B stacked
+  \begin{scope}[shift={(3.70, 0)}]
+    \node[g1lab] at (0, \cellHbot) {(f)};
+    \begin{scope}[shift={(1.85, 1.22)}]
+      \PTOperator[minimum width=8.4mm,minimum height=8.4mm]{g1fA}{(0,0.58)}{\(A\)}
+      \PTOperator[minimum width=8.4mm,minimum height=8.4mm]{g1fB}{(0,-0.48)}{\(B\)}
+      \draw[PTHilbertKetLeg] (g1fA.west) -- ++(-0.46,0) coordinate (g1f-i);
+      \draw[PTHilbertBraLeg primed] (g1fA.east) -- ++(0.46,0) coordinate (g1f-j);
+      \draw[PTHilbertKetLeg] (g1fB.west) -- ++(-0.46,0) coordinate (g1f-k);
+      \draw[PTHilbertBraLeg primed] (g1fB.east) -- ++(0.46,0) coordinate (g1f-l);
+      \PTIndexLabel[anchor=east, math={i}, xshift=-1.6pt]{g1f-i}
+      \PTIndexLabel[anchor=west, math={j}, xshift=1.6pt]{g1f-j}
+      \PTIndexLabel[anchor=east, math={k}, xshift=-1.6pt]{g1f-k}
+      \PTIndexLabel[anchor=west, math={l}, xshift=1.6pt]{g1f-l}
+      \node[g1eq, below=4.0pt] at (0,-1.02) {\(A\otimes B=a_{ij}b_{kl}\)};
+    \end{scope}
+  \end{scope}
+
+  % (g) trace
+  \begin{scope}[shift={(7.40, 0)}]
+    \node[g1lab] at (0, \cellHbot) {(g)};
+    \begin{scope}[shift={(1.85, 1.22)}]
+      \PTOperator[minimum width=8.4mm,minimum height=8.4mm]{g1g}{(0,0.28)}{\(A\)}
+      \PTTraceLoop{g1g}
+      \PTIndexLabel[anchor=south, math={i}, yshift=0.8pt]{g1g-loopmid}
+      \node[g1eq, below=5.5pt] at (g1g-loopmid)
+        {\(\operatorname{Tr}(A)=a_{ii}\)};
+    \end{scope}
+  \end{scope}
+
+  % (h) transpose
+  \begin{scope}[shift={(11.10, 0)}]
+    \node[g1lab] at (0, \cellHbot) {(h)};
+    \begin{scope}[shift={(1.85, 1.22)}]
+      \PTOperator[minimum width=8.4mm,minimum height=8.4mm]{g1h}{(0,0.12)}{\(A\)}
+      \PTTransposeBends{g1h}
+      \PTIndexLabel[anchor=west, math={i}, xshift=1.6pt]{g1h-i}
+      \PTIndexLabel[anchor=east, math={j}, xshift=-1.6pt]{g1h-j}
+      \node[g1eq, below=4.0pt] at (0,-0.72) {\(A^{\mathsf T}=A_{ji'}\)};
+    \end{scope}
+  \end{scope}
+\end{tikzpicture}

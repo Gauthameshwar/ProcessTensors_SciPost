@@ -1,0 +1,29 @@
+% Joint (non-factorised) process tensor.  The same time slots and ports as the
+% PT-MPO, but one continuous body and no exposed link indices.
+\begin{tikzpicture}[PTPicture]
+  \PTDrawJointProcess[
+    n=4,
+    name=jp,
+    at={5.55,1.35},
+    spacing=22mm,
+    times=true,
+    time arrow=true,
+    label={\(\Upsilon_{n:0}\)},
+  ]
+  \PTIndexLabel[
+    anchor=west,
+    math={\ell_{\mathrm{out}}},
+    tag={Output,t-00},
+    xshift=3.0pt,
+  ]{jp-out-0}
+  \PTIndexLabel[
+    anchor=east,
+    math={\ell_{\mathrm{in}}},
+    tag={Input,t-00},
+    xshift=-3.0pt,
+    yshift=-4.0pt,
+  ]{jp-in-0}
+  \node[font=\scriptsize, text=PTLabel, align=center, below=22pt]
+    at ($(jp-tn)!0.5!(jp-t0)$)
+    {one joint multi-time object (no exposed PT-link indices)};
+\end{tikzpicture}

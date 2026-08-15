@@ -1,0 +1,48 @@
+% Local vectorisation: a Hilbert-space density MPO becomes a Liouville MPS
+% by fusing each ket/bra pair with a combiner C_j.
+\begin{tikzpicture}[PTPicture]
+  % (a) three-site density MPO
+  \begin{scope}[shift={(0.35,2.55)}]
+    \PTPanelLabel{(-0.25,1.15)}{(a)}
+    \foreach \j/\x in {1/0, 2/2.05, 3/4.10} {
+      \PTOperator{mpo-r-\j}{(\x,0)}{\(\rho^{[\j]}\)}
+      \draw[PTHilbertKetLeg] ([xshift=-2.1mm]mpo-r-\j.south)
+        -- ++(0,-0.72) coordinate (mpo-st-\j);
+      \draw[PTHilbertBraLeg primed] ([xshift=2.1mm]mpo-r-\j.south)
+        -- ++(0,-0.72) coordinate (mpo-spt-\j);
+    }
+    \draw[PTBondLeg] (mpo-r-1.east) -- (mpo-r-2.west) coordinate[midway] (mpo-b01);
+    \draw[PTBondLeg] (mpo-r-2.east) -- (mpo-r-3.west) coordinate[midway] (mpo-b12);
+    \draw[PTBondLeg] (mpo-r-1.west) -- ++(-0.42,0);
+    \draw[PTBondLeg] (mpo-r-3.east) -- ++( 0.42,0);
+    \PTIndexLabel[anchor=east,  math={s_1}, tag={Site,S=1/2,n=1}, xshift=-2.0pt]{mpo-st-1}
+    \PTIndexLabel[anchor=west,  math={s_1}, tag={Site,S=1/2,n=1}, prime={1}, xshift=2.0pt]{mpo-spt-1}
+    \PTIndexLabel[anchor=south, math={\chi}, tag={bond-00}, yshift=2.0pt]{mpo-b01}
+    \node[font=\small, text=PTLabel, above=3.2pt] at (mpo-r-2.north)
+      {\ttfamily MPO[Hilbert], \(\dim s_j=d_j\)};
+  \end{scope}
+
+  % (b) combiners fuse s_j \otimes s'_j -> \ell_j
+  \begin{scope}[shift={(0.35,0.05)}]
+    \PTPanelLabel{(-0.25,1.55)}{(b)}
+    \foreach \j/\x in {1/0, 2/2.05, 3/4.10} {
+      \PTOperator{mps-r-\j}{(\x,0.85)}{\(\rho^{[\j]}\)}
+      \PTCombiner[direction=down]{mps-C-\j}{(\x,-0.22)}{\(C_{\j}\)}
+      \draw[PTHilbertKetLeg] ([xshift=-2.1mm]mps-r-\j.south) -- (mps-C-\j-ket);
+      \draw[PTHilbertBraLeg] ([xshift= 2.1mm]mps-r-\j.south) -- (mps-C-\j-bra);
+      \draw[PTLiouvilleLeg] (mps-C-\j-fused) -- ++(0,-0.62) coordinate (mps-ell-\j);
+    }
+    \draw[PTBondLeg] (mps-r-1.east) -- (mps-r-2.west);
+    \draw[PTBondLeg] (mps-r-2.east) -- (mps-r-3.west);
+    \draw[PTBondLeg] (mps-r-1.west) -- ++(-0.42,0);
+    \draw[PTBondLeg] (mps-r-3.east) -- ++( 0.42,0);
+    \PTIndexLabel[
+      anchor=west,
+      math={\ell_1},
+      tag={Liouv,ptype=S=1/2,n=1},
+      xshift=2.4pt,
+    ]{mps-ell-1}
+    \node[font=\small, text=PTLabel, above=3.2pt] at (mps-r-2.north)
+      {\ttfamily MPS[Liouville], \(\dim\ell_j=d_j^{2}\)};
+  \end{scope}
+\end{tikzpicture}

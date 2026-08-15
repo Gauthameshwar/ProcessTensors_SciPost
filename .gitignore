@@ -5,6 +5,10 @@
 # PdfLaTeX deps
 latex/
 out/
+figures/tikz/*.aux
+figures/tikz/*.log
+figures/tikz/*.out
+figures/tikz/*.toc
 
 # MacOS deps
 .DS_Store

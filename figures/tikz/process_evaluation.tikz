@@ -1,0 +1,83 @@
+% Process evaluation: a PT-MPO contracted with an instrument sequence.
+% Time runs right to left.  Panel (a) leaves the final leg open (conditional
+% state); panel (b) closes it with a trace (outcome probability).
+\begin{tikzpicture}[PTPicture]
+  % =========================================================================
+  % (a) open final leg
+  % =========================================================================
+  \begin{scope}[shift={(0,3.55)}]
+    \PTPanelLabel{(-0.15,1.55)}{(a) conditional state}
+    \PTDrawProcessMPO[
+      n=3,
+      name=eva,
+      at={4.55,0.95},
+      spacing=24mm,
+      tags=false,
+      chi=true,
+      times=false,
+      time arrow=false,
+    ]
+    \PTControl{eva-A0}{($(eva-W-0)+(0,-1.95)$)}{\(\mathcal A_0\)}
+    \PTUnitary{eva-A1}{($(eva-W-1)+(0,-1.95)$)}{\(U_1\)}
+    \PTMeasure[classical label={x}]{eva-A2}{($(eva-W-2)+(0,-1.95)$)}{\(\mathcal A_{2}\)}
+    \foreach \k/\nm in {0/eva-A0, 1/eva-A1, 2/eva-A2} {
+      \draw[PTLiouvilleLeg] (eva-out-\k) -- ([xshift=\PTIOSep]\nm.north);
+      \draw[PTLiouvilleLeg] ([xshift=-\PTIOSep]\nm.north) -- (eva-in-\k);
+    }
+    % Final system output at t_n (open Liouville wire to the left).
+    \coordinate (eva-final-src) at ([yshift=2.0mm]eva-W-2.west);
+    \draw[PTLiouvilleLeg] (eva-final-src) -- ++(-1.15,0) coordinate (eva-final);
+    \PTIndexLabel[
+      anchor=south east,
+      math={\lvert\rho(t_n)\rangle\!\rangle},
+      tag={Output,t-n},
+      yshift=2.4pt,
+    ]{eva-final}
+    \PTCallout[anchor=south west, font=\scriptsize]{$(eva-link-0)+(0.05,0.22)$}{temporal link}
+    \PTCallout[anchor=west, font=\scriptsize]{$(eva-out-0)+(0.12,-0.02)$}{output}
+    \PTCallout[anchor=east, font=\scriptsize]{$(eva-in-0)+(-0.12,-0.22)$}{input}
+    \PTCallout[anchor=west, font=\scriptsize]{$(eva-A1.east)+(0.08,0)$}{instrument}
+    \coordinate (eva-t0) at ($(eva-A0.south)+(0.85,-0.95)$);
+    \coordinate (eva-tn) at ($(eva-A2.south)+(-0.85,-0.95)$);
+    \PTTimeArrow{eva-t0}{eva-tn}{\(t\)}
+    \node[font=\small, text=PTLabel, anchor=west] at (eva-t0) {\(t_0\)};
+    \node[font=\small, text=PTLabel, anchor=east] at (eva-tn) {\(t_n\)};
+  \end{scope}
+
+  % =========================================================================
+  % (b) traced final leg
+  % =========================================================================
+  \begin{scope}[shift={(0,0.0)}]
+    \PTPanelLabel{(-0.15,1.55)}{(b) outcome probability}
+    \PTDrawProcessMPO[
+      n=3,
+      name=evb,
+      at={4.55,0.95},
+      spacing=24mm,
+      tags=false,
+      chi=true,
+      times=false,
+      time arrow=false,
+    ]
+    \PTControl{evb-A0}{($(evb-W-0)+(0,-1.95)$)}{\(\mathcal A_0\)}
+    \PTUnitary{evb-A1}{($(evb-W-1)+(0,-1.95)$)}{\(U_1\)}
+    \PTMeasure[classical label={x}]{evb-A2}{($(evb-W-2)+(0,-1.95)$)}{\(\mathcal A_{2}\)}
+    \foreach \k/\nm in {0/evb-A0, 1/evb-A1, 2/evb-A2} {
+      \draw[PTLiouvilleLeg] (evb-out-\k) -- ([xshift=\PTIOSep]\nm.north);
+      \draw[PTLiouvilleLeg] ([xshift=-\PTIOSep]\nm.north) -- (evb-in-\k);
+    }
+    \PTTraceLiouville{evb-tr}{([yshift=2.0mm, xshift=-1.05cm]evb-W-2.west)}{\(\operatorname{Tr}\)}
+    \draw[PTLiouvilleLeg] ([yshift=2.0mm]evb-W-2.west) -- (evb-tr.east);
+    \PTIndexLabel[
+      anchor=south,
+      math={p(x)},
+      yshift=3.0pt,
+    ]{evb-tr.west}
+    \PTCallout[anchor=east, font=\scriptsize]{$(evb-tr.west)+(-0.08,0)$}{probability}
+    \coordinate (evb-t0) at ($(evb-A0.south)+(0.85,-0.95)$);
+    \coordinate (evb-tn) at ($(evb-A2.south)+(-0.85,-0.95)$);
+    \PTTimeArrow{evb-t0}{evb-tn}{\(t\)}
+    \node[font=\small, text=PTLabel, anchor=west] at (evb-t0) {\(t_0\)};
+    \node[font=\small, text=PTLabel, anchor=east] at (evb-tn) {\(t_n\)};
+  \end{scope}
+\end{tikzpicture}

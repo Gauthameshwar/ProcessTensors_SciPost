@@ -1,0 +1,84 @@
+% Dictionary of quantum instruments.  Every symbol is a \PTInstrumentNode
+% (or a specialised wrapper).  Classical outcomes are dashed.
+\begin{tikzpicture}[PTPicture]
+  % (a) identity as a plain wire and as a box
+  \begin{scope}[shift={(0.0,3.35)}]
+    \PTPanelLabel{(-0.1,0.85)}{(a)}
+    \draw[PTLiouvilleLeg] (0,0) -- (1.35,0);
+    \node[font=\small, text=PTLabel, above=2.4pt] at (0.67,0) {\(\mathcal I\)};
+    \PTIdentity{id-box}{(2.35,0)}{\(\mathcal I\)}
+    \draw[PTLiouvilleLeg] (id-box.west) -- ++(-0.45,0);
+    \draw[PTLiouvilleLeg] (id-box.east) -- ++( 0.45,0);
+    \node[font=\small, text=PTLabel, below=11pt] at (1.15,-0.15) {identity};
+  \end{scope}
+
+  % (b) general control
+  \begin{scope}[shift={(4.55,3.35)}]
+    \PTPanelLabel{(-0.1,0.85)}{(b)}
+    \PTControl{inst-A}{(0.7,0)}{\(\mathcal A_k\)}
+    \draw[PTLiouvilleLeg] (inst-A.north) -- ++(0,0.48);
+    \draw[PTLiouvilleLeg] (inst-A.south) -- ++(0,-0.48);
+    \node[font=\small, text=PTLabel, below=12pt] at (0.7,-0.15) {control};
+  \end{scope}
+
+  % (c) unitary
+  \begin{scope}[shift={(6.85,3.35)}]
+    \PTPanelLabel{(-0.1,0.85)}{(c)}
+    \PTUnitary{inst-U}{(0.55,0)}{\(U_k\)}
+    \draw[PTLiouvilleLeg] (inst-U.north) -- ++(0,0.48);
+    \draw[PTLiouvilleLeg] (inst-U.south) -- ++(0,-0.48);
+    \node[font=\small, text=PTLabel, below=12pt] at (0.55,-0.15) {unitary};
+  \end{scope}
+
+  % (d) preparation (no incoming system state)
+  \begin{scope}[shift={(9.15,3.35)}]
+    \PTPanelLabel{(-0.1,0.85)}{(d)}
+    \PTPrepare{inst-P}{(0.55,0)}{\(\mathcal P_k\)}
+    \draw[PTLiouvilleLeg] (inst-P.west) -- ++(-0.70,0);
+    \node[font=\small, text=PTLabel, below=12pt] at (0.35,-0.15) {preparation};
+  \end{scope}
+
+  % (e) measurement effect
+  \begin{scope}[shift={(0.0,1.05)}]
+    \PTPanelLabel{(-0.1,1.35)}{(e)}
+    \PTMeasure[classical label={x_k}]{inst-E}{(0.85,0.35)}{\(E_k^{(x)}\)}
+    \draw[PTLiouvilleLeg] (inst-E.north) -- ++(0,0.48);
+    \node[font=\small, text=PTLabel, below=18pt] at (0.85,-0.35) {measurement};
+  \end{scope}
+
+  % (f) projective
+  \begin{scope}[shift={(3.15,1.05)}]
+    \PTPanelLabel{(-0.1,1.35)}{(f)}
+    \PTProjective[classical label={x_k}]{inst-Pi}{(0.90,0.35)}{\(\mathcal P_k^{(x)}\)}
+    \draw[PTLiouvilleLeg] (inst-Pi.north) -- ++(0,0.48);
+    \draw[PTLiouvilleLeg] (inst-Pi.south) -- ++(0,-0.42);
+    \node[font=\small, text=PTLabel, below=18pt] at (0.90,-0.35) {projective};
+  \end{scope}
+
+  % (g) causal break: measure (right, earlier) then prepare (left, later)
+  \begin{scope}[shift={(6.35,1.05)}]
+    \PTPanelLabel{(-0.1,1.35)}{(g)}
+    \PTCausalBreak{cb}{(1.55,0.35)}
+    \draw[PTLiouvilleLeg] (cb-E.east) -- ++(0.50,0);
+    \draw[PTLiouvilleLeg] (cb-P.west) -- ++(-0.50,0);
+    \node[font=\small, text=PTLabel, below=18pt] at (0.70,-0.35) {causal break};
+  \end{scope}
+
+  % (h) Hilbert trace cup  and  (i) Liouville trace node
+  \begin{scope}[shift={(10.55,1.05)}]
+    \PTPanelLabel{(-0.1,1.35)}{(h)}
+    \coordinate (trH-k) at (0.15,0.85);
+    \coordinate (trH-b) at (0.85,0.85);
+    \draw[PTHilbertKetLeg] (trH-k) -- ++(0,0.35);
+    \draw[PTHilbertBraLeg] (trH-b) -- ++(0,0.35);
+    \PTTraceHilbert{trH-k}{trH-b}
+    \node[font=\small, text=PTLabel, below=14pt] at (0.50,-0.15) {\(\operatorname{Tr}_{S}\)};
+  \end{scope}
+
+  \begin{scope}[shift={(12.55,1.05)}]
+    \PTPanelLabel{(-0.1,1.35)}{(i)}
+    \PTTraceLiouville{trL}{(0.45,0.45)}{\(\operatorname{Tr}\)}
+    \draw[PTLiouvilleLeg] (trL.north) -- ++(0,0.55);
+    \node[font=\small, text=PTLabel, below=14pt] at (0.45,-0.15) {Liouville};
+  \end{scope}
+\end{tikzpicture}

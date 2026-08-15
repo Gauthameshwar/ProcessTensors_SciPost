@@ -1,0 +1,343 @@
+% Standalone catalogue of the process-tensor graphical calculus.
+% Compile from this directory:
+%   pdflatex pt_tikz_demo.tex
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=16mm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{tikz}
+
+\IfFileExists{pt_tikz_styles.tex}{%
+  \input{pt_tikz_styles.tex}%
+}{%
+  \input{figures/tikz/pt_tikz_styles.tex}%
+}
+
+\title{\textbf{Process-tensor graphical calculus}\\[0.4em]
+\large A reusable TikZ library for \texttt{ProcessTensors.jl}}
+\author{Style demo --- not a SciPost figure}
+\date{}
+
+\pagestyle{plain}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+\maketitle
+
+\noindent
+Time in every process-tensor diagram runs \textbf{right to left}
+(\(t_n \leftarrow t_0\)).
+Kets are right-pointing triangles (\texttt{----|>});
+bras are left-pointing triangles (\texttt{<|----}).
+Spaces are distinguished by line structure, not colour alone.
+
+% =============================================================================
+\section*{1.\ Ket and bra triangles}
+% =============================================================================
+\begin{tikzpicture}[PTPicture]
+  \PTKet{d-ket}{(1.2,0.2)}{\(\lvert\psi\rangle\)}
+  \draw[PTHilbertKetLeg] (0,0.2) -- (d-ket.west);
+  \node[font=\small, text=PTLabel, below=12pt] at (d-ket.south) {ket: wire from the left};
+
+  \PTBra{d-bra}{(4.4,0.2)}{\(\langle\phi\rvert\)}
+  \draw[PTHilbertBraLeg] (d-bra.east) -- (5.7,0.2);
+  \node[font=\small, text=PTLabel, below=12pt] at (d-bra.south) {bra: wire to the right};
+
+  \PTLiouvilleKet{d-Lket}{(8.3,0.2)}{\(\lvert\rho\rangle\!\rangle\)}
+  \draw[PTLiouvilleLeg] (7.1,0.2) -- (d-Lket.west);
+  \node[font=\small, text=PTLabel, below=12pt] at (d-Lket.south) {Liouville ket (double-wired leg)};
+
+  \PTKet{d-k2}{(12.15,0.2)}{\(\lvert\psi\rangle\)}
+  \PTBra{d-b2}{(9.85,0.2)}{\(\langle\phi\rvert\)}
+  \draw[PTHilbertKetLeg] (d-b2.east) -- (d-k2.west);
+  \node[font=\small, text=PTLabel, below=12pt] at ($(d-b2)!0.5!(d-k2)$) {\(\langle\phi\vert\psi\rangle\)};
+\end{tikzpicture}
+
+% =============================================================================
+\section*{2.\ Hilbert ket and bra wires}
+% =============================================================================
+\begin{tikzpicture}[PTPicture]
+  \draw[PTHilbertKetLeg] (0,0.8) -- (3.2,0.8);
+  \PTIndexLabel[anchor=south, math={s_j}, tag={site-01}, yshift=2.2pt]{1.6,0.8}
+  \node[font=\small, text=PTLabel, below=3pt] at (1.6,0.8) {ket leg};
+
+  \draw[PTHilbertBraLeg primed] (0,0.0) -- (3.2,0.0);
+  \PTIndexLabel[anchor=south, math={s_j}, tag={site-01}, prime={1}, yshift=2.2pt]{1.6,0.0}
+  \node[font=\small, text=PTLabel, below=8pt] at (1.6,0.0) {bra leg (prime marker)};
+
+  \draw[PTBondLeg] (4.4,0.4) -- (7.6,0.4);
+  \PTIndexLabel[anchor=south, math={\chi}, tag={bond-00}, yshift=2.2pt]{6.0,0.4}
+  \node[font=\small, text=PTLabel, below=8pt] at (6.0,0.4) {ordinary TN bond};
+
+  \draw[PTClassicalLeg] (8.8,0.4) -- (12.0,0.4);
+  \PTIndexLabel[anchor=south, math={x_k}, yshift=2.2pt]{10.4,0.4}
+  \node[font=\small, text=PTLabel, below=8pt] at (10.4,0.4) {classical outcome};
+\end{tikzpicture}
+
+% =============================================================================
+\section*{3.\ Liouville fused wire}
+% =============================================================================
+\begin{tikzpicture}[PTPicture]
+  \draw[PTLiouvilleLeg] (0,0.55) -- (4.4,0.55);
+  \PTIndexLabel[
+    anchor=south,
+    math={\ell_j\simeq s_j\otimes s_j^{*}},
+    tag={Liouville,site-01},
+    yshift=2.4pt,
+  ]{2.2,0.55}
+  \node[font=\small, text=PTLabel, below=3pt] at (2.2,0.55)
+    {double wire, \(\dim\ell_j=d_j^{2}\)};
+
+  \draw[PTLinkLeg] (5.6,0.55) -- (10.0,0.55);
+  \PTIndexLabel[anchor=south, math={\chi_k}, tag={PTLink,t-01}, yshift=3.6pt]{7.8,0.55}
+  \node[font=\small, text=PTLabel, below=3pt] at (7.8,0.55)
+    {PT-MPO link (thicker than a bond)};
+\end{tikzpicture}
+
+% =============================================================================
+\section*{4.\ Operator and state tensors}
+% =============================================================================
+\begin{tikzpicture}[PTPicture]
+  \PTOperator{d-A}{(1.0,0.7)}{\(A\)}
+  \PTOperatorLegs{d-A}
+  \PTIndexLabel[anchor=west, math={s_j}, xshift=2.2pt]{d-A-ket}
+  \PTIndexLabel[anchor=west, math={s_j}, prime={1}, xshift=2.2pt]{d-A-bra}
+
+  \PTSuperoperator{d-SA}{(3.6,0.7)}{\(\mathsf A\)}
+  \draw[PTLiouvilleLeg] (d-SA.north) -- ++(0,\PTLegLength);
+  \draw[PTLiouvilleLeg] (d-SA.south) -- ++(0,-\PTLegLength);
+
+  \PTProcessCore{d-W}{(6.0,0.7)}{\(W^{[k]}\)}
+  \draw[PTLinkLeg] (d-W.west) -- ++(-0.55,0);
+  \draw[PTLinkLeg] (d-W.east) -- ++( 0.55,0);
+
+  \PTInstrument{d-Ak}{(8.4,0.7)}{\(\mathcal A_k\)}
+  \draw[PTLiouvilleLeg] (d-Ak.north) -- ++(0,0.45);
+  \draw[PTLiouvilleLeg] (d-Ak.south) -- ++(0,-0.45);
+
+  \PTCombiner[direction=up]{d-C}{(10.6,0.15)}{\(C_j\)}
+  \draw[PTHilbertKetLeg] (d-C-ket) -- ++(-0.28,-0.40);
+  \draw[PTHilbertBraLeg] (d-C-bra) -- ++( 0.28,-0.40);
+  \draw[PTLiouvilleLeg] (d-C-fused) -- ++(0,0.55);
+\end{tikzpicture}
+
+% =============================================================================
+\section*{5.\ Cups, caps, trace closure, and transpose by bending}
+% =============================================================================
+\begin{tikzpicture}[PTPicture]
+  % (a) cup / cap
+  \begin{scope}[shift={(0.2,1.7)}]
+    \PTPanelLabel{(-0.1,1.15)}{(a)}
+    \coordinate (cup-L) at (0.15,0.85);
+    \coordinate (cup-R) at (1.15,0.85);
+    \PTCup[PTHilbertKetLeg]{cup-L}{cup-R}
+    \node[font=\small, below=8pt] at (0.65,0.20) {cup};
+    \coordinate (cap-L) at (2.15,0.15);
+    \coordinate (cap-R) at (3.15,0.15);
+    \PTCap[PTHilbertKetLeg]{cap-L}{cap-R}
+    \node[font=\small, above=8pt] at (2.65,0.85) {cap};
+  \end{scope}
+
+  % (b) trace as a cup
+  \begin{scope}[shift={(4.3,1.7)}]
+    \PTPanelLabel{(-0.1,1.15)}{(b)}
+    \PTOperator{tr-rho}{(0.85,0.55)}{\(\rho\)}
+    \draw[PTHilbertKetLeg] (tr-rho.north) -- ++(0,0.42) coordinate (tr-n);
+    \draw[PTHilbertBraLeg] (tr-rho.south) -- ++(0,-0.42) coordinate (tr-s);
+    \draw[PTHilbertKetLeg] (tr-n) -- ++(0.58,0) coordinate (tr-nr);
+    \draw[PTHilbertBraLeg] (tr-s) -- ++(0.58,0) coordinate (tr-sr);
+    \PTTraceHilbert{tr-nr}{tr-sr}
+    \node[font=\small, below=16pt] at (0.85,-0.15)
+      {\(\operatorname{Tr}\rho=\langle\!\langle I\vert\rho\rangle\!\rangle\)};
+  \end{scope}
+
+  % (c) sliding across a cup introduces a transpose (Roth)
+  \begin{scope}[shift={(8.15,1.7)}]
+    \PTPanelLabel{(-0.1,1.15)}{(c)}
+    \coordinate (roth-L) at (0.20,1.05);
+    \coordinate (roth-R) at (1.70,1.05);
+    \PTCup[PTHilbertKetLeg]{roth-L}{roth-R}
+    \PTOperator[minimum width=7.5mm, minimum height=7.5mm]{roth-A}{(0.20,0.45)}{\(A\)}
+    \draw[PTHilbertKetLeg] (roth-A.north) -- (roth-L);
+    \draw[PTHilbertKetLeg] (roth-A.south) -- ++(0,-0.28);
+    \node[font=\small] at (0.95,-0.55) {\((I\otimes A)\lvert I\rangle\!\rangle\)};
+  \end{scope}
+
+  \begin{scope}[shift={(11.15,1.7)}]
+    \coordinate (roth2-L) at (0.20,1.05);
+    \coordinate (roth2-R) at (1.70,1.05);
+    \PTCup[PTHilbertKetLeg]{roth2-L}{roth2-R}
+    \PTOperator[minimum width=7.5mm, minimum height=7.5mm]{roth-AT}{(1.70,0.45)}{\(A^{\mathsf T}\)}
+    \draw[PTHilbertKetLeg] (roth-AT.north) -- (roth2-R);
+    \draw[PTHilbertKetLeg] (roth-AT.south) -- ++(0,-0.28);
+    \node[font=\small] at (0.95,-0.55) {\((A^{\mathsf T}\otimes I)\lvert I\rangle\!\rangle\)};
+  \end{scope}
+
+  % (d) vec(A \rho B) = (B^T \otimes A) |\rho>>
+  \begin{scope}[shift={(0.2,-0.55)}]
+    \PTPanelLabel{(-0.1,1.35)}{(d)}
+    \PTOperator{rb-A}{(0.0,0.55)}{\(A\)}
+    \PTOperator{rb-rho}{(1.45,0.55)}{\(\rho\)}
+    \PTOperator{rb-B}{(2.90,0.55)}{\(B\)}
+    \draw[PTHilbertKetLeg] (rb-A.east) -- (rb-rho.west);
+    \draw[PTHilbertKetLeg] (rb-rho.east) -- (rb-B.west);
+    \draw[PTHilbertKetLeg] (rb-A.west) -- ++(-0.42,0);
+    \draw[PTHilbertBraLeg] (rb-B.east) -- ++(0.42,0);
+    \node[font=\small, below=11pt] at (1.45,0.0) {\(A\rho B\)};
+  \end{scope}
+
+  \PTMapsTo{(4.55,0.05)}
+
+  \begin{scope}[shift={(5.35,-0.55)}]
+    \PTOperator{rb-BT}{(0.0,0.55)}{\(B^{\mathsf T}\)}
+    \PTOperator{rb-rv}{(1.55,0.55)}{\(\lvert\rho\rangle\!\rangle\)}
+    \PTOperator{rb-AA}{(3.10,0.55)}{\(A\)}
+    \draw[PTLiouvilleLeg] (rb-BT.east) -- (rb-rv.west);
+    \draw[PTLiouvilleLeg] (rb-rv.east) -- (rb-AA.west);
+    \draw[PTLiouvilleLeg] (rb-BT.west) -- ++(-0.42,0);
+    \draw[PTLiouvilleLeg] (rb-AA.east) -- ++(0.42,0);
+    \node[font=\small, below=11pt] at (1.55,0.0)
+      {\(\operatorname{vec}(A\rho B)=(B^{\mathsf T}\otimes A)\lvert\rho\rangle\!\rangle\)};
+  \end{scope}
+\end{tikzpicture}
+
+\vspace{1.2em}
+% =============================================================================
+\section*{6.\ Hilbert operator \(\leftrightarrow\) Liouville vector}
+% =============================================================================
+\IfFileExists{liouville_vectorisation.tikz}{%
+  \input{liouville_vectorisation.tikz}%
+}{\input{figures/tikz/liouville_vectorisation.tikz}}
+
+\vspace{1.2em}
+% =============================================================================
+\section*{7.\ Hilbert superoperator \(\leftrightarrow\) Liouville operator}
+% =============================================================================
+\IfFileExists{liouville_superoperator.tikz}{%
+  \input{liouville_superoperator.tikz}%
+}{\input{figures/tikz/liouville_superoperator.tikz}}
+
+\vspace{1.2em}
+% =============================================================================
+\section*{8.\ Density MPO \(\rightarrow\) Liouville MPS}
+% =============================================================================
+\IfFileExists{mpo_to_liouville_mps.tikz}{%
+  \input{mpo_to_liouville_mps.tikz}%
+}{\input{figures/tikz/mpo_to_liouville_mps.tikz}}
+
+\vspace{1.2em}
+% =============================================================================
+\section*{9.\ PT-MPO with right-to-left time}
+% =============================================================================
+\IfFileExists{pt_mpo_structure.tikz}{%
+  \input{pt_mpo_structure.tikz}%
+}{\input{figures/tikz/pt_mpo_structure.tikz}}
+
+\vspace{1.2em}
+% =============================================================================
+\section*{10.\ Joint non-MPO process tensor}
+% =============================================================================
+\IfFileExists{joint_process_tensor.tikz}{%
+  \input{joint_process_tensor.tikz}%
+}{\input{figures/tikz/joint_process_tensor.tikz}}
+
+\vspace{1.2em}
+% =============================================================================
+\section*{11.\ Instrument symbols}
+% =============================================================================
+\IfFileExists{instrument_dictionary.tikz}{%
+  \input{instrument_dictionary.tikz}%
+}{\input{figures/tikz/instrument_dictionary.tikz}}
+
+\vspace{1.2em}
+% =============================================================================
+\section*{12.\ PT-MPO contracted with an instrument sequence}
+% =============================================================================
+\IfFileExists{process_evaluation.tikz}{%
+  \input{process_evaluation.tikz}%
+}{\input{figures/tikz/process_evaluation.tikz}}
+
+\vspace{1.6em}
+% =============================================================================
+\section*{Paper fragment: graphical dictionary}
+% =============================================================================
+\IfFileExists{graphical_dictionary.tikz}{%
+  \input{graphical_dictionary.tikz}%
+}{\input{figures/tikz/graphical_dictionary.tikz}}
+
+\vspace{2em}
+\section*{Public commands}
+\small
+\begin{tabular}{@{}llp{0.46\linewidth}@{}}
+\toprule
+Command & Arguments & Purpose \\
+\midrule
+\verb|\PTKet| & name, pos, label & Right-pointing ket triangle. \\
+\verb|\PTBra| & name, pos, label & Left-pointing bra triangle. \\
+\verb|\PTLiouvilleKet| & name, pos, label & Liouville ket (double-wired leg). \\
+\verb|\PTLiouvilleBra| & name, pos, label & Liouville bra (double-wired leg). \\
+\verb|\PTTensor| & [keys] name pos label & Generic square core, thick rounded stroke. \\
+\verb|\PTOperator| & [keys] name pos label & Hilbert-space operator (square). \\
+\verb|\PTSuperoperator| & [keys] name pos label & Superoperator core (square). \\
+\verb|\PTProcessCore| & [keys] name pos label & PT-MPO time core. \\
+\verb|\PTInstrument| & [keys] name pos label & Instrument core (gold fill). \\
+\verb|\PTInstrumentNode| & [keys] name pos label & Generic instrument constructor. \\
+\verb|\PTIdentity| & [keys] name pos label & Identity box \(\mathcal I\). \\
+\verb|\PTControl| & [keys] name pos label & General control \(\mathcal A_k\). \\
+\verb|\PTUnitary| & [keys] name pos label & Unitary \(U_k\). \\
+\verb|\PTPrepare| & [keys] name pos label & Preparation (triangle). \\
+\verb|\PTMeasure| & [keys] name pos label & Measurement with classical \(x\). \\
+\verb|\PTProjective| & [keys] name pos label & Projective instrument. \\
+\verb|\PTCausalBreak| & [keys] name pos & Measure then prepare. \\
+\verb|\PTTraceHilbert| & ket-coord, bra-coord & Magenta Hilbert-space trace cup. \\
+\verb|\PTTraceLiouville| & name, pos, label & Compact Liouville \(\mathrm{Tr}\) node. \\
+\verb|\PTCombiner| & [dir] name pos label & Fuse \(s\otimes s'\to\ell\). \\
+\verb|\PTCombinerInv| & [keys] name pos label & Inverse combiner. \\
+\verb|\PTIndexLabel| & [keys] coord & Math + ITensor tag + prime. \\
+\verb|\PTCup| / \verb|\PTCap| & [style] A B & Smooth cup / cap. \\
+\verb|\PTTimeArrow| & [anchor] right left label & Left-pointing time arrow. \\
+\verb|\PTDrawProcessMPO| & [keys] & Arbitrary-\(n\) PT-MPO. \\
+\verb|\PTDrawJointProcess| & [keys] & Joint (non-MPO) process. \\
+\verb|\PTOperatorLegs| & node & Ket (north) and bra (south) stubs. \\
+\verb|\PTCallout| & [keys] coord text & Sparse annotation. \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.8em}
+\noindent
+\verb|\PTInstrumentNode| keys:
+\texttt{kind=box|ket|bra|trace},
+\texttt{fill=},
+\texttt{classical=none|up|down|left|right},
+\texttt{classical label=},
+\texttt{minimum width=},
+\texttt{minimum height=}.
+
+\vspace{0.4em}
+\noindent
+\verb|\PTDrawProcessMPO| keys:
+\texttt{n=},
+\texttt{at=(x,y)},
+\texttt{name=},
+\texttt{spacing=},
+\texttt{joint=true|false},
+\texttt{tags=},
+\texttt{chi=},
+\texttt{times=},
+\texttt{time arrow=},
+\texttt{final=},
+\texttt{label=}.
+
+\vspace{0.4em}
+\noindent
+\verb|\PTIndexLabel| keys:
+\texttt{anchor=},
+\texttt{math=},
+\texttt{tag=},
+\texttt{prime=},
+\texttt{xshift=},
+\texttt{yshift=}.
+
+\end{document}

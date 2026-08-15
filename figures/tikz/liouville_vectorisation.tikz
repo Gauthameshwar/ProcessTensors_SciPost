@@ -1,0 +1,53 @@
+% Column-major vectorisation as a wire-bending operation.
+% vec(A) = sum_{j,k} A_{jk} |k> \otimes |j>, so vec(|j><k|) = |k> \otimes |j>.
+\begin{tikzpicture}[PTPicture]
+  % (a) operator with ket output j (up) and bra input k (down)
+  \begin{scope}[shift={(0.2,0.2)}]
+    \PTPanelLabel{(-0.2,1.55)}{(a)}
+    \PTOperator{vec-A}{(0.9,0.7)}{\(A\)}
+    \draw[PTHilbertKetLeg] (vec-A.north) -- ++(0,0.75) coordinate (vec-A-j);
+    \draw[PTHilbertBraLeg] (vec-A.south) -- ++(0,-0.75) coordinate (vec-A-k);
+    \PTIndexLabel[anchor=west, math={j}, xshift=2.4pt]{vec-A-j}
+    \PTIndexLabel[anchor=west, math={k}, xshift=2.4pt]{vec-A-k}
+    \node[font=\small, text=PTLabel, below=2.0pt] at (0.9,-0.55) {operator};
+  \end{scope}
+
+  \PTMapsTo{(3.15,0.9)}
+
+  % (b) bra leg bent into a second output; left factor is |k>
+  \begin{scope}[shift={(4.05,0.2)}]
+    \PTPanelLabel{(-0.15,1.55)}{(b)}
+    \PTOperator{vec-Av}{(1.25,0.7)}{\(A\)}
+    \draw[PTHilbertKetLeg] (vec-Av.north) -- ++(0,0.75) coordinate (vec-Av-j);
+    % Bend the bra (south) around a cup to an upward port on the left.
+    % Control points sit below the operator so the cup is smooth and
+    % unambiguously a vectorisation, not a contraction dot.
+    \coordinate (vec-Av-k) at ($(vec-Av.north)+(-0.72,0.75)$);
+    \draw[PTHilbertBraLeg] (vec-Av.south)
+      .. controls +(0.0,-0.62) and +(0.0,-0.62) ..
+      ([yshift=-0.02cm]vec-Av.south west)
+      .. controls +(-0.62,-0.55) and +(0.0,-0.70) ..
+      (vec-Av-k);
+    \draw[PTHilbertKetLeg] (vec-Av-k) -- ++(0,0.02);
+    \PTIndexLabel[anchor=south, math={k}, yshift=2.0pt]{vec-Av-k}
+    \PTIndexLabel[anchor=south, math={j}, yshift=2.0pt]{vec-Av-j}
+    \node[font=\small, text=PTLabel, below=2.0pt] at (1.05,-0.55)
+      {\(\lvert A\rangle\!\rangle=\lvert k\rangle\otimes\lvert j\rangle\)};
+  \end{scope}
+
+  \PTMapsTo{(7.85,0.9)}
+
+  % (c) A = I leaves the cup: the vectorised identity
+  \begin{scope}[shift={(8.55,0.2)}]
+    \PTPanelLabel{(-0.15,1.55)}{(c)}
+    \coordinate (vec-I-k) at (0.35,1.45);
+    \coordinate (vec-I-j) at (1.15,1.45);
+    \draw[PTHilbertBraLeg] (vec-I-k)
+      .. controls +(0,-0.85) and +(0,-0.85) ..
+      (vec-I-j);
+    \PTIndexLabel[anchor=south, math={k}, yshift=2.0pt]{vec-I-k}
+    \PTIndexLabel[anchor=south, math={j}, yshift=2.0pt]{vec-I-j}
+    \node[font=\small, text=PTLabel, below=2.0pt] at (0.75,-0.55)
+      {\(\lvert I\rangle\!\rangle\)};
+  \end{scope}
+\end{tikzpicture}

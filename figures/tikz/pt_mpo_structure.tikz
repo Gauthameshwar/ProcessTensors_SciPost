@@ -1,0 +1,19 @@
+% Process-tensor MPO.  Time runs right to left: t_0 on the right, t_n on the left.
+% Adjacent cores are joined by thick PT-link indices; each core has a distinct
+% input (left of the pair) and output (right of the pair).
+\begin{tikzpicture}[PTPicture]
+  \PTDrawProcessMPO[
+    n=4,
+    name=pt,
+    at={5.55,1.35},
+    spacing=22mm,
+    tags=true,
+    chi=true,
+    times=true,
+    time arrow=true,
+    label={},
+  ]
+  \node[font=\small, text=PTLabel, inner sep=1pt, above=13pt]
+    at ($(pt-W-0.north)!0.5!(pt-W-3.north)$)
+    {\(\Upsilon_{n:0}\simeq W^{[n-1]}W^{[n-2]}\cdots W^{[0]}\)};
+\end{tikzpicture}

@@ -1,0 +1,57 @@
+% Four-legged Hilbert-space map versus the equivalent two-legged
+% Liouville-space superoperator.  Combiners fuse each ket/bra pair.
+\begin{tikzpicture}[PTPicture]
+  % (a) Hilbert superoperator
+  \begin{scope}[shift={(0.15,0.15)}]
+    \PTPanelLabel{(-0.1,2.05)}{(a)}
+    \PTSuperoperator[minimum width=12mm, minimum height=12mm]{sup-H}{(1.35,1.05)}{\(\mathcal A\)}
+    \coordinate (sup-H-ko) at ([xshift=-3.1mm]sup-H.north);
+    \coordinate (sup-H-bo) at ([xshift= 3.1mm]sup-H.north);
+    \coordinate (sup-H-ki) at ([xshift=-3.1mm]sup-H.south);
+    \coordinate (sup-H-bi) at ([xshift= 3.1mm]sup-H.south);
+    \draw[PTHilbertKetLeg] (sup-H-ko) -- ++(0, 0.78) coordinate (sup-H-kot);
+    \draw[PTHilbertBraLeg] (sup-H-bo) -- ++(0, 0.78) coordinate (sup-H-bot);
+    \draw[PTHilbertKetLeg] (sup-H-ki) -- ++(0,-0.78) coordinate (sup-H-kit);
+    \draw[PTHilbertBraLeg primed] (sup-H-bi) -- ++(0,-0.78) coordinate (sup-H-bit);
+    \PTIndexLabel[anchor=south, math={s}, tag={site-01}, yshift=1.6pt]{sup-H-kot}
+    \PTIndexLabel[anchor=south, math={s}, tag={site-01}, prime={1}, yshift=1.6pt]{sup-H-bot}
+    \PTIndexLabel[anchor=north, math={s}, tag={site-01}, yshift=-1.6pt]{sup-H-kit}
+    \PTIndexLabel[anchor=north, math={s}, tag={site-01}, prime={1}, yshift=-1.6pt]{sup-H-bit}
+    \node[font=\small, text=PTLabel] at (1.35,-0.55) {Hilbert-space map};
+  \end{scope}
+
+  \PTMapsTo{(3.85,1.2)}
+
+  % (b) local combiners
+  \begin{scope}[shift={(4.55,0.15)}]
+    \PTPanelLabel{(-0.1,2.05)}{(b)}
+    \PTSuperoperator[minimum width=12mm, minimum height=12mm]{sup-C}{(1.20,1.05)}{\(\mathcal A\)}
+    \coordinate (sup-C-ko) at ([xshift=-3.1mm]sup-C.north);
+    \coordinate (sup-C-bo) at ([xshift= 3.1mm]sup-C.north);
+    \coordinate (sup-C-ki) at ([xshift=-3.1mm]sup-C.south);
+    \coordinate (sup-C-bi) at ([xshift= 3.1mm]sup-C.south);
+    \PTCombiner[direction=up]{sup-Co}{(1.20,2.22)}{\(C\)}
+    \PTCombiner[direction=down]{sup-Ci}{(1.20,-0.12)}{\(C^{\dagger}\)}
+    \draw[PTHilbertKetLeg] (sup-C-ko) -- (sup-Co-ket);
+    \draw[PTHilbertBraLeg] (sup-C-bo) -- (sup-Co-bra);
+    \draw[PTHilbertKetLeg] (sup-C-ki) -- (sup-Ci-ket);
+    \draw[PTHilbertBraLeg] (sup-C-bi) -- (sup-Ci-bra);
+    \draw[PTLiouvilleLeg] (sup-Co-fused) -- ++(0,0.55) coordinate (sup-Co-ell);
+    \draw[PTLiouvilleLeg] (sup-Ci-fused) -- ++(0,-0.55) coordinate (sup-Ci-ell);
+    \PTIndexLabel[anchor=west, math={\ell}, tag={Liouville,site-01}, xshift=2.4pt]{sup-Co-ell}
+    \node[font=\small, text=PTLabel] at (1.20,-1.15) {\(\ell\simeq s\otimes s^{*}\)};
+  \end{scope}
+
+  \PTMapsTo{(8.55,1.2)}
+
+  % (c) Liouville operator
+  \begin{scope}[shift={(9.15,0.15)}]
+    \PTPanelLabel{(-0.1,2.05)}{(c)}
+    \PTSuperoperator[minimum width=12mm, minimum height=12mm]{sup-L}{(0.95,1.05)}{\(\mathsf A\)}
+    \draw[PTLiouvilleLeg] (sup-L.north) -- ++(0,0.95) coordinate (sup-L-o);
+    \draw[PTLiouvilleLeg] (sup-L.south) -- ++(0,-0.95) coordinate (sup-L-i);
+    \PTIndexLabel[anchor=west, math={\ell_{\mathrm{out}}}, tag={Liouville,site-01}, xshift=2.6pt]{sup-L-o}
+    \PTIndexLabel[anchor=west, math={\ell_{\mathrm{in}}},  tag={Liouville,site-01}, xshift=2.6pt]{sup-L-i}
+    \node[font=\small, text=PTLabel] at (0.95,-0.55) {Liouville-space map};
+  \end{scope}
+\end{tikzpicture}
