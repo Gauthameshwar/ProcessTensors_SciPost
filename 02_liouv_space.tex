@@ -1,0 +1,613 @@
+% Liouville-space foundations for the ProcessTensors.jl SciPost manuscript.
+% This file is intended to be included from the main manuscript with \input.
+%
+%
+% The boxed figure placeholders are deliberately compile-safe. Each names the
+% intended future TikZ source and contains a drawing brief that can be replaced
+% by \input{figures/<name>.tikz} without changing the surrounding discussion,
+% caption, or label.
+
+\section{Liouville-space and tensor-network foundations}
+\label{sec:liouville-foundations}
+
+The process tensor is a map acting on other maps. Before constructing such an object, it is useful to place density matrices and quantum operations on equal footing. Moving to the Liouville space does precisely this: density matrices become state-like vectors, while operations on density matrices become ordinary linear operators. This change of language is especially natural for tensor networks, because the same ideas can be read in three equivalent ways---as an equation, as a tensor diagram, and as the corresponding \texttt{ITensor} code. We develop these three descriptions together below. Our graphical conventions are adapted from the open-system tensor calculus of Ref.~\cite{Wood2015}, with time and contractions drawn from right to left to match the convention used throughout this paper. In case the readers are not familiar with ITensors and their notations of sites and indices, they are encouraged to read the documentation of the ITensor library [cite ITensor docs, and also the original papers]. Alternatively, they can also go through the tutorials in the stable docs of our package [add the link to the stable docs].
+
+\subsection{A graphical dictionary for tensors}
+\label{subsec:graphical-dictionary}
+
+A tensor is represented by a shape with one open wire for every index. In our conventions, the direction of a wire records which dual space that leg belongs to: a leg pointing to the left is a ket index [Fig.~\ref{fig:graphical-dictionary}a], whereas a leg pointing to the right is a bra index [Fig.~\ref{fig:graphical-dictionary}b]. Joining two wires means summing over their shared index. For example, ordinary matrix multiplication,
+\begin{equation}
+    (AB)_{ij}
+    =
+    A_{ik}B_{kj},
+    \label{eq:tensor-contraction}
+\end{equation}
+is drawn by joining the right-hand wire of \(A\) to the left-hand wire of \(B\) [Fig.~\ref{fig:graphical-dictionary}e].
+Stacking two disconnected tensors vertically, with ket wires on the left and
+bra wires on the right, represents their tensor product [Fig.~\ref{fig:graphical-dictionary}f]. Closing the two wires
+of an operator on the same index with a loop gives its trace [Fig.~\ref{fig:graphical-dictionary}g],
+\begin{equation}
+    \operatorname{Tr}(A)
+    =
+    A_{ii}.
+    \label{eq:graphical-trace}
+\end{equation}
+
+\begin{figure}[H]
+    \centering
+    \input{figures/tikz/graphical_dictionary.tikz}
+    \caption{Graphical dictionary used throughout this work.
+    (a)~A ket \(\lvert\psi\rangle\) with unprimed index \(s\), 
+    (b)~A bra \(\langle\psi\rvert\) with primed index \(s'\), 
+    (c)~An operator \(A\) with a ket wire \(s\) on the left and a bra wire
+    \(s'\) on the right.
+    (d)~Contracting the primed wire of \(A\) with \(\lvert\psi\rangle\).
+    (e)~The matrix multiplication \(AB=a_{ik}b_{kj}\).
+    (f)~The tensor product \(A\otimes B=a_{ij}b_{kl}\), drawn by stacking
+    \(A\) above \(B\).
+    (g)~The trace \(\operatorname{Tr}(A)=a_{ii}\).
+    (h)~The transpose \(A^{\mathsf T}=A_{ji}\), obtained by bending the
+    left and right wires to the opposite directions.}
+    \label{fig:graphical-dictionary}
+\end{figure}
+
+Equations~\eqref{eq:tensor-contraction} and~\eqref{eq:graphical-trace}, Fig.~\ref{fig:graphical-dictionary},
+and Listing~\ref{lst:itensor-grammar} express the same basic rule: tensors contract when their indices match. Wire bending deserves one warning though, when we implement them in ITensor codes. A bend represents a basis-dependent transpose (swapping two indices), complex conjugation changes the tensor entries, and combining the two gives the Hermitian adjoint, \(A^\dagger=(A^*)^{\mathsf T}\). An ITensor \texttt{prime} operation, by contrast, only changes the identity of an index. It does not transpose or conjugate the tensor. For achieving a dagger, we need to use the Hermitian adjoint function \texttt{dag} and then prime the indices. This distinction becomes important when we use an unprimed index for the input and a primed copy for its output when constructing operator ITensors. 
+
+\begin{juliacode}[
+  caption={ITensor codes to realise tensor operations in Fig.~\ref{fig:graphical-dictionary}(a)--(h).},
+  label={lst:itensor-grammar},
+]
+using ITensors
+
+s = Index(2, "s")
+
+psi = ITensor([1.0, 0.0], s) # (a) ket |psi> = psi_s
+
+psidag = dag(prime(psi)) # (b) bra <psi| = psi_s'
+
+A = random_itensor(s, prime(s)) # (c) operator A = a_ss'
+
+Apsi = A * prime(psi) # (d) A|psi> = A_ss' psi_s'
+
+i = Index(2, "i")
+k = Index(2, "k")
+j = Index(2, "j")
+AB = random_itensor(i, k) * random_itensor(k, j) # (e) AB = a_ik b_kj
+
+l = Index(2, "l")
+AxB = random_itensor(i, j) * random_itensor(k, l) # (f) A ox B = a_ij b_kl  (no shared index)
+
+TrA = A * delta(s, prime(s)) # (g) Tr(A) = a_ii
+
+AT = conj(dag(A)) # (h) AT = a_ji
+\end{juliacode}
+
+
+\subsection{From density operators to Liouville vectors}
+\label{subsec:liouville-vectorisation}
+
+Let \(\mathcal H\) be a \(d\)-dimensional Hilbert space. A density operator is
+an element of the operator space \(\mathcal B(\mathcal H)\). This operator space
+is itself a Hilbert space when equipped with the Hilbert--Schmidt inner product
+\begin{equation}
+    \langle\!\langle A\vert B\rangle\!\rangle
+    =
+    \operatorname{Tr}(A^\dagger B).
+    \label{eq:hilbert-schmidt-inner-product}
+\end{equation}
+Because \(\dim\mathcal B(\mathcal H)=d^2\), an operator can be treated as a
+vector in a larger space. We denote this vectorisation by
+\(A\mapsto\lvert A\rangle\!\rangle\).
+
+Different vectorisation conventions arrange the matrix entries differently.
+\texttt{ProcessTensors.jl} follows Julia's column-major ordering. In a fixed
+basis \(\{\lvert j\rangle\}\),
+\begin{equation}
+    \lvert A\rangle\!\rangle
+    \equiv
+    \operatorname{vec}(A)
+    =
+    \sum_{j,k} A_{jk}
+    \lvert k\rangle\otimes\lvert j\rangle,
+    \label{eq:column-vectorisation}
+\end{equation}
+so that
+\begin{equation}
+    \begin{pmatrix}
+        A_{11} & A_{12}\\
+        A_{21} & A_{22}
+    \end{pmatrix}
+    \longmapsto
+    \begin{pmatrix}
+        A_{11}\\ A_{21}\\ A_{12}\\ A_{22}
+    \end{pmatrix}.
+    \label{eq:qubit-column-vectorisation}
+\end{equation}
+Equivalently, \(\operatorname{vec}(\lvert j\rangle\langle k\rvert)
+=\lvert k\rangle\otimes\lvert j\rangle\). Stating this ordering explicitly
+fixes every transpose that appears later.
+
+Graphically, vectorisation bends the input wire of an operator until both
+wires point in the same direction. The bend is the unnormalised maximally
+entangled state
+\begin{equation}
+    \lvert I\rangle\!\rangle
+    =
+    \sum_j \lvert j\rangle\otimes\lvert j\rangle,
+    \label{eq:vectorised-identity}
+\end{equation}
+which is the vectorised identity operator. Figure~\ref{fig:wire-bending-vectorisation}
+pairs this graphical operation with Eqs.~\eqref{eq:column-vectorisation} and
+\eqref{eq:vectorised-identity}.
+
+\begin{figure}[t]
+    \centering
+    \fbox{%
+    \begin{minipage}{0.92\linewidth}
+        \centering
+        \textbf{Tensor-diagram placeholder: vectorisation by wire bending}\\[0.5em]
+        Future source: \texttt{figures/liouville\_vectorisation.tikz}.\\[0.5em]
+        Panel (a): draw \(A\) as an operator box with an input and an output.
+        Panel (b): attach a cup representing
+        \(\lvert I\rangle\!\rangle\) to the input wire and bend it into a second
+        output, producing \(\lvert A\rangle\!\rangle\). Panel (c): set \(A=I\)
+        and show that the remaining curved wire is the vectorised identity.
+        Label the two output components in the order
+        \(\lvert k\rangle\otimes\lvert j\rangle\), matching the column-major
+        convention of Eq.~\eqref{eq:column-vectorisation}.
+    \end{minipage}}
+    \caption{Column-major vectorisation as a wire-bending operation. The bend
+    converts an operator into a vector in \(\mathcal H\otimes\mathcal H^*\).}
+    \label{fig:wire-bending-vectorisation}
+\end{figure}
+
+For a many-site tensor network, \texttt{ProcessTensors.jl} performs this
+reorganisation locally. A Hilbert-space density matrix is stored as an
+\texttt{MPO}\{\texttt{Hilbert}\} with a ket and a primed bra index on every site. A
+combiner fuses each local pair into a single Liouville index of dimension
+\(d_j^2\), producing an \texttt{MPS}\{\texttt{Liouville}\}:
+\begin{equation}
+    C_j:
+    \mathcal H_j\otimes\mathcal H_j^*
+    \longrightarrow
+    \mathcal L_j,
+    \qquad
+    \dim\mathcal L_j=d_j^2.
+    \label{eq:local-liouville-combiner}
+\end{equation}
+This local fusion is shown in Fig.~\ref{fig:mpo-to-liouville-mps}.
+
+\begin{figure}[t]
+    \centering
+    \fbox{%
+    \begin{minipage}{0.92\linewidth}
+        \centering
+        \textbf{Tensor-diagram placeholder: density MPO to Liouville MPS}\\[0.5em]
+        Future source: \texttt{figures/mpo\_to\_liouville\_mps.tikz}.\\[0.5em]
+        Draw a three-site density MPO. At each site show an unprimed Hilbert
+        index \(s_j\), a primed index \(s'_j\), and the horizontal MPO bond.
+        Attach a three-legged combiner \(C_j\) to \(s_j,s'_j\), producing one
+        thick Liouville leg \(\ell_j\). The final panel is an
+        \texttt{MPS}\{\texttt{Liouville}\} with the original horizontal bonds and one
+        Liouville leg per site. Annotate one example with
+        \texttt{Site,S=1/2,n=1} and
+        \texttt{Liouv,ptype=S=1/2,n=1}; also mark
+        \(\dim s_j=d_j\) and \(\dim\ell_j=d_j^2\).
+    \end{minipage}}
+    \caption{Local vectorisation used by \texttt{ProcessTensors.jl}. A
+    combiner fuses the ket and bra indices of each density-MPO tensor into one
+    Liouville index.}
+    \label{fig:mpo-to-liouville-mps}
+\end{figure}
+
+\begin{juliacode}[
+  caption={Hilbert-to-Liouville conversion in \texttt{ProcessTensors.jl}.},
+  label={lst:hilbert-to-liouville},
+]
+sites = siteinds("S=1/2", 1)
+psi = MPS(ComplexF64[0.6, 0.8im], sites)
+
+rho = to_dm(psi)                 # MPO{Hilbert}
+sites_L = liouv_sites(sites)     # local dimension d^2
+rho_L = to_liouville(rho; sites=sites_L)
+                                    # MPS{Liouville}
+
+rho_back = to_hilbert(rho_L)     # undo the local fusion
+\end{juliacode}
+
+The Liouville indices should be created once and then reused throughout a
+calculation. Two independent calls to \texttt{liouv\_sites} produce indices
+with the same dimensions and tags but different identities, which is enough to
+prevent an intended ITensor contraction.
+
+\subsection{Traces and observables as closures}
+\label{subsec:liouville-closures}
+
+Once a density operator has become a Liouville vector, traces and expectation
+values become inner products. From Eq.~\eqref{eq:hilbert-schmidt-inner-product},
+\begin{equation}
+    \operatorname{Tr}(\rho)
+    =
+    \langle\!\langle I\vert\rho\rangle\!\rangle,
+    \qquad
+    \langle O\rangle
+    =
+    \operatorname{Tr}(O\rho)
+    =
+    \langle\!\langle O\vert\rho\rangle\!\rangle,
+    \label{eq:liouville-trace-expectation}
+\end{equation}
+where the last equality assumes the observable \(O=O^\dagger\). Graphically,
+the vectorised identity closes a Liouville leg and returns the trace; replacing
+it by a vectorised observable returns its expectation value. Leaving the same
+leg open returns a state-like Liouville object instead. These three choices are
+shown together in Fig.~\ref{fig:liouville-closures} because they later become
+three basic ways of interrogating a process tensor.
+
+\begin{figure}[t]
+    \centering
+    \fbox{%
+    \begin{minipage}{0.92\linewidth}
+        \centering
+        \textbf{Tensor-diagram placeholder: closing a Liouville leg}\\[0.5em]
+        Future source: \texttt{figures/liouville\_closures.tikz}.\\[0.5em]
+        Draw the same \(\lvert\rho\rangle\!\rangle\) tensor in three panels.
+        In (a), close its Liouville leg with
+        \(\langle\!\langle I\rvert\) to obtain the scalar
+        \(\operatorname{Tr}\rho\). In (b), close it with
+        \(\langle\!\langle O\rvert\) to obtain
+        \(\operatorname{Tr}(O\rho)\). In (c), leave the leg open and label the
+        result \(\lvert\rho\rangle\!\rangle\). Use the same visual shapes later
+        for \texttt{trace\_out}, \texttt{observable\_measurement}, and
+        \texttt{open\_output}.
+    \end{minipage}}
+    \caption{The trace, an expectation value, and an open Liouville output are
+    three different closures of the same tensor-network leg.}
+    \label{fig:liouville-closures}
+\end{figure}
+
+\begin{juliacode}[
+  caption={Traces and observables as Liouville inner products.},
+  label={lst:liouville-closures},
+]
+Id = OpSum()
+Id += 1.0, "Id", 1
+
+O = OpSum()
+O += 1.0, "Sz", 1
+
+Id_L = to_liouville(MPO(Id, sites); sites=sites_L)
+O_L  = to_liouville(MPO(O, sites);  sites=sites_L)
+
+normalisation = inner(Id_L, rho_L)
+expectation   = inner(O_L, rho_L)
+\end{juliacode}
+
+The operations in Fig.~\ref{fig:liouville-closures} will therefore require no
+new graphical language later. A trace, measurement insertion, or open output
+will simply be attached to a chosen temporal leg of the process tensor.
+
+\subsection{Left and right actions}
+\label{subsec:left-right-actions}
+
+The transpose introduced by vectorisation can be understood directly by
+sliding an operator around a bend. For the vectorised identity,
+\begin{equation}
+    (I\otimes A)\lvert I\rangle\!\rangle
+    =
+    (A^{\mathsf T}\otimes I)\lvert I\rangle\!\rangle.
+    \label{eq:operator-sliding}
+\end{equation}
+An operator moved from one side of the cup to the other therefore emerges
+transposed. Applying this rule to a product of three operators gives the
+column-vectorisation identity
+\begin{equation}
+    \operatorname{vec}(A\rho B)
+    =
+    (B^{\mathsf T}\otimes A)
+    \lvert\rho\rangle\!\rangle.
+    \label{eq:roth-lemma}
+\end{equation}
+The two special cases used repeatedly in this work are
+\begin{align}
+    A\rho
+    &\longleftrightarrow
+    (I\otimes A)\lvert\rho\rangle\!\rangle
+    \equiv A_{\mathrm L}\lvert\rho\rangle\!\rangle,
+    \label{eq:left-action}\\
+    \rho B
+    &\longleftrightarrow
+    (B^{\mathsf T}\otimes I)\lvert\rho\rangle\!\rangle
+    \equiv B_{\mathrm R}\lvert\rho\rangle\!\rangle.
+    \label{eq:right-action}
+\end{align}
+Figure~\ref{fig:left-right-wire-sliding} provides the graphical derivation
+rather than asking the reader to memorise where the transpose belongs.
+
+\begin{figure}[t]
+    \centering
+    \fbox{%
+    \begin{minipage}{0.92\linewidth}
+        \centering
+        \textbf{Tensor-diagram placeholder: wire sliding and Roth's lemma}\\[0.5em]
+        Future source: \texttt{figures/left\_right\_wire\_sliding.tikz}.\\[0.5em]
+        First row: place \(A\) on one arm of the cup representing
+        \(\lvert I\rangle\!\rangle\), slide it continuously around the bend,
+        and show \(A^{\mathsf T}\) on the other arm. Second row: draw the
+        ordinary product \(A\rho B\), bend the input of \(\rho\), and obtain a
+        doubled Liouville wire with \(A\) on one component and
+        \(B^{\mathsf T}\) on the other. Final two panels should isolate
+        \(A_{\mathrm L}\) and \(B_{\mathrm R}\) and match
+        Eqs.~\eqref{eq:left-action}--\eqref{eq:right-action}.
+    \end{minipage}}
+    \caption{Wire bending explains the transpose in right multiplication and
+    gives a graphical proof of Eq.~\eqref{eq:roth-lemma}.}
+    \label{fig:left-right-wire-sliding}
+\end{figure}
+
+\begin{juliacode}[
+  caption={Package notation for left and right multiplication.},
+  label={lst:left-right-actions},
+]
+sL = sites_L[1]
+
+A_L = op("Sx_L", sL)  # vec(Sx * rho)
+B_R = op("Sz_R", sL)  # vec(rho * Sz)
+\end{juliacode}
+
+The suffixes \texttt{\_L} and \texttt{\_R} refer to multiplication from the
+left and right of the density matrix \emph{before} vectorisation. They do not
+refer to the geometric left and right sides of an ITensor.
+
+\subsection{Quantum operations as Liouville superoperators}
+\label{subsec:liouville-operations}
+
+A quantum operation is a completely positive map that may decrease the trace
+of a state. It can therefore describe either deterministic evolution or a
+particular outcome of a measurement. Any such map admits an operator-sum
+representation
+\begin{equation}
+    \mathcal A(\rho)
+    =
+    \sum_\mu K_\mu\rho K_\mu^\dagger.
+    \label{eq:kraus-operation}
+\end{equation}
+Using Eq.~\eqref{eq:roth-lemma}, its Liouville-space matrix is
+\begin{equation}
+    \mathsf A
+    =
+    \sum_\mu K_\mu^*\otimes K_\mu,
+    \qquad
+    \lvert\mathcal A(\rho)\rangle\!\rangle
+    =
+    \mathsf A\lvert\rho\rangle\!\rangle.
+    \label{eq:kraus-liouville-map}
+\end{equation}
+The doubled tensor network in Fig.~\ref{fig:kraus-liouville-map} makes the two
+copies of each Kraus operator and the sum over \(\mu\) explicit. If
+\(\sum_\mu K_\mu^\dagger K_\mu=I\), the operation is trace preserving and is a
+quantum channel. In Liouville notation this condition is
+\begin{equation}
+    \langle\!\langle I\vert\mathsf A
+    =
+    \langle\!\langle I\vert.
+    \label{eq:liouville-trace-preservation}
+\end{equation}
+
+\begin{figure}[t]
+    \centering
+    \fbox{%
+    \begin{minipage}{0.92\linewidth}
+        \centering
+        \textbf{Tensor-diagram placeholder: a quantum operation in Liouville space}\\[0.5em]
+        Future source: \texttt{figures/kraus\_liouville\_map.tikz}.\\[0.5em]
+        Panel (a): draw \(K_\mu\rho K_\mu^\dagger\) as a density-matrix
+        network with the Kraus label \(\mu\) visibly summed. Panel (b): bend
+        the density-matrix wire and show the superoperator
+        \(K_\mu^*\otimes K_\mu\) acting on
+        \(\lvert\rho\rangle\!\rangle\). Panel (c): attach the trace cap
+        \(\langle\!\langle I\rvert\) after a trace-preserving map and simplify
+        it to the same cap before the map, illustrating
+        Eq.~\eqref{eq:liouville-trace-preservation}.
+    \end{minipage}}
+    \caption{A completely positive map becomes an ordinary operator on
+    Liouville space. Trace preservation is expressed by the invariance of the
+    identity effect.}
+    \label{fig:kraus-liouville-map}
+\end{figure}
+
+For a single physical operator \(K\), the package constructs the doubled term
+\(K^*\otimes K\) through the \texttt{\_Jump} suffix:
+\begin{juliacode}[
+  caption={A local doubled operator in Liouville space.},
+  label={lst:liouville-jump},
+]
+K_jump = op("S-_Jump", sites_L[1])  # conj(S-) kron S-
+\end{juliacode}
+General preparations, controls, and measurement outcomes will be assembled
+from the same ingredients when instruments are introduced in
+Sec.~\ref{sec:process-tensor}.
+
+\subsection{Dynamics in Liouville space}
+\label{subsec:liouville-dynamics}
+
+For a closed system, the density matrix obeys the von Neumann equation
+\begin{equation}
+    \frac{d\rho}{dt}
+    =
+    -i[H,\rho].
+    \label{eq:von-neumann-equation}
+\end{equation}
+Equations~\eqref{eq:left-action} and \eqref{eq:right-action} turn the
+commutator into a linear generator on Liouville space,
+\begin{equation}
+    \frac{d}{dt}\lvert\rho(t)\rangle\!\rangle
+    =
+    \mathcal L_H\lvert\rho(t)\rangle\!\rangle,
+    \qquad
+    \mathcal L_H
+    =
+    -iH_{\mathrm L}+iH_{\mathrm R}.
+    \label{eq:hamiltonian-liouvillian}
+\end{equation}
+The two terms in this generator are shown separately in
+Fig.~\ref{fig:liouvillian-diagram}; their signs are inherited directly from the
+commutator.
+
+Markovian dissipation can be included through the Gorini--Kossakowski--Sudarshan--
+Lindblad generator,
+\begin{equation}
+    \mathcal L(\rho)
+    =
+    -i[H,\rho]
+    +
+    \sum_\mu\gamma_\mu
+    \left(
+        L_\mu\rho L_\mu^\dagger
+        -\frac{1}{2}L_\mu^\dagger L_\mu\rho
+        -\frac{1}{2}\rho L_\mu^\dagger L_\mu
+    \right).
+    \label{eq:gksl-generator}
+\end{equation}
+Here its role is not to reintroduce the Markov approximation, but to establish
+the common Liouville-space representation used by the package: Hamiltonian
+terms, dissipators, and later the full system--bath propagator are all linear
+operators acting on vectorised density matrices.
+
+\begin{figure}[t]
+    \centering
+    \fbox{%
+    \begin{minipage}{0.92\linewidth}
+        \centering
+        \textbf{Tensor-diagram placeholder: construction of a Liouvillian}\\[0.5em]
+        Future source: \texttt{figures/liouvillian\_terms.tikz}.\\[0.5em]
+        Top row: draw the Hamiltonian commutator as the sum of two doubled-wire
+        diagrams, \(-iH_{\mathrm L}\) and \(+iH_{\mathrm R}\). Bottom row: draw
+        the three pieces of one GKSL term---the jump
+        \(L\rho L^\dagger\), the left anticommutator contribution, and the
+        right anticommutator contribution---with their coefficients. Use the
+        same left/right conventions as Fig.~\ref{fig:left-right-wire-sliding}.
+    \end{minipage}}
+    \caption{Hamiltonian and dissipative contributions to a Liouville-space
+    generator. Every term is an operator acting on the doubled physical wire.}
+    \label{fig:liouvillian-diagram}
+\end{figure}
+
+\begin{juliacode}[
+  caption={Constructing Hamiltonian and dissipative Liouvillians.},
+  label={lst:liouvillian-construction},
+]
+H = OpSum()
+H += 0.7, "Sx", 1
+H += 0.2, "Sz", 1
+
+L_H = liouvillian_mpo(H, sites_L)
+L_open = liouvillian_mpo(
+    H,
+    sites_L;
+    jump_ops=[(0.1, "S-", 1)],
+)
+\end{juliacode}
+
+For a short time step \(\Delta t\), the propagator is
+\(\mathsf U_k=\exp(\Delta t\,\mathcal L_k)\). A prescribed trajectory is
+therefore the contraction
+\begin{equation}
+    \lvert\rho(t_n)\rangle\!\rangle
+    =
+    \mathsf U_{n-1}\cdots\mathsf U_1\mathsf U_0
+    \lvert\rho(t_0)\rangle\!\rangle.
+    \label{eq:liouville-trajectory}
+\end{equation}
+Figure~\ref{fig:liouville-trajectory} draws this equation as a temporal tensor
+network.
+
+\begin{figure}[t]
+    \centering
+    \fbox{%
+    \begin{minipage}{0.92\linewidth}
+        \centering
+        \textbf{Tensor-diagram placeholder: a contracted Liouville trajectory}\\[0.5em]
+        Future source: \texttt{figures/liouville\_trajectory.tikz}.\\[0.5em]
+        Draw \(\lvert\rho(t_0)\rangle\!\rangle\) followed from left to right by
+        a chain of two-legged propagator tensors
+        \(\mathsf U_0,\mathsf U_1,\ldots,\mathsf U_{n-1}\), ending in
+        \(\lvert\rho(t_n)\rangle\!\rangle\). Label the connecting Liouville
+        indices and the discrete times \(t_0,\ldots,t_n\). Beneath it, draw a
+        faded preview in which the system operations between time steps have
+        been removed and replaced by open input/output legs. This preview will
+        become the process tensor in the next section.
+    \end{minipage}}
+    \caption{A reduced trajectory as a fully contracted temporal network. The
+    process-tensor construction will retain the environmental part of this
+    network while leaving the intermediate system operations open.}
+    \label{fig:liouville-trajectory}
+\end{figure}
+
+\begin{juliacode}[
+  caption={One discrete Liouville-space propagation step.},
+  label={lst:liouville-propagation},
+]
+dt = 0.1
+U = liouvillian_propagator(
+    H,
+    sites_L,
+    dt;
+    jump_ops=[(0.1, "S-", 1)],
+)
+
+rho_next = apply(U, rho_L)
+\end{juliacode}
+
+\subsection{The equation--diagram--code dictionary}
+\label{subsec:liouville-dictionary}
+
+Table~\ref{tab:liouville-dictionary} collects the conventions established in
+this section. It is also a compact reference for the process-tensor diagrams
+that follow.
+
+\begin{table}[t]
+    \centering
+    \caption{Hilbert-space expressions, Liouville-space representations, and
+    their \texttt{ProcessTensors.jl} counterparts.}
+    \label{tab:liouville-dictionary}
+    \begin{tabular}{p{0.25\linewidth}p{0.38\linewidth}p{0.25\linewidth}}
+        \hline
+        Hilbert-space object
+        & Liouville-space object
+        & Package representation \\
+        \hline
+        \(\lvert\psi\rangle\)
+        & state vector
+        & \texttt{MPS}\{\texttt{Hilbert}\} \\
+        \(\rho\)
+        & \(\lvert\rho\rangle\!\rangle\)
+        & \texttt{MPS}\{\texttt{Liouville}\} \\
+        density operator
+        & ket--bra legs fused locally
+        & \texttt{to\_liouville} \\
+        \(A\rho\)
+        & \(A_{\mathrm L}\lvert\rho\rangle\!\rangle\)
+        & \texttt{"A\_L"} \\
+        \(\rho A\)
+        & \(A_{\mathrm R}\lvert\rho\rangle\!\rangle\)
+        & \texttt{"A\_R"} \\
+        \(A\rho A^\dagger\)
+        & \((A^*\otimes A)\lvert\rho\rangle\!\rangle\)
+        & \texttt{"A\_Jump"} \\
+        \(\operatorname{Tr}\rho\)
+        & \(\langle\!\langle I\vert\rho\rangle\!\rangle\)
+        & \texttt{inner(Id\_L,rho\_L)} \\
+        \(-i[H,\rho]\)
+        & \(\mathcal L_H\lvert\rho\rangle\!\rangle\)
+        & \texttt{liouvillian\_mpo} \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Liouville space has now turned density operators into vectors, physical
+operations into tensors acting on those vectors, and time evolution into a
+network of contractions. In Eq.~\eqref{eq:liouville-trajectory}, every
+operation between two times has already been chosen. We now leave those choices
+open. The resulting multi-time object is the process tensor.

@@ -28,6 +28,8 @@
 \usepackage{caption}
 \usepackage{keyval}
 \usepackage[outputdir=out,cachedir=minted]{minted}
+\usepackage[skins,breakable,minted]{tcolorbox}
+\input{figures/tikz/pt_tikz_styles.tex}
 \urlstyle{same}
 
 % Fix \cal and \mathcal characters look (so it's not the same as \mathscr)
@@ -50,13 +52,22 @@
 \newcommand{\cqt}{Centre for Quantum Technologies, Singapore}
 \newcommand{\majulab}{MajuLab, CNRS-UNS-NUS-NTU International Joint Research Unit, Singapore}
 
+% Julia listing palette (print-friendly)
+\definecolor{julialistingbg}{HTML}{F7F8FA}
+\definecolor{julialistingframe}{HTML}{C5CAD3}
+\definecolor{juliabadge}{HTML}{4063D8}
+\definecolor{julialineno}{HTML}{6B7280}
+
 % Julia code highlighting via minted + custom ptjulia lexer/style:
 % keywords (Julia), builtins (ITensor), API (ProcessTensors.jl), types/structs, variables, numbers.
+% Frame / badge / rounding are handled by tcolorbox in juliacode.
 \setminted{
   style=ptjulia,
   fontsize=\small,
-  frame=single,
-  framesep=2mm,
+  linenos,
+  numbersep=4mm,
+  frame=none,
+  framesep=0pt,
   breaklines=true,
   breakanywhere=false,
   tabsize=4,
@@ -66,8 +77,11 @@
 \setmintedinline{style=ptjulia, fontsize=\small}
 \renewcommand{\listingscaption}{Listing}
 \newcommand{\jlinline}[1]{\mintinline{ptjulia}{#1}}
+\renewcommand{\theFancyVerbLine}{%
+  \textcolor{julialineno}{\scriptsize\arabic{FancyVerbLine}}%
+}
 
-% Figure-like Julia listing (minted details hidden):
+% Figure-like Julia listing (minted + tcolorbox details hidden):
 %   \begin{juliacode}[
 %     caption={...},
 %     label={lst:...},
@@ -81,18 +95,57 @@
   \def\juliacodeCaption{}%
   \def\juliacodeLabel{}%
 }
-\newenvironment{juliacode}[1][]{%
-  \juliacode@resetkeys
-  \setkeys{juliacode}{#1}%
-  \par\medskip
-  \captionsetup{type=listing}%
-  \VerbatimEnvironment
-  \begin{minted}{ptjulia}%
-}{%
-  \end{minted}%
-  \ifx\juliacodeCaption\empty\else\caption{\juliacodeCaption}\fi
-  \ifx\juliacodeLabel\empty\else\label{\juliacodeLabel}\fi
-  \par\medskip
+\newtcblisting{juliacode}[1][]{%
+  listing engine=minted,
+  minted language=ptjulia,
+  minted options={
+    style=ptjulia,
+    fontsize=\small,
+    linenos,
+    numbersep=4mm,
+    frame=none,
+    breaklines,
+    breakanywhere=false,
+    tabsize=4,
+    obeytabs=false,
+    baselinestretch=1.05,
+  },
+  listing only,
+  colback=julialistingbg,
+  colframe=julialistingframe,
+  arc=2.5mm,
+  boxrule=0.55pt,
+  left=7mm,
+  right=2.5mm,
+  top=3.5mm,
+  bottom=2.5mm,
+  enhanced jigsaw,
+  breakable,
+  attach boxed title to top right={xshift=-2.8mm,yshift=-2.1mm},
+  boxed title style={
+    colback=juliabadge,
+    colframe=juliabadge,
+    arc=1.2mm,
+    boxrule=0pt,
+    top=1.2pt,
+    bottom=1.2pt,
+    left=5pt,
+    right=5pt,
+  },
+  coltitle=white,
+  title={\sffamily\bfseries\scriptsize Julia},
+  code={%
+    \juliacode@resetkeys
+    \setkeys{juliacode}{#1}%
+  },
+  before={%
+    \par\medskip
+  },
+  after={%
+    \ifx\juliacodeCaption\empty\else\captionof{listing}{\juliacodeCaption}\fi
+    \ifx\juliacodeLabel\empty\else\label{\juliacodeLabel}\fi
+    \par\medskip
+  },
 }
 \makeatother
 
@@ -180,29 +233,14 @@ We present ProcessTensors.jl, a Julia package for learning, constructing, and us
 
 
 % =========================================================================
+%%%%%%%%%%%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \input{01_intro}
 % =========================================================================
 
 % =========================================================================
-\section{Liouville-space foundations}
-\label{sec:liouville}
+%%%%%%%%%%%%%%%%%%%%%% LIOUVILLE SPACE FOUNDATION %%%%%%%%%%%%%%%%%%%%%%%%%
+\input{02_liouv_space}
 % =========================================================================
-
-\subsection{Vectorisation of operators}
-
-Use sections to structure your article's presentation.
-
-Equations should be centered; multi-line equations should be aligned.
-\begin{equation}
-H = \sum_{j=1}^N \left[J (S^x_j S^x_{j+1} + S^y_j S^y_{j+1} + \Delta S^z_j S^z_{j+1}) - h S^z_j \right].
-\end{equation}
-
-All equations and references should be hyperlinked to ensure ease of navigation. This also holds for [sub]sections: readers should be able to easily jump to Section~\ref{sec:architecture}.
-
-\subsection{Superoperators, Liouvillians, and channels}
-
-\subsection{From spatial to temporal tensor networks}
-
 
 % =========================================================================
 \section{Software architecture}
