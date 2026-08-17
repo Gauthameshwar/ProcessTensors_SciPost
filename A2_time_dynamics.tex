@@ -1,0 +1,62 @@
+% Time dynamics for Liouville-space tensor-network states.
+
+\section{Time dynamics in Liouville space}
+\label{app:time-dynamics}
+
+The Liouville-space MPS and MPO objects introduced in Sec.~\ref{subsec:liouville-mpos} provide a direct representation of time-dependent open-system states and generators.  If \(\lvert\rho(0)\rangle\!\rangle\) is an initial Liouville MPS and \(\mathcal L\) is its Liouvillian, the state at time \(t\) is
+\begin{equation}
+    \lvert\rho(t)\rangle\!\rangle
+    =
+    \exp(t\mathcal L)\lvert\rho(0)\rangle\!\rangle.
+    \label{eq:appendix-liouville-time-evolution}
+\end{equation}
+\texttt{ProcessTensors.jl} extends the time-evolution algorithms provided by \texttt{ITensorMPS.jl} to its typed Hilbert- and Liouville-space objects. These routines are useful for time-local master equations and provide reference trajectories against which process-tensor calculations can be validated.
+
+For a small two-spin example, Liouville-space TEBD approximates the propagator over successive time steps by constructing local gates for \(\exp(\Delta t\,\mathcal L)\) from a Hilbert-space Hamiltonian and local dissipators:
+\begin{juliacode}[
+  caption={Time evolution of a dissipative Liouville-space state with TEBD.},
+  label={lst:appendix-liouville-tebd},
+]
+using ITensors, ProcessTensors
+using ITensors.Ops: Trotter
+
+sites = siteinds("S=1/2", 2)
+sites_L = liouv_sites(sites)
+psi0 = MPS(sites, ["Up", "Dn"])
+rho_L0 = to_liouville(to_dm(psi0); sites=sites_L)
+
+H = OpSum()
+H += 1.0, "Sz", 1, "Sz", 2
+H += 0.4, "Sx", 1
+H += 0.4, "Sx", 2
+jumps = [(0.15, "S-", 1), (0.15, "S-", 2)]
+
+dt, T = 0.025, 0.1
+rho_L_tebd = tebd(
+    rho_L0, H, dt, T;
+    jump_ops=jumps,
+    alg=Trotter{2}(),
+    maxdim=32,
+    cutoff=1e-12,
+)
+\end{juliacode}
+
+TDVP provides a complementary time-evolution route by acting with the Liouvillian MPO itself.  The evolution time supplied to TDVP is real because the Hamiltonian contribution \(-i[H,\rho]\) and all dissipative terms are already contained in \(\mathcal L\):
+\begin{juliacode}[
+  caption={Time evolution of the same Liouville-space state with TDVP.},
+  label={lst:appendix-liouville-tdvp},
+]
+L = liouvillian_mpo(H, sites_L; jump_ops=jumps)
+rho_L_tdvp = tdvp(
+    L, T, rho_L0;
+    time_step=dt,
+    nsite=2,
+    maxdim=32,
+    cutoff=1e-12,
+    outputlevel=0,
+)
+\end{juliacode}
+
+The two methods expose the same physical time dynamics through different tensor-network approximations: TEBD controls the local Trotter decomposition, whereas TDVP controls projection onto the evolving MPS manifold.  In either case, convergence should be checked with respect to the time step, truncation cutoff, and maximum bond dimension.  The resulting trajectory should also be validated by monitoring trace, Hermiticity, and positivity.
+
+Complete discussions of Trotter order, TDVP parameters, dense validation, and time-resolved observables are available in the \href{https://gauthameshwar.github.io/ProcessTensors.jl/stable/tutorials/unitary_dynamics/}{unitary-dynamics} and \href{https://gauthameshwar.github.io/ProcessTensors.jl/stable/tutorials/dissipative_dynamics/}{dissipative-dynamics} tutorials.  Larger time-dependent examples, including dissipative spin chains, boundary-driven transport, and driven bosonic systems, are linked from the stable package documentation. For a more detailed overview of time evolution using MPS and MPO, refer to the review by Paeckel et al. \cite{Paeckel2019}.

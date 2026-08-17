@@ -1,48 +1,89 @@
-% Local vectorisation: a Hilbert-space density MPO becomes a Liouville MPS
-% by fusing each ket/bra pair with a combiner C_j.
+% Fig. 4: three-site density MPO -> bent pairs -> Liouville MPS.
+% Requires pt_tikz_styles.tex in the preamble.
 \begin{tikzpicture}[PTPicture]
-  % (a) three-site density MPO
-  \begin{scope}[shift={(0.35,2.55)}]
-    \PTPanelLabel{(-0.25,1.15)}{(a)}
-    \foreach \j/\x in {1/0, 2/2.05, 3/4.10} {
-      \PTOperator{mpo-r-\j}{(\x,0)}{\(\rho^{[\j]}\)}
-      \draw[PTHilbertKetLeg] ([xshift=-2.1mm]mpo-r-\j.south)
-        -- ++(0,-0.72) coordinate (mpo-st-\j);
-      \draw[PTHilbertBraLeg primed] ([xshift=2.1mm]mpo-r-\j.south)
-        -- ++(0,-0.72) coordinate (mpo-spt-\j);
+  \def\siteDy{1.24}%
+  \tikzset{
+    g4eq/.style={
+      font=\footnotesize,
+      text=PTLabel,
+      align=center,
+      inner sep=0.4pt,
+      anchor=north,
+    },
+    g4bond/.style={
+      PTBondLeg,
+      draw=black!32,
+      line width=\PTLinkLW,
+    },
+  }
+
+  % Shared vertical stack: site 1 at top, site 3 at bottom.
+  % #1 = name prefix, #2 = x, #3 = core fill.
+  % Bonds are drawn on the background layer so bent primed wires sit on top.
+  \newcommand{\GFourSites}[3]{%
+    \foreach \j/\yy in {1/\siteDy, 2/0, 3/-\siteDy} {
+      \PTOperator[fill=#3,minimum width=7.2mm,minimum height=7.2mm]
+        {#1-\j}{(#2,\yy)}{\(\rho^{[\j]}\)}
     }
-    \draw[PTBondLeg] (mpo-r-1.east) -- (mpo-r-2.west) coordinate[midway] (mpo-b01);
-    \draw[PTBondLeg] (mpo-r-2.east) -- (mpo-r-3.west) coordinate[midway] (mpo-b12);
-    \draw[PTBondLeg] (mpo-r-1.west) -- ++(-0.42,0);
-    \draw[PTBondLeg] (mpo-r-3.east) -- ++( 0.42,0);
-    \PTIndexLabel[anchor=east,  math={s_1}, tag={Site,S=1/2,n=1}, xshift=-2.0pt]{mpo-st-1}
-    \PTIndexLabel[anchor=west,  math={s_1}, tag={Site,S=1/2,n=1}, prime={1}, xshift=2.0pt]{mpo-spt-1}
-    \PTIndexLabel[anchor=south, math={\chi}, tag={bond-00}, yshift=2.0pt]{mpo-b01}
-    \node[font=\small, text=PTLabel, above=3.2pt] at (mpo-r-2.north)
-      {\ttfamily MPO[Hilbert], \(\dim s_j=d_j\)};
+    \draw[g4bond] (#1-1.south) -- (#1-2.north);
+    \draw[g4bond] (#1-2.south) -- (#1-3.north);
+  }
+
+  % Hilbert-space density MPO
+  \begin{scope}[shift={(0.10, 1.95)}]
+    \GFourSites{a}{1.15}{PTProcess}
+    \foreach \j in {1,2,3} {
+      \draw[PTHilbertKetLeg]
+        (a-\j.west) -- ++(-0.42,0) coordinate (a-\j-s);
+      \draw[PTHilbertBraLeg primed]
+        (a-\j.east) -- ++(0.42,0) coordinate (a-\j-sp);
+    }
+    \PTIndexLabel[anchor=east, math={s_1}, xshift=-1.2pt]{a-1-s}
+    \PTIndexLabel[anchor=west, math={s'_1}, xshift=1.2pt]{a-1-sp}
+    \PTIndexLabel[anchor=east, math={s_2}, xshift=-1.2pt]{a-2-s}
+    \PTIndexLabel[anchor=west, math={s'_2}, xshift=1.2pt]{a-2-sp}
+    \PTIndexLabel[anchor=east, math={s_3}, xshift=-1.2pt]{a-3-s}
+    \PTIndexLabel[anchor=west, math={s'_3}, xshift=1.2pt]{a-3-sp}
+
+    \node[g4eq] at (1.15,-1.92)
+      {\(\hat\rho=\rho_{s_1 s_2 s_3}^{s'_1 s'_2 s'_3}
+        \lvert s_1 s_2 s_3\rangle\langle s'_1 s'_2 s'_3\rvert\)};
   \end{scope}
 
-  % (b) combiners fuse s_j \otimes s'_j -> \ell_j
-  \begin{scope}[shift={(0.35,0.05)}]
-    \PTPanelLabel{(-0.25,1.55)}{(b)}
-    \foreach \j/\x in {1/0, 2/2.05, 3/4.10} {
-      \PTOperator{mps-r-\j}{(\x,0.85)}{\(\rho^{[\j]}\)}
-      \PTCombiner[direction=down]{mps-C-\j}{(\x,-0.22)}{\(C_{\j}\)}
-      \draw[PTHilbertKetLeg] ([xshift=-2.1mm]mps-r-\j.south) -- (mps-C-\j-ket);
-      \draw[PTHilbertBraLeg] ([xshift= 2.1mm]mps-r-\j.south) -- (mps-C-\j-bra);
-      \draw[PTLiouvilleLeg] (mps-C-\j-fused) -- ++(0,-0.62) coordinate (mps-ell-\j);
+  \PTMapsTo{(3.55,1.95)}
+
+  % Bend each bra over the ket: column-major pair (s_j', s_j)
+  \begin{scope}[shift={(4.05, 1.95)}]
+    \GFourSites{b}{1.55}{PTProcess}
+    \foreach \j in {1,2,3} {
+      \PTVectoriseToKet{b-\j}
+      \PTIndexLabel[anchor=south east, math={s'_{\j}}, xshift=-0.6pt, yshift=0.3pt]
+        {b-\j-bra}
+      \PTIndexLabel[anchor=north east, math={s_{\j}}, xshift=-0.6pt, yshift=-0.3pt]
+        {b-\j-ket}
     }
-    \draw[PTBondLeg] (mps-r-1.east) -- (mps-r-2.west);
-    \draw[PTBondLeg] (mps-r-2.east) -- (mps-r-3.west);
-    \draw[PTBondLeg] (mps-r-1.west) -- ++(-0.42,0);
-    \draw[PTBondLeg] (mps-r-3.east) -- ++( 0.42,0);
-    \PTIndexLabel[
-      anchor=west,
-      math={\ell_1},
-      tag={Liouv,ptype=S=1/2,n=1},
-      xshift=2.4pt,
-    ]{mps-ell-1}
-    \node[font=\small, text=PTLabel, above=3.2pt] at (mps-r-2.north)
-      {\ttfamily MPS[Liouville], \(\dim\ell_j=d_j^{2}\)};
+  \end{scope}
+
+  % Geometric middle of the gap: east of the bent cores (~5.96) and west
+  % of the Liouville labels (~8.85).
+  \node[font=\small, text=PTLabel] at (7.28,1.95) {\(\equiv\)};
+
+  % Liouville MPS: double wire α_j = (s_j', s_j)
+  \begin{scope}[shift={(8.70, 1.95)}]
+    \GFourSites{c}{1.35}{PTLiouville!20}
+    \foreach \j in {1,2,3} {
+      \draw[PTLiouvilleLeg]
+        (c-\j.west) -- ++(-0.62,0) coordinate (c-\j-a);
+    }
+    \PTIndexLabel[anchor=east, math={\alpha_1}, xshift=-1.4pt]{c-1-a}
+    \PTIndexLabel[anchor=east, math={\alpha_2}, xshift=-1.4pt]{c-2-a}
+    \PTIndexLabel[anchor=east, math={\alpha_3}, xshift=-1.4pt]{c-3-a}
+
+    \node[g4eq] at (1.45,-1.92)
+      {\(\lvert\rho\rangle\!\rangle
+        =\rho_{\alpha_1\alpha_2\alpha_3}\,
+        \lvert\alpha_1\rangle\otimes
+        \lvert\alpha_2\rangle\otimes
+        \lvert\alpha_3\rangle\)};
   \end{scope}
 \end{tikzpicture}

@@ -1,53 +1,206 @@
-% Column-major vectorisation as a wire-bending operation.
-% vec(A) = sum_{j,k} A_{jk} |k> \otimes |j>, so vec(|j><k|) = |k> \otimes |j>.
+% Fig. 2: vectorisation, the identity cup, the Liouville trace, and
+% the expectation value.  Requires pt_tikz_styles.tex in the preamble.
+% Each panel is one horizontal row (Hilbert → bend → Liouville) with
+% the matching equations underneath.
 \begin{tikzpicture}[PTPicture]
-  % (a) operator with ket output j (up) and bra input k (down)
-  \begin{scope}[shift={(0.2,0.2)}]
-    \PTPanelLabel{(-0.2,1.55)}{(a)}
-    \PTOperator{vec-A}{(0.9,0.7)}{\(A\)}
-    \draw[PTHilbertKetLeg] (vec-A.north) -- ++(0,0.75) coordinate (vec-A-j);
-    \draw[PTHilbertBraLeg] (vec-A.south) -- ++(0,-0.75) coordinate (vec-A-k);
-    \PTIndexLabel[anchor=west, math={j}, xshift=2.4pt]{vec-A-j}
-    \PTIndexLabel[anchor=west, math={k}, xshift=2.4pt]{vec-A-k}
-    \node[font=\small, text=PTLabel, below=2.0pt] at (0.9,-0.55) {operator};
+  \def\cellW{7.40}%
+  \def\cellH{2.95}%
+  \def\rowOneY{3.20}%
+  \tikzset{
+    g2lab/.style={
+      font=\small\bfseries,
+      text=PTLabel,
+      inner sep=1.0pt,
+      anchor=north west,
+    },
+    g2eq/.style={
+      font=\small,
+      text=PTLabel,
+      align=center,
+      inner sep=0.4pt,
+      anchor=north,
+    },
+    g2arr/.style={
+      -{Stealth[length=1.8mm, width=1.25mm]},
+      line width=0.90pt,
+      draw=PTLabel,
+    },
+    g2dash/.style={
+      dash pattern=on 1.5pt off 1.2pt,
+      draw=black!55,
+      line width=0.65pt,
+    },
+  }
+
+  % =====================================================================
+  % (a) vectorise an operator
+  % =====================================================================
+  \begin{scope}[shift={(0, \rowOneY)}]
+    \node[g2lab] at (0, \cellH) {(a)};
+    \begin{scope}[shift={(3.70, 1.55)}]
+      \PTOperator[minimum width=7.2mm,minimum height=7.2mm]{vA}{(-2.55,0)}{\(A\)}
+      \draw[PTHilbertKetLeg] (vA.west) -- ++(-0.28,0) coordinate (vA-j);
+      \draw[PTHilbertBraLeg] (vA.east) -- ++(0.28,0) coordinate (vA-k);
+      \PTIndexLabel[anchor=east, math={j}, xshift=-1.2pt]{vA-j}
+      \PTIndexLabel[anchor=west, math={k}, xshift=1.2pt]{vA-k}
+
+      \PTOperator[minimum width=7.2mm,minimum height=7.2mm]{vAb}{(0.05,0)}{\(A\)}
+      \PTVectoriseToKet{vAb}
+      \coordinate (vAb-tl) at ($ (vAb.west) + (-\PTVecOverhang, 2*\PTVecBendR) $);
+      \coordinate (vAb-elbow) at ($ (vAb.east) + (\PTVecBendR, \PTVecBendR) $);
+      % Start: equal (x,y) outside the NE of A.  End: equal (x,y) outside the
+      % top-left of the bent wire, with d2 chosen so both ends share a y
+      % (symmetric circular arc).
+      \coordinate (g2a-s) at ($ (vA.north east) + (2.2mm, 2.2mm) $);
+      \path let
+        \p1=(g2a-s),
+        \p2=(vAb-tl),
+        \n{d2}={\y1-\y2}
+      in coordinate (g2a-e) at ($ (vAb-tl) + (-\n{d2}, \n{d2}) $);
+      \draw[g2arr] (g2a-s) to[bend left=34] (g2a-e);
+      \PTIndexLabel[anchor=south east, math={k}, xshift=-1.0pt, yshift=0.4pt]{vAb-bra}
+      \PTIndexLabel[anchor=north east, math={j}, xshift=-1.0pt, yshift=-0.4pt]{vAb-ket}
+
+      \PTLiouvilleKet{vAL}{(2.78,0)}{\(A\)}
+      \draw[PTLiouvilleLeg] (vAL.west) -- ++(-0.62,0) coordinate (vAL-ell);
+      \path let \p1=(vAb-elbow), \p2=(vAL-ell) in
+        node[font=\small, text=PTLabel] at ({0.5*(\x1+\x2)}, 0) {\(\equiv\)};
+      \PTIndexLabel[anchor=south, math={(k,j)}, yshift=1.8pt]
+        {$(vAL-ell)!0.18!(vAL.west)$}
+
+      \node[g2eq] at (-2.20,-1.05)
+        {\(\hat A=a_{jk}\lvert j\rangle\langle k\rvert\)};
+      \node[g2eq] at ($ (vAb)!0.5!(vAL) +(0,-1.05) $)
+        {\(\lvert A\rangle\!\rangle=a_{jk}\lvert k\rangle\otimes\lvert j\rangle\)};
+    \end{scope}
   \end{scope}
 
-  \PTMapsTo{(3.15,0.9)}
+  % =====================================================================
+  % (b) vectorised identity / trace-out
+  % =====================================================================
+  \begin{scope}[shift={(7.40, \rowOneY)}]
+    \node[g2lab] at (0, \cellH) {(b)};
+    \begin{scope}[shift={(3.70, 1.55)}]
+      \draw[PTWire]
+        (-3.00,0) coordinate (Id-j) -- (-2.20,0) coordinate (Id-k);
+      \PTIndexLabel[anchor=east, math={j}, xshift=-1.2pt]{Id-j}
+      \PTIndexLabel[anchor=west, math={k}, xshift=1.2pt]{Id-k}
 
-  % (b) bra leg bent into a second output; left factor is |k>
-  \begin{scope}[shift={(4.05,0.2)}]
-    \PTPanelLabel{(-0.15,1.55)}{(b)}
-    \PTOperator{vec-Av}{(1.25,0.7)}{\(A\)}
-    \draw[PTHilbertKetLeg] (vec-Av.north) -- ++(0,0.75) coordinate (vec-Av-j);
-    % Bend the bra (south) around a cup to an upward port on the left.
-    % Control points sit below the operator so the cup is smooth and
-    % unambiguously a vectorisation, not a contraction dot.
-    \coordinate (vec-Av-k) at ($(vec-Av.north)+(-0.72,0.75)$);
-    \draw[PTHilbertBraLeg] (vec-Av.south)
-      .. controls +(0.0,-0.62) and +(0.0,-0.62) ..
-      ([yshift=-0.02cm]vec-Av.south west)
-      .. controls +(-0.62,-0.55) and +(0.0,-0.70) ..
-      (vec-Av-k);
-    \draw[PTHilbertKetLeg] (vec-Av-k) -- ++(0,0.02);
-    \PTIndexLabel[anchor=south, math={k}, yshift=2.0pt]{vec-Av-k}
-    \PTIndexLabel[anchor=south, math={j}, yshift=2.0pt]{vec-Av-j}
-    \node[font=\small, text=PTLabel, below=2.0pt] at (1.05,-0.55)
-      {\(\lvert A\rangle\!\rangle=\lvert k\rangle\otimes\lvert j\rangle\)};
+      \coordinate (Idb-w) at (0.05,0);
+      \PTVectoriseIdentityToBra{Idb}{Idb-w}
+      \PTIndexLabel[anchor=south west, math={j}, xshift=1.0pt, yshift=0.4pt]{Idb-ket}
+      \PTIndexLabel[anchor=north west, math={k}, xshift=1.0pt, yshift=-0.4pt]{Idb-bra}
+      \coordinate (Idb-left) at ($ (Idb-w) + (-\PTVecBendR, 0) $);
+      % Arrow centred in the gap, inset from both objects.
+      \draw[g2arr] let
+        \p1=(Id-k),
+        \p2=(Idb-left),
+        \n{mid}={0.5*(\x1+\x2)+2.0mm},
+        \n{half}={(2/3)*(0.5*(\x2-\x1)-3.2mm)}
+      in ({\n{mid}-\n{half}},0) -- ({\n{mid}+\n{half}},0);
+
+      \node[font=\small, text=PTLabel] at (1.35,0) {\(\equiv\)};
+
+      \PTTraceOut{Idslash}{(2.45,0)}
+      \node[font=\scriptsize, text=PTLabel, below=6.5pt] at (2.45,0)
+        {(trace-out)};
+
+      \node[g2eq] at (-2.35,-1.05)
+        {\(\hat I=\delta_{jk}\lvert j\rangle\langle k\rvert\)};
+      \node[g2eq] at (1.55,-1.05)
+        {\(\langle\!\langle I\rvert=\sum_j\langle j\rvert\otimes\langle j\rvert\)};
+    \end{scope}
   \end{scope}
 
-  \PTMapsTo{(7.85,0.9)}
+  % =====================================================================
+  % (c) Liouville-space trace
+  % =====================================================================
+  \begin{scope}[shift={(0, 0)}]
+    \node[g2lab] at (0, \cellH) {(c)};
+    \begin{scope}[shift={(3.70, 1.55)}]
+      \PTOperator[minimum width=7.2mm,minimum height=7.2mm]{trA}{(-2.55,0)}{\(A\)}
+      \draw[PTWire]
+        (trA.west)
+        arc[start angle=270, delta angle=-180, radius=2.7mm]
+        -- ([yshift=5.4mm]trA.east)
+        arc[start angle=90, delta angle=-180, radius=2.7mm];
 
-  % (c) A = I leaves the cup: the vectorised identity
-  \begin{scope}[shift={(8.55,0.2)}]
-    \PTPanelLabel{(-0.15,1.55)}{(c)}
-    \coordinate (vec-I-k) at (0.35,1.45);
-    \coordinate (vec-I-j) at (1.15,1.45);
-    \draw[PTHilbertBraLeg] (vec-I-k)
-      .. controls +(0,-0.85) and +(0,-0.85) ..
-      (vec-I-j);
-    \PTIndexLabel[anchor=south, math={k}, yshift=2.0pt]{vec-I-k}
-    \PTIndexLabel[anchor=south, math={j}, yshift=2.0pt]{vec-I-j}
-    \node[font=\small, text=PTLabel, below=2.0pt] at (0.75,-0.55)
-      {\(\lvert I\rangle\!\rangle\)};
+      \draw[g2arr] (-1.85,0) -- (-1.42,0);
+
+      \coordinate (cI-w) at (-1.05,0);
+      \PTVectoriseIdentityToBra{cI}{cI-w}
+      \PTOperator[minimum width=7.2mm,minimum height=7.2mm]{trAb}{(0.55,0)}{\(A\)}
+      \PTVectoriseToKet{trAb}
+      % Upper (bent) to upper (bent); lower (unbent) to lower (unbent).
+      \draw[PTHilbertKetLeg] (cI-ket) -- (trAb-bra);
+      \draw[PTHilbertBraLeg] (cI-bra) -- (trAb-ket);
+      \draw[g2dash] let
+        \p1=(cI-ket),
+        \p2=(trAb-bra)
+      in ({0.5*(\x1+\x2)}, 0.70) -- ({0.5*(\x1+\x2)}, -0.40);
+
+      \node[font=\small, text=PTLabel] at (1.52,0) {\(\equiv\)};
+
+      \PTTraceOut{cslash}{(2.18,0)}
+      \PTLiouvilleKet{cAL}{(2.72,0)}{\(A\)}
+      \draw[PTLiouvilleLeg] (cslash-east) -- (cAL.west);
+
+      \node[g2eq] at (-2.55,-1.05)
+        {\(\operatorname{Tr}(A)\)};
+      \node[g2eq] at (1.35,-1.05)
+        {\(\operatorname{Tr}(A)=\langle\!\langle I\vert A\rangle\!\rangle\)};
+    \end{scope}
+  \end{scope}
+
+  % =====================================================================
+  % (d) expectation value
+  % =====================================================================
+  \begin{scope}[shift={(7.40, 0)}]
+    \node[g2lab] at (0, \cellH) {(d)};
+    \begin{scope}[shift={(3.70, 1.55)}]
+      \PTOperator[minimum width=7.2mm,minimum height=7.2mm]{dO}{(-3.42,0)}{\(O\)}
+      \PTOperator[minimum width=7.2mm,minimum height=7.2mm]{dr}{(-2.50,0)}{\(\rho\)}
+      \draw[PTBondLeg] (dO.east) -- (dr.west);
+      \draw[PTWire]
+        (dO.west)
+        arc[start angle=270, delta angle=-180, radius=2.7mm]
+        -- ([yshift=5.4mm]dr.east)
+        arc[start angle=90, delta angle=-180, radius=2.7mm];
+
+      \begingroup
+      \setlength{\PTVecDipH}{2.0mm}%
+      \setlength{\PTVecRun}{1.0mm}%
+      \PTOperator[minimum width=7.2mm,minimum height=7.2mm]{dOb}{(-0.88,0)}{\(O\)}
+      \PTVectoriseToBra{dOb}
+      \PTOperator[minimum width=7.2mm,minimum height=7.2mm]{drb}{(0.50,0)}{\(\rho\)}
+      \PTVectoriseToKet{drb}
+      \draw[PTHilbertKetLeg] (dOb-ket) -- (drb-bra);
+      \draw[PTHilbertBraLeg] (dOb-bra) -- (drb-ket);
+      \draw[g2dash] let
+        \p1=(dOb-ket),
+        \p2=(drb-bra)
+      in ({0.5*(\x1+\x2)}, 0.70) -- ({0.5*(\x1+\x2)}, -0.40);
+      \endgroup
+
+      \coordinate (g2d-s) at ($ (dr.north east) + (2.2mm, 2.2mm) $);
+      \coordinate (g2d-tl) at ($ (dOb.west) + (0, 2*\PTVecBendR) $);
+      \path let
+        \p1=(g2d-s),
+        \p2=(g2d-tl),
+        \n{d2}={\y1-\y2}
+      in coordinate (g2d-e) at ($ (g2d-tl) + (-\n{d2}, \n{d2}) $);
+      \draw[g2arr] (g2d-s) to[bend left=34] (g2d-e);
+
+      \PTLiouvilleBra{dOL}{(1.68,0)}{\(O\)}
+      \PTLiouvilleKet{drL}{(2.60,0)}{\(\rho\)}
+      \draw[PTLiouvilleLeg] (dOL.east) -- (drL.west);
+      \node[font=\small, text=PTLabel] at ($ (drb.east)!0.5!(dOL.west) + (1.5mm,-2.6mm) $)
+        {\(\equiv\)};
+
+      \node[g2eq] at ($ (dO)!0.5!(dr) +(0,-1.05) $)
+        {\(\langle O\rangle=\operatorname{Tr}(O\rho)\)};
+      \node[g2eq] at ($ (drb)!0.5!(dOL) +(0,-1.05) $)
+        {\(\langle O\rangle=\langle\!\langle O\vert\rho\rangle\!\rangle\)};
+    \end{scope}
   \end{scope}
 \end{tikzpicture}

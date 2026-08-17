@@ -20,8 +20,8 @@ class ProcessTensorsJuliaStyle(Style):
     Colour roles (print-oriented, mutually distinct):
 
     - Keyword: Julia language keywords (blue)
-    - Name.Builtin: ITensor / Julia-native constructors (teal)
-    - Name.Function.Magic: ProcessTensors.jl API (violet)
+    - Name.Builtin: ITensor.jl-exclusive functions (teal)
+    - Name.Function.Magic: ProcessTensors.jl exports, including MPS/MPO/OpSum (violet)
     - Name.Class: structs / types / backends (orange)
     - Name: variables (near-black)
     - Number: numeric literals (green)

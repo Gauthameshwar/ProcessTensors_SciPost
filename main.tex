@@ -38,7 +38,7 @@
 
 \fancypagestyle{SPstyle}{
 \fancyhf{}
-\lhead{\colorbox{scipostblue}{\bf \color{white} ~SciPost Physics Codebases }}
+\lhead{\colorbox{scipostdeepblue}{\bf \color{white} ~SciPost Physics Codebases }}
 \rhead{{\bf \color{scipostdeepblue} ~Submission }}
 \renewcommand{\headrulewidth}{1pt}
 \fancyfoot[C]{\textbf{\thepage}}
@@ -59,7 +59,7 @@
 \definecolor{julialineno}{HTML}{6B7280}
 
 % Julia code highlighting via minted + custom ptjulia lexer/style:
-% keywords (Julia), builtins (ITensor), API (ProcessTensors.jl), types/structs, variables, numbers.
+% keywords (Julia), ITensor.jl-exclusive (teal), ProcessTensors.jl exports (violet), types, variables, numbers.
 % Frame / badge / rounding are handled by tcolorbox in juliacode.
 \setminted{
   style=ptjulia,
@@ -355,6 +355,20 @@ You must include a conclusion.
 \section*{Acknowledgements}
 Acknowledgements should follow immediately after the conclusion.
 
+\paragraph{Disclosure of generative AI use}
+The authors disclose that the following generative AI tools have been used in
+the preparation of this submission.
+Large language models accessed through coding assistants (including Cursor and
+ChatGPT) were used to draft \texttt{TikZ} figures, to generate example code
+listings that were subsequently verified by hand, and to assist in the
+construction of \texttt{ProcessTensors.jl} package.
+All AI-generated source, including figure code, listing code, and package
+code, was examined thoroughly by the authors, tested against the intended
+mathematical and numerical behaviour, and is not left in an unverified
+``vibe-coded'' state.
+The authors take full responsibility for the contents of the manuscript and of
+the software.
+
 % TODO: include author contributions
 \paragraph{Author contributions}
 This is optional. If desired, contributions should be succinctly described in a single short paragraph, using author initials.
@@ -374,13 +388,9 @@ cite an immutable release and archive the scripts/data used for all benchmark fi
 \begin{appendix}
 \numberwithin{equation}{section}
 
-\section{Broader Hilbert- and Liouville-space functionality}
-\label{app:broader}
+\input{A1_code_listings}
 
-Add material which is better left outside the main text in a series of Appendices labeled by capital letters.
-
-\section{Vectorisation conventions and index orientation}
-\label{app:conventions}
+\input{A2_time_dynamics}
 
 \end{appendix}
 

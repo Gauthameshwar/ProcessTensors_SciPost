@@ -4,14 +4,10 @@ from pygments.lexer import inherit, words
 from pygments.lexers.julia import JuliaLexer
 from pygments.token import Name
 
-# ITensor / ITensorMPS names that appear in the manuscript listings.
-# These render in teal (Name.Builtin), distinct from ProcessTensors.jl (violet).
+# ITensor.jl-exclusive names that appear in the manuscript listings (teal).
 ITENSOR_BUILTINS = (
     "Index",
     "ITensor",
-    "MPS",
-    "MPO",
-    "OpSum",
     "apply",
     "dag",
     "delta",
@@ -22,8 +18,12 @@ ITENSOR_BUILTINS = (
     "siteinds",
 )
 
-# ProcessTensors.jl user-facing functions / methods (violet).
+# ProcessTensors.jl exports (violet), including re-exported ITensor types
+# that form the package's user-facing tensor-network surface.
 PT_FUNCTIONS = (
+    "MPS",
+    "MPO",
+    "OpSum",
     "add!",
     "build_process_tensor",
     "default_schedule",

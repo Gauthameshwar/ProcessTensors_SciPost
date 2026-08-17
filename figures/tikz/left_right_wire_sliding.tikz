@@ -1,0 +1,141 @@
+% Fig. 3: Roth's lemma (wire sliding) and vec(A rho B).
+% Requires pt_tikz_styles.tex in the preamble.
+\begin{tikzpicture}[PTPicture]
+  \def\railY{0.64}%
+  \def\stubL{2.0mm}%
+  \def\preCap{0.7mm}%
+  \def\capR{3.2mm}%
+  \tikzset{
+    g3lab/.style={
+      font=\small\bfseries,
+      text=PTLabel,
+      inner sep=1.0pt,
+      anchor=north west,
+    },
+    g3eq/.style={
+      font=\small,
+      text=PTLabel,
+      align=center,
+      inner sep=0.4pt,
+      anchor=north,
+    },
+    g3dash/.style={
+      dash pattern=on 1.5pt off 1.2pt,
+      draw=black!55,
+      line width=0.65pt,
+      rounded corners=1.2pt,
+    },
+  }
+  \newcommand{\GThreeCap}[1]{%
+    \draw[PTWire]
+      (#1) arc[start angle=90, delta angle=-180, radius=\capR];
+  }
+
+  % Shared Hilbert-rail baseline so (a) and (b) sit on one row.
+  \begin{scope}[shift={(0.12, 1.28)}]
+    \node[g3lab] at (-0.08, 1.58) {(a)};
+    \node[g3lab] at (4.42, 1.58) {(b)};
+
+    % -----------------------------------------------------------------
+    % (a) LHS: A on the j rail, then immediately the cap
+    % -----------------------------------------------------------------
+    \PTOperator[minimum width=7.0mm,minimum height=7.0mm]{aA}{(0.58,0)}{\(A\)}
+    \coordinate (aL-k) at ($(aA.west)+(-\stubL,\railY)$);
+    \coordinate (aL-j) at ($(aA.west)+(-\stubL,0)$);
+    \coordinate (aL-cap) at ($(aA.east)+(\preCap,\railY)$);
+    \draw[PTHilbertKetLeg] (aL-k) -- (aL-cap);
+    \draw[PTHilbertKetLeg] (aL-j) -- (aA.west);
+    \draw[PTHilbertKetLeg] (aA.east) -- (aL-cap |- aA.east);
+    \GThreeCap{aL-cap}
+    \PTIndexLabel[anchor=east, math={k}, xshift=-1.2pt]{aL-k}
+    \PTIndexLabel[anchor=east, math={j}, xshift=-1.2pt]{aL-j}
+
+    \node[font=\small, text=PTLabel] at (1.78,0.32) {\(=\)};
+
+    % -----------------------------------------------------------------
+    % (a) RHS: A^T on the k rail, then immediately the cap
+    % -----------------------------------------------------------------
+    \PTOperator[minimum width=7.0mm,minimum height=7.0mm]
+      {aAT}{(2.78,\railY)}{\(A^{\mathsf T}\)}
+    \coordinate (aR-k) at ($(aAT.west)+(-\stubL,0)$);
+    \coordinate (aR-j) at ($(aAT.west)+(-\stubL,-\railY)$);
+    \coordinate (aR-cap) at ($(aAT.east)+(\preCap,0)$);
+    \draw[PTHilbertKetLeg] (aR-k) -- (aAT.west);
+    \draw[PTHilbertKetLeg] (aAT.east) -- (aR-cap);
+    \draw[PTHilbertKetLeg] (aR-j) -- (aR-cap |- aR-j);
+    \GThreeCap{aR-cap}
+    \PTIndexLabel[anchor=east, math={k}, xshift=-1.2pt]{aR-k}
+    \PTIndexLabel[anchor=east, math={j}, xshift=-1.2pt]{aR-j}
+
+    % -----------------------------------------------------------------
+    % (b) LHS: A, rho, B on the j rail, then immediately the cap
+    % -----------------------------------------------------------------
+    \PTOperator[minimum width=6.4mm,minimum height=6.4mm]{bA}{(5.08,0)}{\(A\)}
+    \PTOperator[minimum width=6.4mm,minimum height=6.4mm]{br}{(5.92,0)}{\(\rho\)}
+    \PTOperator[minimum width=6.4mm,minimum height=6.4mm]{bB}{(6.76,0)}{\(B\)}
+    \coordinate (bL-k) at ($(bA.west)+(-\stubL,\railY)$);
+    \coordinate (bL-j) at ($(bA.west)+(-\stubL,0)$);
+    \coordinate (bL-cap) at ($(bB.east)+(\preCap,\railY)$);
+    \draw[PTHilbertKetLeg] (bL-k) -- (bL-cap);
+    \draw[PTHilbertKetLeg] (bL-j) -- (bA.west);
+    \draw[PTHilbertKetLeg] (bA.east) -- (br.west);
+    \draw[PTHilbertKetLeg] (br.east) -- (bB.west);
+    \draw[PTHilbertKetLeg] (bB.east) -- (bL-cap |- bB.east);
+    \GThreeCap{bL-cap}
+    \PTIndexLabel[anchor=east, math={k}, xshift=-1.2pt]{bL-k}
+    \PTIndexLabel[anchor=east, math={j}, xshift=-1.2pt]{bL-j}
+
+    \node[font=\small, text=PTLabel] at (7.82,0.32) {\(=\)};
+
+    % -----------------------------------------------------------------
+    % (b) mid: B^T on k, A on j; rho on a 2*capR semicircle
+    % Wires leave the midpoints of rho's top and bottom edges.
+    % -----------------------------------------------------------------
+    \def\midR{6.4mm}%
+    \def\rhoHalf{3.2mm}%
+    \pgfmathsetlengthmacro{\rhoOff}{sqrt(\midR*\midR-\rhoHalf*\rhoHalf)}%
+    \PTOperator[minimum width=6.4mm,minimum height=6.4mm]
+      {bBT}{($(8.72,0.32)+(0,\midR)$)}{\(B^{\mathsf T}\)}
+    \PTOperator[minimum width=6.4mm,minimum height=6.4mm]
+      {bAr}{($(8.72,0.32)+(0,-\midR)$)}{\(A\)}
+    \coordinate (bR-capT) at ($(bBT.east)+(\preCap,0)$);
+    \coordinate (bR-capB) at ($(bAr.east)+(\preCap,0)$);
+    \PTOperator[minimum width=6.4mm,minimum height=6.4mm]
+      {bRhoBox}{($(bR-capT)+(\rhoOff,-\midR)$)}{\(\rho\)}
+    \draw[g3dash]
+      ($(bAr.south west)+(-1.4mm,-1.4mm)$)
+      rectangle ($(bBT.north east)+(1.4mm,1.4mm)$);
+    \coordinate (bR-k) at ($(bBT.west)+(-\stubL,0)$);
+    \coordinate (bR-j) at ($(bAr.west)+(-\stubL,0)$);
+    \draw[PTHilbertKetLeg] (bR-k) -- (bBT.west);
+    \draw[PTHilbertKetLeg] (bR-j) -- (bAr.west);
+    \draw[PTHilbertKetLeg] (bBT.east) -- (bR-capT);
+    \draw[PTHilbertKetLeg] (bAr.east) -- (bR-capB);
+    \draw[PTHilbertKetLeg]
+      (bR-capT) arc[start angle=90, end angle=30, radius=\midR]
+      -- (bRhoBox.north);
+    \draw[PTHilbertKetLeg]
+      (bR-capB) arc[start angle=-90, end angle=-30, radius=\midR]
+      -- (bRhoBox.south);
+    \PTIndexLabel[anchor=east, math={k}, xshift=-1.2pt]{bR-k}
+    \PTIndexLabel[anchor=east, math={j}, xshift=-1.2pt]{bR-j}
+
+    \node[font=\small, text=PTLabel] at (10.42,0.32) {\(\equiv\)};
+
+    % -----------------------------------------------------------------
+    % (b) Liouville form, same row
+    % -----------------------------------------------------------------
+    \PTSuperoperator[minimum width=14.8mm,minimum height=7.0mm]
+      {bSup}{(11.72,0.32)}{\(B^{\mathsf T}\otimes A\)}
+    \PTLiouvilleKet{bRhoL}{(13.12,0.32)}{\(\rho\)}
+    \draw[PTLiouvilleLeg] (bSup.west) -- ++(-0.28,0);
+    \draw[PTLiouvilleLeg] (bSup.east) -- (bRhoL.west);
+
+    \node[g3eq] at (1.78,-1.12)
+      {\((I\otimes A)\lvert I\rangle\!\rangle
+        =(A^{\mathsf T}\otimes I)\lvert I\rangle\!\rangle\)};
+    \node[g3eq] at (9.20,-1.12)
+      {\(\operatorname{vec}(A\rho B)
+        =(B^{\mathsf T}\otimes A)\lvert\rho\rangle\!\rangle\)};
+  \end{scope}
+\end{tikzpicture}
