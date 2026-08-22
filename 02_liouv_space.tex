@@ -13,7 +13,7 @@
 The process tensor is a map acting on other maps. Before constructing such an object, it is useful to place density matrices and quantum operations on equal footing. Moving to the Liouville space does precisely this: density matrices become state-like vectors, while operations on density matrices become ordinary linear operators. This change of language is especially natural for tensor networks, because the same ideas can be read in three equivalent ways---as an equation, as a tensor diagram, and as the corresponding \texttt{ITensor} code. We develop these three descriptions together below. Our graphical conventions are adapted from the open-system tensor calculus of Ref.~\cite{Wood2015}, with time and contractions drawn from right to left to match the convention used throughout this paper. In case the readers are not familiar with ITensors and their notations of sites and indices, they are encouraged to read the documentation of the ITensor library [\textcolor{red}{cite ITensor docs, and also the original papers}]. Alternatively, they can also go through the tutorials in the stable docs of our package [\textcolor{red}{add the link to the stable docs}].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{A graphical dictionary for tensors}
+\markedsubsection{\tocboth}{A graphical dictionary for tensors}
 \label{subsec:graphical-dictionary}
 
 A tensor is represented by a shape with one open wire for every index. In our conventions, the direction of a wire records which dual space that leg belongs to: a leg pointing to the left is a ket index [Fig.~\ref{fig:graphical-dictionary}a], whereas a leg pointing to the right is a bra index [Fig.~\ref{fig:graphical-dictionary}b]. Joining two wires means summing over their shared index. For example, ordinary matrix multiplication,
@@ -83,7 +83,7 @@ AT = conj(dag(A)) # (h) AT = a_ji
 \end{juliacode}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{From operator space to Liouville space}
+\markedsubsection{\tocboth}{From operator space to Liouville space}
 \label{subsec:liouville-vectorisation}
 
 Let \(\mathcal H\) be a \(d\)-dimensional Hilbert space of state vectors.  Associated with it is the operator space
@@ -231,7 +231,7 @@ expect_O = inner(O_L, rho_L) # (d) <O> = <<O|rho>>
 \end{juliacode}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Left and right actions}
+\markedsubsection{\tocboth}{Left and right actions}
 \label{subsec:left-right-actions}
 
 Vectorisation becomes especially useful when we want to describe an operation such as \(A\rho B\) as a linear action on the Liouville-space vector \(\lvert\rho\rangle\!\rangle\), because it brings the opeartions on the bra and ket bases to the same space. This allows Hamiltonian evolution, dissipative jumps, and process-tensor contractions to be written as ordinary tensor-network operations or MPOs. The only small surprise is that multiplication from the right does not look exactly like multiplication from the left after vectorisation. The transpose appearing below is the bookkeeping rule that keeps the two descriptions consistent.
@@ -333,7 +333,7 @@ A_jump = op("S-_Jump", sL)  # vec(S- * rho * S+)
 In this notation, \texttt{Sx\_L} represents multiplication by \(S_x\) from the left, while \texttt{Sz\_R} represents multiplication by \(S_z\) from the right. The \texttt{\_Jump} suffix represents the corresponding left-right action, also known as the sandwich action in the context of Local Master Equation (LME) superoperators. Together, these local operators provide the elementary building blocks for the Liouville-space dynamics and process-tensor constructions developed below.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Vectorised many-body MPS and Liouvillian MPOs}
+\markedsubsection{\tocboth}{Vectorised many-body MPS and Liouvillian MPOs}
 \label{subsec:liouville-mpos}
 
 A single quantum degree of freedom lives in one Hilbert space. A many-body system brings several of them together: if site \(j\) has a local Hilbert space \(\mathcal H_j\) of dimension \(d_j\), then the full state belongs to the joint Hilbert space

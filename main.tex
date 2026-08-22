@@ -52,11 +52,16 @@
 \newcommand{\cqt}{Centre for Quantum Technologies, Singapore}
 \newcommand{\majulab}{MajuLab, CNRS-UNS-NUS-NTU International Joint Research Unit, Singapore}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Julia listing palette (print-friendly)
 \definecolor{julialistingbg}{HTML}{F7F8FA}
 \definecolor{julialistingframe}{HTML}{C5CAD3}
 \definecolor{juliabadge}{HTML}{4063D8}
 \definecolor{julialineno}{HTML}{6B7280}
+\definecolor{juliaoutputbg}{HTML}{ECEEF2}
+\definecolor{juliaoutputframe}{HTML}{B8BDC7}
+\definecolor{juliaoutputbadge}{HTML}{4B5563}
+\definecolor{juliaoutputtext}{HTML}{1F2937}
 
 % Julia code highlighting via minted + custom ptjulia lexer/style:
 % keywords (Julia), ITensor.jl-exclusive (teal), ProcessTensors.jl exports (violet), types, variables, numbers.
@@ -81,6 +86,8 @@
   \textcolor{julialineno}{\scriptsize\arabic{FancyVerbLine}}%
 }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Julia listing macro to be used whenever we present a Julia code listing.
 % Figure-like Julia listing (minted + tcolorbox details hidden):
 %   \begin{juliacode}[
 %     caption={...},
@@ -147,7 +154,108 @@
     \par\medskip
   },
 }
+% Printed Julia output (unhighlighted, gray Terminal badge):
+%   \begin{juliaoutput}
+%   <stdout>
+%   \end{juliaoutput}
+\newtcblisting{juliaoutput}{%
+  listing engine=minted,
+  minted language=text,
+  minted options={
+    style=bw,
+    fontsize=\small,
+    linenos=false,
+    frame=none,
+    breaklines,
+    breakanywhere=false,
+    tabsize=4,
+    obeytabs=false,
+    baselinestretch=1.05,
+  },
+  listing only,
+  colback=juliaoutputbg,
+  colframe=juliaoutputframe,
+  colupper=juliaoutputtext,
+  fontupper=\ttfamily,
+  arc=2.5mm,
+  boxrule=0.55pt,
+  left=2.5mm,
+  right=2.5mm,
+  top=3.5mm,
+  bottom=2.5mm,
+  enhanced jigsaw,
+  breakable,
+  attach boxed title to top right={xshift=-2.8mm,yshift=-2.1mm},
+  boxed title style={
+    colback=juliaoutputbadge,
+    colframe=juliaoutputbadge,
+    arc=1.2mm,
+    boxrule=0pt,
+    top=1.2pt,
+    bottom=1.2pt,
+    left=5pt,
+    right=5pt,
+  },
+  coltitle=white,
+  title={\sffamily\bfseries\scriptsize Terminal},
+  before={\par\smallskip},
+  after={\par\medskip},
+}
 \makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TOC mode icons: notebook = theory-heavy, Julia dots = listing-heavy.
+% Each glyph is drawn in a unit square of side 1em (the current line's
+% font size), sitting on the baseline with the TOC text.
+\colorlet{tociconcolor}{red!50!black}
+\newlength{\tociconside}
+\DeclareRobustCommand{\tociconbox}[1]{%
+  \begingroup
+  \setlength{\tociconside}{1em}%
+  \begin{tikzpicture}[
+      color=tociconcolor,
+      line cap=round,
+      line join=round,
+      x=\tociconside,
+      y=\tociconside,
+      baseline=0pt,
+    ]
+    \path[use as bounding box] (0,0) rectangle (1,1);
+    #1
+  \end{tikzpicture}%
+  \endgroup
+}
+\DeclareRobustCommand{\tocnotebook}{%
+  \tociconbox{%
+    % Offset page along the right and bottom edges (3D stack).
+    \draw[line width=0.08\tociconside, rounded corners=0.08\tociconside]
+      (0.35,0.00) rectangle (0.96,0.84);
+    \fill[white, rounded corners=0.08\tociconside]
+      (0.26,0.08) rectangle (0.88,0.92);
+    \draw[line width=0.08\tociconside, rounded corners=0.08\tociconside]
+      (0.26,0.08) rectangle (0.88,0.92);
+    \foreach \y in {0.32,0.50,0.68}
+      \draw[line width=0.15\tociconside] (0.20,\y) -- (0.30,\y);
+    \draw[line width=0.07\tociconside]
+      (0.42,0.58) -- (0.72,0.58)
+      (0.42,0.42) -- (0.72,0.42);
+  }%
+}
+\DeclareRobustCommand{\tocjulia}{%
+  \tociconbox{%
+    \fill (0.500,0.717) circle[x radius=0.215, y radius=0.215];
+    \fill (0.250,0.284) circle[x radius=0.215, y radius=0.215];
+    \fill (0.750,0.284) circle[x radius=0.215, y radius=0.215];
+  }%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% New commands to be used in each subsection to highlight the type of subsection.
+\DeclareRobustCommand{\toctheory}{\tocnotebook}
+\DeclareRobustCommand{\tocboth}{\tocnotebook\,\tocjulia}
+\newcommand{\tocmark}[1]{\texorpdfstring{\mbox{#1}\hspace{0.45em}}{}}
+\newcommand{\markedsection}[2]{\section[\tocmark{#1}#2]{#2}}
+\newcommand{\markedsubsection}[2]{\subsection[\tocmark{#1}#2]{#2}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
@@ -227,6 +335,11 @@ We present ProcessTensors.jl, a Julia package for learning, constructing, and us
 % To remove the TOC, simply cut the following block
 \vspace{10pt}
 \noindent\rule{\textwidth}{1pt}
+{\small\color{julialineno}%
+\noindent Markers indicate whether a subsection is primarily theoretical
+(\mbox{\toctheory}), focuses on Julia walkthroughs (\mbox{\tocjulia}), or both
+(\mbox{\tocboth}).%
+\par\vspace{4pt}}
 \tableofcontents
 \noindent\rule{\textwidth}{1pt}
 \vspace{10pt}
@@ -282,11 +395,11 @@ Figures should only occupy the stricly necessary space, in any case individually
 \label{sec:instruments}
 % =========================================================================
 
-\subsection{Operational meaning}
+\markedsubsection{\toctheory}{Operational meaning}
 
-\subsection{Instrument organisation in \texttt{ProcessTensors.jl}}
+\markedsubsection{\tocboth}{Instrument organisation in \texttt{ProcessTensors.jl}}
 
-\subsection{\texttt{InstrumentSeq}: a temporal analogue of \texttt{OpSum}}
+\markedsubsection{\tocboth}{\texttt{InstrumentSeq}: a temporal analogue of \texttt{OpSum}}
 
 
 % =========================================================================
@@ -294,11 +407,11 @@ Figures should only occupy the stricly necessary space, in any case individually
 \label{sec:evaluation}
 % =========================================================================
 
-\subsection{General contraction with \texttt{evaluate\_process}}
+\markedsubsection{\tocboth}{General contraction with \texttt{evaluate\_process}}
 
-\subsection{Reduced dynamics with \texttt{evolve}}
+\markedsubsection{\tocboth}{Reduced dynamics with \texttt{evolve}}
 
-\subsection{Open process legs}
+\markedsubsection{\toctheory}{Open process legs}
 
 
 % =========================================================================
@@ -306,13 +419,13 @@ Figures should only occupy the stricly necessary space, in any case individually
 \label{sec:workflows}
 % =========================================================================
 
-\subsection{Final reduced density matrices}
+\markedsubsection{\tocjulia}{Final reduced density matrices}
 
-\subsection{Observable expectation values}
+\markedsubsection{\tocjulia}{Observable expectation values}
 
-\subsection{Probabilities and trace-non-preserving branches}
+\markedsubsection{\tocboth}{Probabilities and trace-non-preserving branches}
 
-\subsection{Multi-time correlation functions}
+\markedsubsection{\tocboth}{Multi-time correlation functions}
 
 
 % =========================================================================
@@ -337,13 +450,13 @@ should not be read as claiming currently released package functionality.}
 \label{sec:benchmarks}
 % =========================================================================
 
-\subsection{Correctness against dense and exact references}
+\markedsubsection{\tocboth}{Correctness against dense and exact references}
 
-\subsection{Compression accuracy and temporal bond dimension}
+\markedsubsection{\tocboth}{Compression accuracy and temporal bond dimension}
 
-\subsection{Runtime and memory scaling}
+\markedsubsection{\tocjulia}{Runtime and memory scaling}
 
-\subsection{Comparison with the C++ ACE toolkit}
+\markedsubsection{\tocboth}{Comparison with the C++ ACE toolkit}
 
 % =========================================================================
 \section{Conclusion and outlook}
