@@ -51,7 +51,7 @@ is drawn by joining the right-hand wire of \(A\) to the left-hand wire of \(B\) 
 \end{figure}
 %
 
-Equations~\eqref{eq:tensor-contraction} and~\eqref{eq:graphical-trace}, Fig.~\ref{fig:graphical-dictionary}, and Listing~\ref{lst:itensor-grammar} express the same basic rule: tensors contract when their indices match. Wire bending deserves one warning though, when we implement them in ITensor codes. A bend represents a basis-dependent transpose (swapping two indices), complex conjugation changes the tensor entries, and combining the two gives the Hermitian adjoint, \(A^\dagger=(A^*)^{\mathsf T}\). An ITensor \texttt{prime} operation, by contrast, only changes the identity of an index. It does not transpose or conjugate the tensor. For achieving a dagger, we need to use the Hermitian adjoint function \texttt{dag} and then prime the indices. This distinction becomes important when we use an unprimed index for the input and a primed copy for its output when constructing operator ITensors. 
+Equations~\eqref{eq:tensor-contraction} and~\eqref{eq:graphical-trace}, Fig.~\ref{fig:graphical-dictionary}, and Listing~\ref{lst:itensor-grammar} express the same basic rule: tensors contract when their indices match. Transposing deserves one warning when we implement it in ITensor code. For an operator with indices \(s\) and \(s'\), \texttt{swapinds(A, s, prime(s))} exchanges those index identities and therefore implements \(A^{\mathsf T}\). An ITensor \texttt{prime} operation, by contrast, only changes the identity of an index; it does not transpose or conjugate the tensor. Likewise, \texttt{dag} conjugates the entries (and reverses index directions when applicable) but does not by itself exchange the two operator indices. This distinction becomes important when we use an unprimed index for the input and a primed copy for its output when constructing operator ITensors.
 
 \begin{juliacode}[
   caption={ITensor codes to realise tensor operations in Fig.~\ref{fig:graphical-dictionary}(a)--(h).},
@@ -79,7 +79,7 @@ AxB = random_itensor(i, j) * random_itensor(k, l) # (f) A ox B = a_ij b_kl  (no 
 
 TrA = A * delta(s, prime(s)) # (g) Tr(A) = a_ii
 
-AT = conj(dag(A)) # (h) AT = a_ji
+AT = swapinds(A, s, prime(s)) # (h) AT = a_ji
 \end{juliacode}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +208,6 @@ Listing~\ref{lst:fig2-vectorisation} realises the four panels of Fig.~\ref{fig:w
   label={lst:fig2-vectorisation},
 ]
 using ProcessTensors
-using ITensors: inner
 
 sites = siteinds("S=1/2", 1)
 sites_L = liouv_sites(sites)
