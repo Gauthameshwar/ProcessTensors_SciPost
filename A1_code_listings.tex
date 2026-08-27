@@ -19,13 +19,13 @@ The colour roles are as follows.
     \item \textbf{Violet, bold:} names exported by \texttt{ProcessTensors.jl}.
     This includes package-specific constructors and converters
     (\jlinline{to_dm}, \jlinline{liouv_sites}, \jlinline{liouvillian_mpo},
-    \ldots) as well as the tensor-network types that form the package's public
-    surface, notably \jlinline{MPS}, \jlinline{MPO}, and \jlinline{OpSum}.
+    \ldots), tensor-network types such as \jlinline{MPS}, \jlinline{MPO},
+    and \jlinline{OpSum}, and re-exported ITensorMPS inspection routines
+    such as \jlinline{siteinds}, \jlinline{linkinds}, and \jlinline{inner}.
     \item \textbf{Teal, bold:} functions that belong to \texttt{ITensors.jl}
     and are \emph{not} part of the \texttt{ProcessTensors.jl} export list
-    (\jlinline{Index}, \jlinline{ITensor}, \jlinline{siteinds},
-    \jlinline{dag}, \jlinline{prime}, \jlinline{delta}, \jlinline{inner},
-    \jlinline{op}, \jlinline{apply}, \ldots).
+    (\jlinline{Index}, \jlinline{ITensor}, \jlinline{dag}, \jlinline{prime},
+    \jlinline{delta}, \jlinline{op}, \jlinline{apply}, \ldots).
     \item \textbf{Orange, bold:} package types and backends such as
     \jlinline{Hilbert}, \jlinline{Liouville}, \jlinline{Dense}, and
     \jlinline{ACE}.

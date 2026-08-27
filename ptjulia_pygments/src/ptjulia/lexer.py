@@ -11,15 +11,13 @@ ITENSOR_BUILTINS = (
     "apply",
     "dag",
     "delta",
-    "inner",
     "op",
     "prime",
     "random_itensor",
-    "siteinds",
 )
 
-# ProcessTensors.jl exports (violet), including re-exported ITensor types
-# that form the package's user-facing tensor-network surface.
+# ProcessTensors.jl exports (violet), including re-exported ITensorMPS
+# names that form the package's user-facing tensor-network surface.
 PT_FUNCTIONS = (
     "MPS",
     "MPO",
@@ -29,10 +27,13 @@ PT_FUNCTIONS = (
     "default_schedule",
     "evaluate_process",
     "evolve",
+    "inner",
     "liouv_sites",
     "liouvillian_mpo",
     "liouvillian_propagator",
+    "linkinds",
     "observable_measurement",
+    "siteinds",
     "spin_bath",
     "spin_mode",
     "spin_system",
