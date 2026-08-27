@@ -95,12 +95,33 @@
 %   ]
 %   <julia source>
 %   \end{juliacode}
+% Stacked code (top) + output (bottom), one caption after both:
+%   \begin{julialistingpair}[caption={...},label={lst:...}]
+%   \begin{juliacode}[paired]
+%   ...
+%   \end{juliacode}
+%   \begin{juliaoutput}[paired]
+%   ...
+%   \end{juliaoutput}
+%   \end{julialistingpair}
 \makeatletter
+\newif\ifjuliacodepaired
 \define@key{juliacode}{caption}{\def\juliacodeCaption{#1}}
 \define@key{juliacode}{label}{\def\juliacodeLabel{#1}}
+\define@key{juliacode}{paired}[true]{\juliacodepairedtrue}
 \newcommand{\juliacode@resetkeys}{%
+  \juliacodepairedfalse
   \def\juliacodeCaption{}%
   \def\juliacodeLabel{}%
+}
+\newif\ifjuliaoutputpaired
+\define@key{juliaoutput}{paired}[true]{\juliaoutputpairedtrue}
+\newcommand{\juliaoutput@resetkeys}{\juliaoutputpairedfalse}
+\define@key{julialistingpair}{caption}{\def\julialistingpairCaption{#1}}
+\define@key{julialistingpair}{label}{\def\julialistingpairLabel{#1}}
+\newcommand{\julialistingpair@resetkeys}{%
+  \def\julialistingpairCaption{}%
+  \def\julialistingpairLabel{}%
 }
 \newtcblisting{juliacode}[1][]{%
   listing engine=minted,
@@ -144,21 +165,26 @@
   code={%
     \juliacode@resetkeys
     \setkeys{juliacode}{#1}%
+    \ifjuliacodepaired
+      \pgfkeysalso{nobeforeafter,after skip=1.2mm}%
+    \fi
   },
   before={%
     \par\medskip
   },
   after={%
-    \ifx\juliacodeCaption\empty\else\captionof{listing}{\juliacodeCaption}\fi
-    \ifx\juliacodeLabel\empty\else\label{\juliacodeLabel}\fi
-    \par\medskip
+    \ifjuliacodepaired\else
+      \ifx\juliacodeCaption\empty\else\captionof{listing}{\juliacodeCaption}\fi
+      \ifx\juliacodeLabel\empty\else\label{\juliacodeLabel}\fi
+      \par\medskip
+    \fi
   },
 }
 % Printed Julia output (unhighlighted, gray Terminal badge):
 %   \begin{juliaoutput}
 %   <stdout>
 %   \end{juliaoutput}
-\newtcblisting{juliaoutput}{%
+\newtcblisting{juliaoutput}[1][]{%
   listing engine=minted,
   minted language=text,
   minted options={
@@ -198,8 +224,24 @@
   },
   coltitle=white,
   title={\sffamily\bfseries\scriptsize Terminal},
+  code={%
+    \juliaoutput@resetkeys
+    \setkeys{juliaoutput}{#1}%
+    \ifjuliaoutputpaired
+      \pgfkeysalso{nobeforeafter}%
+    \fi
+  },
   before={\par\smallskip},
   after={\par\medskip},
+}
+\newenvironment{julialistingpair}[1][]{%
+  \julialistingpair@resetkeys
+  \setkeys{julialistingpair}{#1}%
+  \par\medskip
+}{%
+  \ifx\julialistingpairCaption\empty\else\captionof{listing}{\julialistingpairCaption}\fi
+  \ifx\julialistingpairLabel\empty\else\label{\julialistingpairLabel}\fi
+  \par\medskip
 }
 \makeatother
 
