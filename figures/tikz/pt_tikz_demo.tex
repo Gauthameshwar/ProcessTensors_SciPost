@@ -251,6 +251,14 @@ Spaces are distinguished by line structure, not colour alone.
   \input{process_evaluation.tikz}%
 }{\input{figures/tikz/process_evaluation.tikz}}
 
+\vspace{1.2em}
+% =============================================================================
+\section*{12.\ Channel to multi-time process (Fig.~5, (a)(b) only)}
+% =============================================================================
+\IfFileExists{channel_to_multitime_process.tikz}{%
+  \input{channel_to_multitime_process.tikz}%
+}{\input{figures/tikz/channel_to_multitime_process.tikz}}
+
 \vspace{1.6em}
 % =============================================================================
 \section*{Paper fragment: graphical dictionary}
@@ -270,6 +278,7 @@ Command & Arguments & Purpose \\
 \verb|\PTBra| & name, pos, label & Left-pointing bra triangle. \\
 \verb|\PTLiouvilleKet| & name, pos, label & Liouville ket (double-wired leg). \\
 \verb|\PTLiouvilleBra| & name, pos, label & Liouville bra (double-wired leg). \\
+\verb|\PTLiouvilleKetLeft| & name, pos, label & Left-pointing Liouville ket (RTL output). \\
 \verb|\PTTensor| & [keys] name pos label & Generic square core, thick rounded stroke. \\
 \verb|\PTOperator| & [keys] name pos label & Hilbert-space operator (square). \\
 \verb|\PTSuperoperator| & [keys] name pos label & Superoperator core (square). \\

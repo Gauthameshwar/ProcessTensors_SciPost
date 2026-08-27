@@ -1,0 +1,264 @@
+% Fig. 7: microscopic ingredients of a ProcessTensor.
+% Requires pt_tikz_styles.tex in the preamble.
+\begin{tikzpicture}[PTPicture]
+  \definecolor{PTQubit}{HTML}{42B3F5}
+  \definecolor{PTBlochVec}{HTML}{1D50C4}
+  \definecolor{PTSpin}{HTML}{E36A5C}
+  \definecolor{PTBoson}{HTML}{8FCB8A}
+
+  \tikzset{
+    ingred box/.style={
+      draw=black,
+      line width=0.75pt,
+      double,
+      double distance=1.25pt,
+      rounded corners=2.4pt,
+      inner sep=2.7mm,
+      fill=none,
+    },
+    time box/.style={
+      draw=black,
+      line width=0.85pt,
+      rounded corners=2.4pt,
+      inner xsep=3.4mm,
+      inner ysep=2.6mm,
+      fill=white,
+      align=center,
+    },
+    bath group/.style={
+      draw=black,
+      line width=0.65pt,
+      rounded corners=2.0pt,
+      inner xsep=2.4mm,
+      inner ysep=2.0mm,
+    },
+    flow/.style={
+      draw=black,
+      line width=0.95pt,
+      line cap=round,
+      line join=round,
+      rounded corners=1.6mm,
+      -{Stealth[length=2.2mm, width=1.6mm]},
+    },
+    box title/.style={
+      font=\normalsize\bfseries,
+      text=PTLabel,
+      inner sep=1.0pt,
+    },
+    box sub/.style={
+      font=\small,
+      text=PTLabel,
+      inner sep=0.3pt,
+    },
+    icon slot/.style={
+      inner sep=0pt,
+      outer sep=0pt,
+      minimum width=11.0mm,
+      minimum height=13.2mm,
+    },
+    pt leg/.style={
+      draw=black,
+      line width=0.95pt,
+      line cap=round,
+      on background layer,
+    },
+    bloch axis/.style={
+      draw=PTQubit,
+      line width=0.62pt,
+      line cap=round,
+      -{Stealth[length=1.45mm, width=1.10mm, fill=PTQubit]},
+    },
+    bloch vec/.style={
+      draw=PTBlochVec,
+      line width=1.05pt,
+      line cap=butt,
+      -{Triangle[length=2.10mm, width=1.85mm, fill=PTBlochVec]},
+    },
+  }
+
+  % Bloch-sphere qubit in #42B3F5.  #1 = centre.
+  \newcommand{\IngQubit}[1]{%
+    \begin{scope}[shift={#1}]
+      \def\BlochR{4.35mm}%
+      \draw[PTQubit, line width=0.75pt] (0,0) circle[radius=\BlochR];
+      \draw[
+        PTQubit,
+        dash pattern=on 0.85pt off 0.65pt,
+        line width=0.55pt,
+      ] (0,0) ellipse[x radius=\BlochR, y radius=0.34*\BlochR];
+      \draw[bloch axis] (0,-1.42*\BlochR) -- (0,1.48*\BlochR);
+      \draw[bloch axis] (0,0) -- (1.48*\BlochR,0);
+      \draw[bloch axis] (0,0) -- (-0.95*\BlochR,-0.74*\BlochR);
+      \fill[PTQubit] (0,\BlochR) circle[radius=1.35mm];
+      \fill[PTQubit] (0,-\BlochR) circle[radius=1.35mm];
+      \node[
+        font=\tiny\bfseries,
+        text=white,
+        inner sep=0pt,
+      ] at (0,\BlochR) {0};
+      \node[
+        font=\tiny\bfseries,
+        text=white,
+        inner sep=0pt,
+      ] at (0,-\BlochR) {1};
+      \draw[bloch vec] (0,0) -- (0.56*\BlochR,0.58*\BlochR);
+    \end{scope}%
+  }
+  % Thick coral spin; disc diameter is half the arrow length.  #1 = rotation, #2 = centre.
+  \newcommand{\IngSpin}[2][0]{%
+    \begin{scope}[shift={#2}, rotate=#1]
+      \def\SpinLen{9.20mm}%
+      \def\SpinR{2.30mm}%
+      \def\SpinTailGap{1.55mm}%
+      \fill[PTSpin] (0,0) circle[radius=\SpinR];
+      \draw[
+        PTSpin,
+        line width=2.40pt,
+        line cap=round,
+        -{Stealth[length=2.80mm, width=2.30mm, fill=PTSpin]},
+      ] (0,-\SpinR-\SpinTailGap) -- (0,-\SpinR-\SpinTailGap+\SpinLen);
+    \end{scope}%
+  }
+  % Harmonic well: #1 = relative frequency ω, #2 = centre.
+  \newcommand{\IngBoson}[2][1]{%
+    \begin{scope}[shift={#2}]
+      \def\BosonH{0.820}%
+      \pgfmathsetmacro{\BosonW}{min(0.33, 0.300/sqrt(#1))}%
+      \pgfmathsetmacro{\BosonA}{\BosonH/(\BosonW*\BosonW)}%
+      \pgfmathtruncatemacro{\BosonN}{max(2, round(4.2/#1))}%
+      \draw[
+        PTBoson,
+        line width=1.55pt,
+        line cap=round,
+        line join=round,
+      ] plot[domain=-\BosonW:\BosonW, samples=49]
+        (\x, {\BosonA*\x*\x - 0.5*\BosonH});
+      \pgfmathsetmacro{\BosonDy}{\BosonH/(\BosonN+1)}%
+      \foreach \k in {1,...,\BosonN} {
+        \pgfmathsetmacro{\BosonE}{-\BosonH/2 + \k*\BosonDy}%
+        \pgfmathsetmacro{\BosonHW}{sqrt((\BosonE+0.5*\BosonH)/\BosonA)}%
+        \draw[PTBoson, line width=1.15pt, line cap=round]
+          (-\BosonHW, \BosonE) -- (\BosonHW, \BosonE);
+      }
+    \end{scope}%
+  }
+
+  % ---- System --------------------------------------------------------------
+  \node[icon slot] (sys-q) at (0.20,3.50) {};
+  \node[icon slot] (sys-s) at (1.45,3.50) {};
+  \node[icon slot] (sys-b) at (2.70,3.50) {};
+  \node[box title, above=1.8mm] (sys-lab) at ($(sys-q.north)!0.5!(sys-b.north)$) {System};
+  \IngQubit{(sys-q.center)}
+  \IngSpin{(sys-s.center)}
+  \IngBoson{(sys-b.center)}
+  \node[ingred box, fit=(sys-lab)(sys-q)(sys-s)(sys-b)] (sys) {};
+
+  % ---- Bath modes ----------------------------------------------------------
+  \node[icon slot] (bm-box-l) at (0.20,0.15) {};
+  \node[icon slot] (bm-box-r) at (2.80,0.15) {};
+  \node[box title, above=1.8mm] (bath-lab)
+    at ($(bm-box-l.north)!0.5!(bm-box-r.north)$) {Bath modes};
+  \node[ingred box, fit=(bath-lab)(bm-box-l)(bm-box-r)] (bath) {};
+  % Three equal gaps: edge--mode, mode--mode, mode--edge (11mm icon slots).
+  \path let
+    \p1 = (bath.west),
+    \p2 = (bath.east),
+    \p3 = (bm-box-l.center),
+    \n1 = {(\x2-\x1-22mm)/3}
+  in
+    coordinate (bm-s-c) at (\x1+\n1+5.5mm,\y3)
+    coordinate (bm-b-c) at (\x2-\n1-5.5mm,\y3);
+  \node[icon slot] (bm-s) at (bm-s-c) {};
+  \node[icon slot] (bm-b) at (bm-b-c) {};
+  \IngSpin{(bm-s.center)}
+  \IngBoson{(bm-b.center)}
+
+  % ---- Environment (south aligned with bath modes) -------------------------
+  \node[
+    bath group,
+    fill=PTBoson!16,
+    minimum width=3.20cm,
+    minimum height=1.32cm,
+    anchor=south,
+  ] (bosonbath) at ([yshift=6.4mm]7.45,0 |- bath.south) {};
+  \IngBoson[0.72]{([xshift=-10.4mm]bosonbath.center)}
+  \IngBoson[1.05]{(bosonbath.center)}
+  \IngBoson[1.70]{([xshift=10.4mm]bosonbath.center)}
+  \node[box sub, below=1.2pt] (bosonbath-lab) at (bosonbath.south) {Bosonic bath};
+
+  \node[
+    bath group,
+    fill=PTSpin!14,
+    minimum width=3.20cm,
+    minimum height=1.32cm,
+    above=5.2mm of bosonbath,
+  ] (spinbath) {};
+  \IngSpin[24]{([xshift=-10.4mm]spinbath.center)}
+  \IngSpin[-12]{(spinbath.center)}
+  \IngSpin[32]{([xshift=10.4mm]spinbath.center)}
+  \node[box sub, below=1.2pt] (spinbath-lab) at (spinbath.south) {Spin bath};
+
+  \node[box title, above=2.8mm] (env-lab) at (spinbath.north) {Environment};
+  \node[ingred box, fit=(env-lab)(spinbath)(bosonbath)(spinbath-lab)(bosonbath-lab)] (env) {};
+
+  % ---- PT-MPO comb: right of Environment, bottoms aligned ------------------
+  \path let
+    \p1 = (env.east),
+    \p2 = (env.south)
+  in
+    coordinate (pt-orig) at (\x1+5.15cm,\y2+7.2mm);
+  \begin{scope}[shift={(pt-orig)}]
+    \foreach \k in {0,1,2} {
+      \PTTensor[
+        fill=PTProcess,
+        minimum width=7.6mm,
+        minimum height=14.4mm,
+      ]{ing-Q-\k}{(-\k*1.32,0)}{}
+      \draw[PTLiouvilleLeg]
+        ([yshift=3.1mm]ing-Q-\k.south west) -- ++(-1.7mm,0);
+      \draw[PTLiouvilleLeg]
+        ([yshift=3.1mm]ing-Q-\k.south east) -- ++(1.7mm,0);
+    }
+    \foreach \k [evaluate=\k as \knext using int(\k+1)] in {0,1} {
+      \draw[PTLinkLeg, draw=PTBond]
+        ([yshift=3.3mm]ing-Q-\k.west) -- ([yshift=3.3mm]ing-Q-\knext.east);
+    }
+    \node[box title, anchor=south east] (ptlab)
+      at ([xshift=1.7mm, yshift=1.4mm]ing-Q-0.north east) {PT-MPO};
+    \coordinate (pt-in) at ([xshift=-2.2mm]ing-Q-2.west);
+    \coordinate (pt-top) at ([yshift=3.0mm]ing-Q-1.north);
+    \coordinate (pt-aim-sys) at ([yshift=3.0mm]ing-Q-2.north);
+    \coordinate (pt-right) at (ing-Q-0.east);
+  \end{scope}
+
+  % ---- Time discretisation: east = Q^{[0]} core, north = Environment ------
+  \node[time box, anchor=north east] (time) at (pt-right |- env.north) {%
+    \textbf{\normalsize Time discretisation}\\[-0.08em]
+    {\small\texttt{dt}, \texttt{nsteps}}%
+  };
+
+  % ---- Flow arrows (drawn after the PT is in place) -----------------------
+  \path let
+    \p1 = (sys.east),
+    \p2 = (bath.east),
+    \p3 = (env.west),
+    \p4 = (env.east),
+    \p5 = (env.north),
+    \p6 = (time.west),
+    \p7 = (time.south),
+    \p8 = (pt-aim-sys)
+  in
+    coordinate (bath-turn) at ({0.5*(\x2+\x3)},\y2)
+    coordinate (sys-elbow) at ({0.5*(\x1+\x3)},\y1)
+    coordinate (sys-over) at ({0.5*(\x1+\x3)},\y5+3.8mm)
+    coordinate (gap-top) at (\x6-5.8mm,\y5+3.8mm)
+    coordinate (sys-low) at (\x6-5.8mm,\y7-4.6mm)
+    coordinate (sys-run) at (\x8,\y7-4.6mm)
+    coordinate (env-run) at (\x4+7.2mm,\y4);
+  \draw[flow] (bath.east) -- (bath-turn) |- (env.west);
+  \draw[flow] (env.east) -- (env-run) |- (pt-in);
+  \draw[flow]
+    (sys.east) -- (sys-elbow) -- (sys-over) -- (gap-top)
+    -- (sys-low) -- (sys-run) -- (pt-aim-sys);
+  \draw[flow] (pt-top |- time.south) -- (pt-top);
+\end{tikzpicture}

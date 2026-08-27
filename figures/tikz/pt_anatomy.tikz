@@ -1,0 +1,114 @@
+% Fig. 6: PT-MPO anatomy.  Time runs right to left.
+% Requires pt_tikz_styles.tex in the preamble.
+\begin{tikzpicture}[PTPicture]
+  \def\QACoreW{10.2mm}%
+  \def\QACoreH{16.8mm}%
+  \def\QAIOLen{3.4mm}%
+  \def\QAIORaise{3.5mm}%
+  \def\QABondRaise{3.6mm}%
+  \tikzset{
+    qalab/.style={
+      font=\normalsize\bfseries,
+      text=PTLabel,
+      inner sep=1.0pt,
+    },
+    qaleg/.style={
+      font=\footnotesize,
+      text=PTLabel,
+      inner sep=0.6pt,
+    },
+    qamem/.style={
+      draw=PTBond,
+      line width=\PTLinkLW,
+      line cap=butt,
+      line join=round,
+      double=none,
+      on background layer,
+    },
+    qaeq/.style={
+      font=\footnotesize,
+      text=PTLabel,
+      align=center,
+      inner sep=1.0pt,
+    },
+  }
+
+  % Tall process core with lower-side I/O and mid-upper bond ports.
+  % #1 = node name, #2 = centre, #3 = display label.
+  \newcommand{\QACore}[3]{%
+    \PTTensor[
+      fill=PTProcess,
+      minimum width=\QACoreW,
+      minimum height=\QACoreH,
+      font=\normalsize,
+    ]{#1}{#2}{#3}%
+    \coordinate (#1-o) at ([yshift=\QAIORaise]#1.south west);
+    \coordinate (#1-i) at ([yshift=\QAIORaise]#1.south east);
+    \coordinate (#1-L) at ([yshift=\QABondRaise]#1.west);
+    \coordinate (#1-R) at ([yshift=\QABondRaise]#1.east);
+  }
+
+  % ------------------------------------------------------------------ (a)
+  \begin{scope}[shift={(0.20,0.15)}]
+    \QACore{a-Q2}{(0.00,0)}{\(Q^{[2]}\)}
+    \QACore{a-Q1}{(2.28,0)}{\(Q^{[1]}\)}
+    \QACore{a-Q0}{(4.56,0)}{\(Q^{[0]}\)}
+
+    \draw[qamem] (a-Q2-R) -- (a-Q1-L)
+      coordinate[midway] (a-a2);
+    \draw[qamem] (a-Q1-R) -- (a-Q0-L)
+      coordinate[midway] (a-a1);
+    \node[qaleg, above=1.4pt] at (a-a2) {\(\chi_2\)};
+    \node[qaleg, above=1.4pt] at (a-a1) {\(\chi_1\)};
+
+    \draw[PTLiouvilleLeg] (a-Q2-o) -- ++(-\QAIOLen,0) coordinate (a-o2);
+    \draw[PTLiouvilleLeg] (a-Q2-i) -- ++(\QAIOLen,0) coordinate (a-i2);
+    \draw[PTLiouvilleLeg] (a-Q1-o) -- ++(-\QAIOLen,0) coordinate (a-o1);
+    \draw[PTLiouvilleLeg] (a-Q1-i) -- ++(\QAIOLen,0) coordinate (a-i1);
+    \draw[PTLiouvilleLeg] (a-Q0-o) -- ++(-\QAIOLen,0) coordinate (a-o0);
+    \draw[PTLiouvilleLeg] (a-Q0-i) -- ++(\QAIOLen,0) coordinate (a-i0);
+
+    \node[qaleg, below=1.1pt] at (a-o2) {\(o_2\)};
+    \node[qaleg, below=1.1pt] at (a-i2) {\(i_2\)};
+    \node[qaleg, below=1.1pt] at (a-o1) {\(o_1\)};
+    \node[qaleg, below=1.1pt] at (a-i1) {\(i_1\)};
+    \node[qaleg, below=1.1pt] at (a-o0) {\(o_0\)};
+    \node[qaleg, below=1.1pt] at (a-i0) {\(i_0\)};
+
+    \node[qalab, anchor=south east, inner sep=1.4pt]
+      at (a-Q2.north west) {(a)};
+
+    \node[qaeq, anchor=north] at (2.28,-1.42) {%
+      \(\displaystyle
+        \bigl[\Upsilon_{2:0}\bigr]_{\boldsymbol{o},\boldsymbol{i}}
+        =\sum_{\chi_1,\chi_2}
+        [Q^{[2]}]_{o_2 i_2}^{\chi_2}\,
+        [Q^{[1]}]_{o_1 i_1}^{\chi_2\chi_1}\,
+        [Q^{[0]}]_{o_0 i_0}^{\chi_1}
+      \)%
+    };
+  \end{scope}
+
+  % ------------------------------------------------------------------ (b)
+  \begin{scope}[shift={(7.85,0.15)}]
+    \QACore{b-Qk}{(0,0)}{\(Q^{[k]}\)}
+    \draw[qamem] (b-Qk-L) -- ++(-\QAIOLen,0) coordinate (b-akp);
+    \draw[qamem] (b-Qk-R) -- ++(\QAIOLen,0) coordinate (b-ak);
+    \node[qaleg, above=1.4pt] at (b-akp) {\(\chi_{k+1}\)};
+    \node[qaleg, above=1.4pt] at (b-ak) {\(\chi_k\)};
+
+    \draw[PTLiouvilleLeg] (b-Qk-o) -- ++(-\QAIOLen,0) coordinate (b-ok);
+    \draw[PTLiouvilleLeg] (b-Qk-i) -- ++(\QAIOLen,0) coordinate (b-ik);
+    \node[qaleg, below=1.1pt] at (b-ok) {\(o_k\)};
+    \node[qaleg, below=1.1pt] at (b-ik) {\(i_k\)};
+
+    \node[qalab, anchor=south east, inner sep=1.4pt]
+      at (b-Qk.north west) {(b)};
+
+    \node[qaeq, anchor=north] at (0,-1.42) {%
+      \(\displaystyle
+        [Q^{[k]}]_{o_k i_k}^{\chi_{k+1}\chi_k}
+      \)%
+    };
+  \end{scope}
+\end{tikzpicture}
