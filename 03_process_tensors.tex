@@ -1,6 +1,8 @@
 \section{Process tensor theory and construction}
 \label{sec:process-tensors}
 
+The previous section placed density operators, quantum operations, and many-body generators within a common Liouville-space tensor-network language. We now use that language to describe dynamics in which the system may be intervened upon at several times. In this section, we first show why a state-to-state quantum channel is insufficient for such experiments and introduce the process tensor as its multi-time generalisation. We then connect its operational and Choi representations to the temporal MPO stored by \texttt{ProcessTensors.jl}, identify the system and memory indices carried by its cores, and assemble the microscopic ingredients required for its construction. Finally, we construct the same \texttt{ProcessTensor} representation using the dense and ACE builders with some details on the compression methods used by \texttt{ACE()}.
+
 \markedsubsection{\toctheory}{From quantum channels to multi-time processes}
 \label{subsec:from-channels}
 
@@ -179,7 +181,7 @@ Second, the process tensor is \emph{completely positive}. Inserting completely p
 
 Finally, the process tensor is \emph{causal}. A choice made at a later time cannot alter statistics already recorded at an earlier time. Operationally, once the future slots are filled with deterministic trace-preserving operations and their outputs are discarded, the probabilities assigned to the earlier interventions cannot depend on which future operations were chosen. This no-signalling-from-the-future condition also supplies the appropriate multi-time notion of normalisation: every deterministic sequence must preserve total probability. In the Choi representation it becomes a hierarchy of partial-trace constraints, which we introduce in the following subsection. Together, linearity, complete positivity, and causality distinguish a physical time-ordered process from an arbitrary multilinear tensor with matching dimensions.
 
-A point worth emphasising is that an individual trajectory selected from a process tensor need not be deterministic. An operation inserted at an intermediate time may represent a probabilistic event, which would then, reduce the trace of the outcome quantum state. Unit trace is determined by the choice of instruments, and so, trace-preserving trajectory is not a requirement for a process tensor. We will see more on this in section 4 (Quantum instruments) \textcolor{red}{TODO: add link}.
+A point worth emphasising is that an individual trajectory selected from a process tensor need not be deterministic. An operation inserted at an intermediate time may represent a probabilistic event, which would then, reduce the trace of the outcome quantum state. Unit trace is determined by the choice of instruments, and so, trace-preserving trajectory is not a requirement for a process tensor. We return to this distinction in Sec.~\ref{sec:quantum-instruments}, where instruments are defined as families of completely positive maps that need not preserve the trace individually, while the complete experiment remains CPTP.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \markedsubsection{\toctheory}{Choi representation, instruments, and process contraction}
@@ -257,7 +259,7 @@ A point worth emphasising is that an individual trajectory selected from a proce
 \markedsubsection{\tocjulia}{Anatomy of a \texttt{ProcessTensor}}
 \label{subsec:pt-anatomy}
 
-The Choi representation introduced above is complete, but its size grows exponentially with the number of intervention times. This is the temporal counterpart of the many-body problem encountered in Sec.~\ref{sec:liouville-foundations}: writing down every possible history as one dense tensor quickly becomes impractical. In this package, the process tensor is represented in matrix-product operator form. The environmental degrees of freedom are compressed into bond indices that carry only the influence of the environment that remains relevant to the system at each timestep. The outcome is an MPO whose physical indices are ordered in time rather than in space; we write this stored object as \(\Upsilon_{n:0}\),
+The Choi representation introduced above is complete, but its size grows exponentially with the number of intervention times. This is the temporal counterpart of the many-body problem encountered in Sec.~\ref{sec:liouville-foundations}: writing down every possible history as one dense tensor quickly becomes impractical. In this package, the process tensor is represented in matrix-product operator form. The environmental degrees of freedom are compressed into bond indices that carry only the influence of the environment that remains relevant to the system at each timestep. The outcome is an MPO whose physical indices are ordered in time rather than in space; we write this stored object as \(\Upsilon_{n:0}\), shown in Fig.~\ref{fig:process-tensor-anatomy},
 %
 \begin{equation}
     \bigl[\Upsilon_{n:0}\bigr]_%
@@ -272,9 +274,9 @@ The Choi representation introduced above is complete, but its size grows exponen
     \label{eq:pt-mpo-decomposition}
 \end{equation}
 %
-\begin{figure}[t]
+\begin{figure}[H]
     \centering
-    \scalebox{0.92}{\input{figures/tikz/pt_anatomy.tikz}}
+    \scalebox{1.0}{\input{figures/tikz/pt_anatomy.tikz}}
     \caption{
         Matrix-product representation of a process tensor.
         (a)~A three-step PT-MPO with time running from right to left:
