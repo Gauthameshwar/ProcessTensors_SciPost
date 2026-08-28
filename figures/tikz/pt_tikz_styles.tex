@@ -217,6 +217,24 @@
     line join=round,
     on background layer,
   },
+  % Prime tick at mid-stub: a thin, slightly tall slash through both rails.
+  PTLiouvilleLeg primed/.style={
+    PTLiouvilleLeg,
+    postaction={
+      decorate,
+      decoration={
+        markings,
+        mark=at position 0.5 with {
+          \fill[white] (-0.28mm,-1.12mm) rectangle (0.62mm,1.20mm);
+          \draw[
+            PTLabel,
+            line width=0.45pt,
+            line cap=round,
+          ] (-0.18mm,-0.98mm) -- (0.38mm,1.06mm);
+        }
+      }
+    },
+  },
   PTBondLeg/.style={
     draw=black,
     line width=\PTBondLW,

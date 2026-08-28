@@ -272,15 +272,15 @@
     % Open system slots: output on the right of each pair, input on the left
     \draw[PTLiouvilleLeg]
       (c-rho.west |- c-sy) -- ++(-\cSlot,0);
-    \draw[PTLiouvilleLeg]
+    \draw[PTLiouvilleLeg primed]
       (c-U10.east |- c-sy) -- ++(\cSlot,0);
     \draw[PTLiouvilleLeg]
       (c-U10.west |- c-sy) -- ++(-\cSlot,0);
-    \draw[PTLiouvilleLeg]
+    \draw[PTLiouvilleLeg primed]
       (c-U21.east |- c-sy) -- ++(\cSlot,0);
     \draw[PTLiouvilleLeg]
       (c-U21.west |- c-sy) -- ++(-\cSlot,0);
-    \draw[PTLiouvilleLeg]
+    \draw[PTLiouvilleLeg primed]
       (c-U32.east |- c-sy) -- ++(\cSlot,0);
     \draw[PTLiouvilleLeg]
       (c-U32.west |- c-sy) -- ++(-\cSlot,0) coordinate (c-open);
