@@ -24,6 +24,7 @@
 \usepackage{orcidlink}
 \usepackage{booktabs}
 \usepackage{xcolor}
+\usepackage{colortbl}
 \usepackage{float}
 \usepackage{caption}
 \usepackage{keyval}
@@ -402,65 +403,10 @@ We present ProcessTensors.jl, a Julia package for learning, constructing, and us
 \input{03_process_tensors}
 % =========================================================================
 
-
-% % =========================================================================
-% \section{Software architecture}
-% \label{sec:architecture}
-% % =========================================================================
-
-% There is no strict length limitation, but the authors are strongly encouraged to keep contents to the strict minimum necessary for peers to reproduce the research described in the paper.
-
-% \subsection{ITensor as the tensor-network substrate}
-
-% You are free to use dividers as you see fit.
-
-% \subsection{Hilbert- and Liouville-space objects}
-
-% Figures should only occupy the stricly necessary space, in any case individually fitting on a single page. Each figure item should be appropriately labeled and accompanied by a descriptive caption. {\bf SciPost does not accept creative or promotional figures or artist's impressions}; on the other hand, technical drawings and scientifically accurate representations are encouraged.
-
-% \subsection{Systems and environments}
-
-% \subsection{A backend-oriented process-tensor API}
-
-
-% % =========================================================================
-% \section{Process tensors as first-class tensor-network objects}
-% \label{sec:process-tensor}
-% % =========================================================================
-
-% \subsection{From a channel to a process}
-
-% \subsection{Anatomy of \texttt{ProcessTensor}}
-
-% \subsection{Building a small process tensor}
-
-% \subsection{Construction backends: dense reference and ACE}
-% \label{sec:builders}
-
-
 % =========================================================================
-\section{Quantum instruments}
-\label{sec:instruments}
+%%%%%%%%%%%%%%%%%%%%%% QUANTUM INSTRUMENTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{04_instruments}
 % =========================================================================
-
-\markedsubsection{\toctheory}{Operational meaning}
-
-\markedsubsection{\tocboth}{Instrument organisation in \texttt{ProcessTensors.jl}}
-
-\markedsubsection{\tocboth}{\texttt{InstrumentSeq}: a temporal analogue of \texttt{OpSum}}
-
-
-% =========================================================================
-\section{Contracting and evaluating processes}
-\label{sec:evaluation}
-% =========================================================================
-
-\markedsubsection{\tocboth}{General contraction with \texttt{evaluate\_process}}
-
-\markedsubsection{\tocboth}{Reduced dynamics with \texttt{evolve}}
-
-\markedsubsection{\toctheory}{Open process legs}
-
 
 % =========================================================================
 \section{Common process-tensor workflows}
@@ -474,14 +420,6 @@ We present ProcessTensors.jl, a Julia package for learning, constructing, and us
 \markedsubsection{\tocboth}{Probabilities and trace-non-preserving branches}
 
 \markedsubsection{\tocboth}{Multi-time correlation functions}
-
-
-% =========================================================================
-\section{Testers and enlarged interventions}
-\label{sec:testers}
-% =========================================================================
-
-\textbf{Status: planned for the paper release; API under development.}
 
 
 % =========================================================================

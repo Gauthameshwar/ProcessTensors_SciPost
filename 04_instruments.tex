@@ -1,0 +1,580 @@
+\section{Quantum instruments and multi-time experiments}
+\label{sec:quantum-instruments}
+
+Constructing a process tensor is only the first half of the story; the physics appears from it when we construct and contract the intermediate interventions of the system at each timestep. The process tensor constructed in the previous section is deliberately left as an abstract object with its system input and output legs open for later intervention. This is what makes the object reusable. The same PT-MPO can describe uninterrupted reduced dynamics, a controlled experiment, a post-selected measurement trajectory, or a multi-time correlation function; what changes between these calculations is not the process tensor, but the instruments contracted with its temporal legs. We first introduce these instruments in their strict operational sense, then explain the instrument interface and classification in \texttt{ProcessTensors.jl}, the lazy schedules that organise them, and the memory-bearing testers that correlate controls across time. The section concludes with two key functions that turn these ingredients into physical results: \texttt{evaluate\_process} and \texttt{evolve}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\markedsubsection{\toctheory}{Operational meaning of instruments}
+\label{subsec:instrument-operational-meaning}
+
+A quantum operation describes one possible transformation of a system, including the possibility that the transformation occurs only for a selected measurement outcome. For an outcome \(x\), it is a completely positive, trace-non-increasing map
+%
+\begin{equation}
+    \mathcal A_x : \mathcal B(\mathcal H_{\mathrm{in}})
+    \longrightarrow \mathcal B(\mathcal H_{\mathrm{out}}),
+    \qquad
+    \mathcal A_x(\rho)
+    =
+    \sum_{\mu} K_{x\mu}\rho K_{x\mu}^{\dagger},
+    \label{eq:instrument-operation-kraus}
+\end{equation}
+%
+with
+%
+\begin{equation}
+    \sum_{\mu}K_{x\mu}^{\dagger}K_{x\mu}\leq \mathbb I.
+    \label{eq:instrument-tni}
+\end{equation}
+%
+Here, \(\mu\) labels the unresolved Kraus components associated with that outcome. Complete positivity guarantees that
+%
+\begin{equation}
+    (\mathcal A_x\otimes\mathcal I_R)(X)\geq0
+    \qquad\text{for every }X\geq0
+    \label{eq:instrument-cp}
+\end{equation}
+%
+and for an arbitrarily large untouched reference \(R\). This requirement is essential in a multi-time setting: the system on which an intervention acts may already be correlated with an environment, an ancillary memory, or other degrees of freedom that are not part of the local description. The inequality in Eq.~\eqref{eq:instrument-tni} then ensures that the trace of the unnormalised output can be interpreted as the probability of the selected event,
+%
+\begin{equation}
+    p(x)=\operatorname{Tr}[\mathcal A_x(\rho)],
+    \qquad
+    \rho_x=\frac{\mathcal A_x(\rho)}{p(x)}
+    \quad\text{when }p(x)>0.
+    \label{eq:instrument-outcome-state}
+\end{equation}
+%
+
+A quantum instrument is the complete family of such outcome maps,
+%
+\begin{equation}
+    \mathfrak I=\{\mathcal A_x\}_{x\in\mathsf X},
+    \qquad
+    \sum_{x\in\mathsf X}\mathcal A_x
+    \text{ is completely positive and trace preserving},
+    \label{eq:quantum-instrument-family}
+\end{equation}
+%
+or, equivalently,
+%
+\begin{equation}
+    \sum_{x,\mu}K_{x\mu}^{\dagger}K_{x\mu}=\mathbb I.
+    \label{eq:instrument-normalisation}
+\end{equation}
+%
+The selected map \(\mathcal A_x\) is generally probabilistic and trace decreasing, while the
+non-selective operation \(\sum_x\mathcal A_x\), obtained by forgetting the outcome, is
+deterministic and trace preserving. This distinction between an individual event and the
+complete experiment is the central operational content of the instrument formalism
+\cite{DaviesLewis1970,Ozawa1984}.
+
+Most familiar laboratory operations fit into this hierarchy. An initial preparation has no incoming quantum state and is formally represented as a map from the one-dimensional space \(\mathbb C\) to the prepared state, $\mathcal P_{\rho_0}(\lambda)=\lambda\rho_0,$ where \(\lambda\) is a scalar weight, normally equal to one for a deterministic preparation. A unitary pulse and a noise channel are deterministic two-sided maps from one system state to another. A measurement outcome \(x\), by contrast, is represented by a positive operator \(E_x\), called a quantum effect. The effects associated with all possible outcomes form a positive operator-valued measure (POVM),
+%
+\begin{equation}
+    E_x\geq0,
+    \qquad
+    \sum_x E_x=\mathbb I,
+\end{equation}
+%
+so each \(E_x\) is referred to, henceforth, as a POVM element and satisfies \(0\leq E_x\leq\mathbb I\). For an input state \(\rho\), this POVM element assigns the outcome probability
+%
+$$
+    p(x)=\operatorname{Tr}(E_x\rho).
+$$
+%
+Combining the POVM element with a newly prepared state \(\sigma_x\) gives the measure-and-prepare operation
+%
+\begin{equation}
+\mathcal A_x^{\mathrm{MP}}(\rho)
+=
+\operatorname{Tr}(E_x\rho),\sigma_x,
+\label{eq:measure-and-prepare}
+\end{equation}
+%
+which explicitly breaks the system channel carrying information from the past while allowing the environment to retain a conditional memory of the outcome.
+
+An observable should be distinguished from an instrument outcome. A positive effect \(E_x\) defines a physical event, whereas a general Hermitian observable \(O=\sum_x o_xE_x\) defines the weighted combination
+%
+\begin{equation}
+    \langle O\rangle=\sum_x o_xp(x).
+    \label{eq:observable-from-outcomes}
+\end{equation}
+%
+The direct insertion of \(O\) into a tensor-network contraction is therefore a convenient linear probe, not necessarily a completely positive outcome map. The package supports both uses: physical operations are used to describe experimental trajectories, while general operator insertions efficiently evaluate expectation values and correlation functions.
+
+For a sequence of outcomes \(\boldsymbol{x}=(x_0,\ldots,x_{N-1})\), the process tensor in Eq.~\eqref{eq:process-tensor-operational-definition} returns the unnormalised conditional state
+%
+\begin{equation}
+    \widetilde\rho_S^{(\boldsymbol{x})}(t_N)
+    =
+    \mathcal T_{N:0}
+    \bigl[
+        \mathcal A_{x_{N-1}}^{(N-1)},\ldots,
+        \mathcal A_{x_0}^{(0)}
+    \bigr],
+    \qquad
+    p(\boldsymbol{x})
+    =
+    \operatorname{Tr}
+    \widetilde\rho_S^{(\boldsymbol{x})}(t_N).
+    \label{eq:instrument-trajectory}
+\end{equation}
+%
+Summing over every outcome at every time replaces the selected maps by deterministic CPTP operations and restores unit total probability. Thus, a process tensor itself is causally normalised, but a trajectory obtained from it need not have unit trace. This is precisely the distinction anticipated at the end of Sec.~3.1 and formalised by the operational process-tensor framework \cite{Pollock2018Framework}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\markedsubsection{\tocjulia}{Instrument organisation in \texttt{ProcessTensors.jl}}
+\label{subsec:instrument-organisation}
+ 
+The package uses the word \emph{instrument} slightly more broadly than the strict definition in Eq.~\eqref{eq:quantum-instrument-family}. An \texttt{AbstractInstrument} is any lazily specified tensor that can be inserted on the system legs of a \texttt{ProcessTensor}. This interface includes physical preparations and channels, but also observable insertions, arbitrary left--right actions, open-leg instructions, and user-supplied tensors. The common interface is computational: it tells the contraction how to materialise an object on the correct PT indices. As of v0.3.0, complete positivity and trace preservation are not inferred for an arbitrary custom tensor, so users who construct a physical protocol remain responsible for supplying physical maps.
+%
+\begin{figure}[t]
+    \centering
+    \fbox{%
+        \begin{minipage}{0.94\linewidth}
+            \centering
+            \textbf{Placeholder: instrument and tester anatomy}\\[0.7em]
+            \begin{tabular}{@{}c@{\hspace{1.2em}}c@{\hspace{1.2em}}c@{}}
+                \textbf{Input single leg} & \textbf{Output single leg} & \textbf{Two-leg map}\\
+                tensor on \(i_k\) & tensor on \(o_k\) & tensor on \(o_{k-1},i_k\)\\[0.4em]
+                \(\lvert\rho\rangle\!\rangle^{i_k}\) &
+                \(\langle\!\langle E\rvert_{o_k}\) &
+                \([\mathcal A_k]^{i_k}_{o_{k-1}}\)
+            \end{tabular}
+            \\[1.2em]
+            \textbf{Tester row:} draw a system wire coupled repeatedly to one ancillary
+            memory wire \(a_0\to a_1\to\cdots\to a_N\), with joint maps
+            \(\mathcal C_k^{SA}\) at selected times and the equation
+            \(p(y\vert\Upsilon)=T_y\star\Upsilon\) underneath.
+            \\[0.7em]
+            Each tensor diagram should show the corresponding \(tstep\) and prime-level
+            labels next to its open indices. Time runs from right to left, matching
+            Figs.~5 and~6.
+        \end{minipage}%
+    }
+    \caption{Anatomy of the instrument objects contracted with a PT-MPO. The top row distinguishes an input-only preparation, an output-only effect, and a two-leg operation that connects adjacent intervention slots. The lower row shows a tester whose ancillary wire persists between several system--tester interactions and can therefore correlate the controls applied at different times.}
+    \label{fig:instrument-anatomy}
+\end{figure}
+%
+
+Two abstract subtypes encode the first structural distinction:
+\texttt{SingleLegInstrument} and \texttt{TwoLegInstrument}. The first occupies one
+process-tensor leg and therefore begins or terminates a system wire. The second joins an output of one PT core to the input of the next and acts as a map between adjacent intervention slots. Using the notation of Eq.~\eqref{eq:pt-mpo-decomposition}, the unprimed system index \(o_k\) is the output of the core \(Q^{[k]}\), whereas the primed index \(i_k\) is its input. Their ITensor tags contain the same \texttt{tstep=k}; their prime levels distinguish the two roles,
+%
+\begin{equation}
+    \operatorname{plev}(o_k)=0,
+    \qquad
+    \operatorname{plev}(i_k)=1.
+    \label{eq:instrument-prime-convention}
+\end{equation}
+%
+A schedule entry at logical step \(k\geq1\) connects \(o_{k-1}\) to \(i_k\),
+%
+\begin{equation}
+    [\mathcal A_k]^{\,i_k}_{o_{k-1}},
+    \label{eq:two-leg-instrument-indices}
+\end{equation}
+%
+while the initial preparation and terminal effect have only one leg,
+%
+\begin{equation}
+    [\mathcal P_{\rho_0}]^{i_0}=\lvert\rho_0\rangle\!\rangle^{i_0},
+    \qquad
+    [\mathcal M]_{o_{N-1}}=\langle\!\langle M\rvert_{o_{N-1}}.
+    \label{eq:single-leg-instrument-indices}
+\end{equation}
+%
+Figure~\ref{fig:instrument-anatomy} collects these cases and places them beside the persistent
+ancillary wire used by a tester.
+
+The single-leg types are intentionally restrictive where the physics fixes their orientation. \texttt{StatePreparation} acts only on an input leg, and \texttt{TraceOut} acts only on an output leg by inserting the vectorised identity effect \(\langle\!\langle\mathbb I\rvert\). Likewise, \texttt{OpenInput} and \texttt{OpenOutput} are fixed to prime levels one and zero, respectively. \texttt{ObservableMeasurement} targets an output leg by default, but may be placed on an input leg with \texttt{leg\_plev=1}; the latter is useful when an operator must act from the right in a correlation-function schedule. The two-leg constructors validate the neighbouring-time rule in Eq.~\eqref{eq:two-leg-instrument-indices} whenever concrete PT sites are supplied.
+
+Table~\ref{tab:instrument-dictionary} gives the compact constructor dictionary needed for the remainder of the paper. These constructors store Hilbert-space states, Hamiltonians, observables, or maps without immediately producing a dense tensor. The corresponding Liouville-space \texttt{ITensor} is created only after a schedule is bound to a specific \texttt{ProcessTensor} in a contraction function.
+%
+\begin{table}[t]
+    \centering
+    \small
+    {\rowcolors{2}{black!8}{white}
+    \begin{tabular}{@{}p{0.35\linewidth}p{0.15\linewidth}p{0.40\linewidth}@{}}
+        \hline
+        Constructor & PT legs & Role in a contraction \\
+        \hline
+        \texttt{state\_preparation(\(\rho\))} & input & Initial or replacement state \\
+        \texttt{observable\_measurement(\(O\))} & output/input & Effect or general observable insertion \\
+        \texttt{trace\_out()} & output & Deterministic identity effect \\
+        \texttt{identity\_operation()} & output--input & Identity channel between adjacent slots \\
+        \texttt{unitary\_propagation(\(H\), sites)} & output--input & Control generated by a Hamiltonian; \(H(t)\) is also accepted \\
+        \texttt{left\_right\_operator(\(A,B\))} & output--input & Linear map \(\rho\mapsto A\rho B\) \\
+        \texttt{left\_action}, \texttt{right\_action} & output--input & Convenient one-sided operator actions \\
+        \texttt{ProductInstrument} & separate pair & Output effect multiplied by an input preparation \\
+        \texttt{custom\_twoleg\_}\newline\texttt{instrument(...)} & output--input & User-supplied dense Liouville map \\
+        \texttt{open\_output()}, \texttt{open\_input()} & one open leg & Keep a selected output or input unresolved \\
+        \texttt{open\_inout()} & two open legs & Keep both legs unresolved and independent \\
+        \hline
+    \end{tabular}}
+    \caption{Principal lazy instrument constructors in \texttt{ProcessTensors.jl}. ``PT legs''
+    specifies which temporal indices the materialised object occupies.}
+    \label{tab:instrument-dictionary}
+\end{table}
+%
+Several physicality distinctions in Table~\ref{tab:instrument-dictionary} are worth retaining. \texttt{identity\_operation()} and unitary propagation are CPTP. A normalised density operator defines a deterministic preparation, and a positive effect bounded by the identity defines a probabilistic measurement outcome. By contrast, the general map \(\rho\mapsto A\rho B\) is not necessarily completely positive, an arbitrary observable is not necessarily an effect, and a \texttt{CustomTwoLegInstrument} is not automatically checked for complete positivity or trace preservation. A \texttt{ProductInstrument} is produced by multiplying an output-side and an input-side single-leg object; for a POVM measurement and a normalised preparation it realises the causal break in Eq.~\eqref{eq:measure-and-prepare}.
+
+\texttt{open\_in, open\_out, open\_inout} constructors are bookkeeping operations rather than physical maps to keep track of which legs we wish to leave uncontracted by the end of a process evaluation. They materialise as the scalar tensor \texttt{ITensor(1.0)} during contraction, deliberately leaving the claimed PT indices uncontracted. They are different from \texttt{identity\_operation()}. The former retains two independent indices, whereas the latter contracts them through an identity channel. Selective opening is important because \texttt{evaluate\_process} returns a dense tensor whenever several system legs remain. If \(m\) Liouville legs of a \(d\)-dimensional system are open, the dense object contains \(d^{2m}\) complex entries. For a qubit, sixteen open legs already require \(4^{16}\) complex numbers, or \(64\,\mathrm{GiB}\) in \texttt{ComplexF64} before tensor overhead. Open-leg schedules should therefore expose only the temporal indices required by the calculation.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\markedsubsection{\tocjulia}{\texttt{InstrumentSeq}: a temporal analogue of \texttt{OpSum}}
+\label{subsec:instrument-seq}
+
+An experiment rarely contains only one operation. \texttt{InstrumentSeq} is the lazy,
+time-indexed schedule that records which instrument is inserted at every logical timestep. Its
+three fields are
+\begin{equation}
+    \texttt{InstrumentSeq}
+    =
+    (\texttt{default},\texttt{entries},\texttt{nsteps}).
+    \label{eq:instrument-seq-fields}
+\end{equation}
+The \texttt{default} fills ordinary slots for which no explicit action is given;
+\texttt{entries} is a sparse dictionary of overrides; and \texttt{nsteps} sets the valid range of
+schedule labels. The initial slot \texttt{tstep=0} is exceptional: it has no default because an
+initial system state is not part of the process tensor, and only a state preparation may be added
+there. The terminal slot \texttt{tstep=pt.nsteps} acts on the final output
+\(o_{N-1}\). Consequently, an \(N\)-core process materialises \(N+1\) instrument tensors: one
+preparation, \(N-1\) intermediate operations, and one terminal action.
+
+The analogy with \texttt{OpSum} is one of construction rather than algebra. Both objects let a
+user assemble a calculation incrementally with \texttt{add!} while postponing the expensive
+tensor construction. An \texttt{InstrumentSeq}, however, is not a sum: each integer labels one
+experimental slot, an explicit entry replaces the default at that slot, and the entries are
+ordered in time. The internal \texttt{create\_instruments} step binds every lazy object to the
+input and output sites of the supplied PT-MPO and performs the Hilbert-to-Liouville conversion
+only when contraction begins.
+
+The three-step process \texttt{pt\_dense} from Sec.~3.5 can be probed by preparing an up spin,
+applying an additional control Hamiltonian during the second bridge, and reading out
+\(S^z\) at the final output:
+
+\begin{juliacode}[
+    caption={A lazy instrument schedule for a controlled three-step experiment.},
+    label={lst:instrument-seq-example},
+]
+psi0 = MPS(system_sites, ["Up"])
+rho0 = to_dm(psi0)
+
+H_control = OpSum()
+H_control += 0.4, "Sy", 1
+
+O_final = OpSum()
+O_final += 1.0, "Sz", 1
+
+seq = InstrumentSeq(
+    default=identity_operation(),
+    nsteps=pt_dense.nsteps,
+)
+add!(seq, state_preparation(rho0), 0)
+add!(seq, unitary_propagation(H_control, system_sites), 2)
+add!(seq, observable_measurement(O_final), pt_dense.nsteps)
+\end{juliacode}
+
+The schedule corresponds to the scalar contraction
+\begin{equation}
+    z
+    =
+    \langle\!\langle S^z\rvert_{o_2}
+    Q^{[2]}
+    \mathcal U_{\mathrm c}
+    Q^{[1]}
+    \mathcal I
+    Q^{[0]}
+    \lvert\rho_0\rangle\!\rangle^{i_0},
+    \label{eq:instrument-seq-example}
+\end{equation}
+where contraction over the temporal memory indices \(\chi_1,\chi_2\) and the joined system
+indices is implicit. The default identity supplies \(\mathcal I\) at step 1, the explicit entry at
+step 2 supplies \(\mathcal U_{\mathrm c}\), and the terminal observable closes the last output.
+Replacing the terminal observable by \texttt{open\_output()} turns the same history into a
+final reduced state; changing an
+intermediate entry to a measurement and preparation pair implements a causal break. The
+PT-MPO itself is unchanged in all three experiments.
+
+During materialisation, consecutive single-leg output and input entries form their two-leg
+product. This allows a measurement at one side of a temporal cut and a
+preparation at the other to be written separately while retaining the product
+structure in Eq.~\eqref{eq:measure-and-prepare}. Conversely, incompatible placements are
+rejected before the costly contraction begins: an unpaired physical input action, a two-leg
+object at the terminal slot, or a timestep beyond \texttt{nsteps} produces an informative
+\texttt{ArgumentError} rather than a malformed tensor network.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\markedsubsection{\tocboth}{Memory-bearing process testers}
+\label{subsec:process-testers}
+
+A product sequence of instruments specifies independent time-local choices. The most general
+experiment on a multi-time process can do more: it may preserve an ancillary quantum system
+between interventions, correlate a later control with an earlier interaction, and measure the
+combined record only at the end. In the language of quantum combs, such an experimental
+strategy is a \emph{tester} \cite{Chiribella2009}. A tester outcome \(y\) is
+represented by a positive multi-time operator \(T_y\), and its probability on the process Choi
+operator \(\Upsilon\) is given by the generalised Born rule
+\begin{equation}
+    p(y\vert\Upsilon)=T_y\star\Upsilon,
+    \qquad
+    \sum_yT_y=T_{\mathrm{det}},
+    \label{eq:tester-generalised-born-rule}
+\end{equation}
+where \(\star\) denotes the link-product contraction, with transpositions fixed by the Choi
+convention of Sec.~3.2, and \(T_{\mathrm{det}}\) is a deterministic causally normalised tester.
+
+Operationally, a tester admits a sequential realisation. An ancilla \(A\) is prepared in a state
+\(\rho_A\), retained across the experiment, and acted on by joint maps
+\begin{equation}
+    \mathcal C_k^{SA}:
+    \mathcal B(\mathcal H_S\otimes\mathcal H_A)
+    \longrightarrow
+    \mathcal B(\mathcal H_S\otimes\mathcal H_A).
+    \label{eq:tester-joint-map}
+\end{equation}
+The memory output of \(\mathcal C_k^{SA}\) becomes the memory input of
+\(\mathcal C_{k+1}^{SA}\), producing the lower row of
+Fig.~\ref{fig:instrument-anatomy}. If the ancilla is trivial and every intervention factorises,
+then
+\begin{equation}
+    T_y=\bigotimes_k\mathcal A^{(k)}_{y_k}
+    \label{eq:product-tester}
+\end{equation}
+and one recovers an ordinary product instrument sequence. A non-trivial persistent ancilla can
+instead produce a correlated tester that cannot generally be decomposed in this way. Its memory
+belongs to the experimental control strategy and should not be confused with the environmental
+memory carried by the PT bonds \(\chi_k\): the former is chosen and accessible, while the latter
+summarises the inaccessible bath influence.
+
+The package separates these two roles explicitly. A \texttt{Tester} stores one ancillary site and
+its initial state; it is the persistent memory carrier, not a complete probability-valued tester by
+itself. A \texttt{TesterSeq} stores the time-dependent tester-only or joint actions. The system
+controls remain in an ordinary \texttt{InstrumentSeq}, and the terminal system readout completes
+the protocol. This separation also prevents tester actions from being accidentally added to an
+\texttt{InstrumentSeq}.
+
+\begin{juliacode}[
+    caption={A single-qubit tester memory and one joint system--tester interaction.},
+    label={lst:tester-seq-example},
+]
+tester_sites = siteinds("Qubit", 1)
+psi_A0 = MPS(tester_sites, ["0"])
+rho_A0 = to_dm(psi_A0)
+memory = tester(tester_sites, rho_A0)
+
+H_SA = OpSum()
+H_SA += 0.25, "Sz", 1, "Z", 2
+
+tester_seq = TesterSeq(nsteps=pt_dense.nsteps)
+add!(
+    tester_seq,
+    joint_propagation(H_SA, system_sites, tester_sites),
+    2,
+)
+\end{juliacode}
+
+Here the site ordering inside \texttt{H\_SA} follows
+\texttt{vcat(system\_sites, tester\_sites)}: site 1 is the system spin and site 2 is the tester
+qubit. The default \texttt{tester\_identity()} carries the ancillary state through every
+unspecified interval. \texttt{tester\_propagation} and \texttt{tester\_unitary} act only on the
+ancilla, whereas \texttt{joint\_propagation} and \texttt{joint\_unitary} couple it to the system.
+Joint actions are inserted symmetrically around the corresponding PT core; a Hamiltonian map
+uses two half-time propagators, while a supplied unitary uses a validated unitary square root.
+A joint action is not allowed at \texttt{tstep=0}, where no preceding system output exists.
+
+The current implementation supports one tester site and one system site in a joint action.
+During \texttt{evaluate\_process}, the ancillary wire is traced after the final interval, so a
+system effect or observable supplies the scalar readout. \texttt{evolve} can additionally return
+the tester and joint system--tester states. A general final POVM acting directly on the tester is
+therefore not yet a separate first-class schedule object; information stored in the ancilla may be
+retrieved through a final joint control or analysed from the returned tester trajectory. This
+boundary keeps the present API precise while leaving a natural route to more general tester
+measurements.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\markedsubsection{\tocjulia}{Evaluating and evolving a process tensor}
+\label{subsec:evaluate-and-evolve}
+
+The objects introduced above are completed by \texttt{evaluate\_process}. Given a PT-MPO
+\(\Upsilon\) and a schedule \(\mathbf A\), the function validates the claimed temporal legs,
+materialises each lazy instrument on the corresponding PT sites, optionally compiles the tester
+memory wire, and contracts the resulting network chronologically. Abstractly,
+\begin{equation}
+    R_{\mathbf A}
+    =
+    \operatorname{Contr}
+    \!\left[
+        \Upsilon,
+        \mathcal P_{\rho_0},
+        \mathcal A_1,\ldots,\mathcal A_{N-1},
+        \mathcal M_N
+    \right],
+    \label{eq:evaluate-process-contraction}
+\end{equation}
+where the nature of \(R_{\mathbf A}\) is determined by the system indices that the schedule
+leaves unresolved. Figure~\ref{fig:evaluate-evolve-schedules} shows the three return cases and
+the related sequence of snapshot contractions used by \texttt{evolve}.
+
+\begin{table}[t]
+    \centering
+    \small
+    \begin{tabular}{@{}p{0.20\linewidth}p{0.29\linewidth}p{0.42\linewidth}@{}}
+        \hline
+        Open system legs & Julia return type & Interpretation \\
+        \hline
+        0 & \texttt{ComplexF64} & Probability, trace, expectation value, or correlation scalar \\
+        1 & \texttt{MPS\{Liouville\}} & Reduced state-like Liouville vector \\
+        2 or more & \texttt{ITensor} & Dense partially contracted multi-time object \\
+        \hline
+    \end{tabular}
+    \caption{Return type of one \texttt{evaluate\_process} call. A batch of fully contracted
+    schedules returns one \texttt{Vector\{ComplexF64\}}.}
+    \label{tab:evaluate-return-types}
+\end{table}
+
+A result with several open legs can be interpreted mathematically as a reduced or partially
+contracted process tensor, but its present Julia type is a dense \texttt{ITensor}, not a
+\texttt{ProcessTensor}. This distinction matters because the returned object no longer carries
+the PT-MPO metadata or temporal compression of the original process. A fully contracted result
+is a probability only when the terminal and intermediate insertions form a physical instrument;
+with a general observable or left--right action, the same scalar may instead be an expectation
+value or correlation function.
+
+The function \texttt{open\_leg\_info} predicts which input and output times remain unresolved
+before a contraction is attempted. In the following schedule, \texttt{open\_inout()} at step 2
+leaves \(o_1\) and \(i_2\) independent while the initial preparation and final trace close the
+remaining boundary legs:
+
+\begin{julialistingpair}[
+    caption={Inspecting the open legs before constructing a dense reduced process.},
+    label={lst:open-leg-info},
+]
+\begin{juliacode}[paired]
+seq_open = InstrumentSeq(
+    default=identity_operation(),
+    nsteps=pt_dense.nsteps,
+)
+add!(seq_open, state_preparation(rho0), 0)
+add!(seq_open, open_inout(), 2)
+add!(seq_open, trace_out(), pt_dense.nsteps)
+
+info = open_leg_info(pt_dense, seq_open)
+reduced = evaluate_process(pt_dense, seq_open; progress=false)
+
+println("open input tsteps: ", info.open_in)
+println("open output tsteps: ", info.open_out)
+println("expected open legs: ", info.n_open_expected)
+println("open dimensions: ", info.open_dims)
+println("return type: ", typeof(reduced))
+\end{juliacode}
+\begin{juliaoutput}[paired]
+open input tsteps: [2]
+open output tsteps: [1]
+expected open legs: 2
+open dimensions: [4, 4]
+return type: ITensor
+\end{juliaoutput}
+\end{julialistingpair}
+
+This diagnostic turns the scaling in Eq.~\eqref{eq:open-leg-scaling} into an immediate memory
+estimate. For example, the dimensions in Listing~\ref{lst:open-leg-info} predict a
+\(4\times4\) dense object before the PT contraction begins. The helper also reports missing
+input or output coverage, allowing malformed schedules to be detected independently of the
+eventual return type.
+
+\begin{figure}[t]
+    \centering
+    \fbox{%
+        \begin{minipage}{0.94\linewidth}
+            \centering
+            \textbf{Placeholder: evaluation and evolution schedules}\\[0.7em]
+            \textbf{Top panel -- \texttt{evaluate\_process}:}
+            show the same PT-MPO contracted with three schedules. Close every system leg for
+            a scalar; leave only the final \(o_{N-1}\) open for a Liouville state; leave
+            \(o_{k-1}\) and \(i_k\) open for a dense two-leg reduced process. Mark each return
+            type beside the corresponding network.
+            \\[1.2em]
+            \textbf{Bottom panel -- one \texttt{evolve} snapshot at \(k\):}
+            show the preparation and scheduled controls through the past, keep \(o_k\) open,
+            and close every later core with
+            \(\langle\!\langle\mathbb I\rvert_{o_j}\otimes
+            \lvert\mathbb I/d\rangle\!\rangle^{i_{j+1}}\).
+            Draw the right closure as one shaded backward environment to indicate the default
+            linear-cost contraction. Time runs from right to left.
+        \end{minipage}%
+    }
+    \caption{Process evaluation and reduced-dynamics schedules. The upper panel distinguishes
+    fully and partially contracted uses of \texttt{evaluate\_process}. The lower panel shows the
+    conceptual schedule that extracts one reduced state during \texttt{evolve}: past controls
+    are retained, the desired system output is left open, and the unused future is closed by
+    deterministic CPTP operations.}
+    \label{fig:evaluate-evolve-schedules}
+\end{figure}
+
+The essential software advantage is now visible. Once \texttt{pt\_dense} or an ACE-compressed
+PT has been constructed, different sequences can be evaluated without rebuilding the
+environmental influence. A terminal trace tests normalisation, a terminal observable gives an
+expectation value, a selected positive effect gives an outcome probability, an intermediate
+measurement--preparation pair gives a conditional trajectory, and selected open legs expose a
+reduced map. The same mechanism also supports the multi-time left--right insertions used by
+correlation functions. In short,
+\begin{equation}
+    \boxed{
+    \text{one process tensor}
+    +
+    \text{different instrument sequences}
+    =
+    \text{different multi-time experiments}}
+    \label{eq:pt-reuse-principle}
+\end{equation}
+and the expensive bath construction is paid only once.
+
+For the common special case in which the desired output is the reduced system state at every
+stored timestep, repeatedly assembling schedules by hand would be unnecessary. The
+\texttt{evolve} interface performs these contractions and returns both Liouville- and
+Hilbert-space trajectories:
+
+\begin{juliacode}[
+    caption={Reduced dynamics from the same process tensor and initial preparation.},
+    label={lst:evolve-example},
+]
+trajectory = evolve(pt_dense, rho0; progress=false)
+
+times = trajectory.times
+rho_liouville = trajectory.states_liouville
+rho_hilbert = trajectory.states_hilbert
+\end{juliacode}
+
+The returned arrays contain one snapshot for each stored PT core, ordered by the logical
+times in \texttt{trajectory.times}. A custom \texttt{InstrumentSeq} may be supplied instead of
+\texttt{rho0} alone when the trajectory includes control operations. With a tester present,
+\texttt{states\_liouville} and \texttt{states\_hilbert} still contain the reduced system states;
+\texttt{tester\_states\_\{liouville,hilbert\}} are returned by default, and the joint fields
+\texttt{joint\_states\_\{liouville,hilbert\}} can be requested with
+\texttt{return\_joint=true}.
+
+Figure~\ref{fig:evaluate-evolve-schedules} depicts the schedule for one snapshot. The past
+preparation and controls are retained, the required output is left open, and every later core is
+discarded through the disconnected CPTP closure
+\begin{equation}
+    \langle\!\langle\mathbb I\rvert_{o_j}
+    \otimes
+    \lvert\mathbb I/d\rangle\!\rangle^{i_{j+1}}.
+    \label{eq:evolve-future-closure}
+\end{equation}
+The reference option \texttt{contraction=:evaluate} constructs precisely this full schedule and
+calls \texttt{evaluate\_process} once per snapshot, giving an \(O(N^2)\) contraction in the
+number of PT cores. The default \texttt{contraction=:closures} evaluates the same trajectory
+with one backward sweep of future closures followed by one forward prefix contraction,
+reducing the timestep scaling to \(O(N)\). For a compressed PT, these backward closure tensors
+are essential: a temporal bond \(\chi_k\) is an effective memory basis and cannot in general be
+terminated by inserting a bare bath trace vector.
+
+Together, \texttt{InstrumentSeq}, \texttt{TesterSeq}, \texttt{evaluate\_process}, and
+\texttt{evolve} complete the operational layer of \texttt{ProcessTensors.jl}. The construction
+algorithms of Sec.~3 determine how environmental influence is encoded; the interfaces developed
+here determine which experiment is asked of that influence. Subsequent applications can
+therefore concentrate on physical questions rather than on rebuilding or manually contracting
+the underlying temporal network.
