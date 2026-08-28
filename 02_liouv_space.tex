@@ -1,13 +1,4 @@
-% Liouville-space foundations for the ProcessTensors.jl SciPost manuscript.
-% This file is intended to be included from the main manuscript with \input.
-%
-%
-% The boxed figure placeholders are deliberately compile-safe. Each names the
-% intended future TikZ source and contains a drawing brief that can be replaced
-% by \input{figures/<name>.tikz} without changing the surrounding discussion,
-% caption, or label.
-
-\section{Liouville-space and tensor-network foundations}
+\section{From tensor diagrams to Liouville-space MPS and MPOs}
 \label{sec:liouville-foundations}
 
 The process tensor is a map acting on other maps. Before constructing such an object, it is useful to place density matrices and quantum operations on equal footing. Moving to the Liouville space does precisely this: density matrices become state-like vectors, while operations on density matrices become ordinary linear operators. This change of language is especially natural for tensor networks, because the same ideas can be read in three equivalent ways---as an equation, as a tensor diagram, and as the corresponding \texttt{ITensor} code. We develop these three descriptions together below. Our graphical conventions are adapted from the open-system tensor calculus of Ref.~\cite{Wood2015}, with time and contractions drawn from right to left to match the convention used throughout this paper. In case the readers are not familiar with ITensors and their notations of sites and indices, they are encouraged to read the documentation of the ITensor library [\textcolor{red}{cite ITensor docs, and also the original papers}]. Alternatively, they can also go through the tutorials in the stable docs of our package [\textcolor{red}{add the link to the stable docs}].
