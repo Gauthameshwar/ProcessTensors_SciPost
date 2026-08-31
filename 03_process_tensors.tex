@@ -179,7 +179,19 @@ Despite acting on operations rather than directly on states, a physical process 
 
 Second, the process tensor is \emph{completely positive}. Inserting completely positive operations at its open times must produce a positive final state, even when those operations act jointly on the system and an arbitrary untouched ancilla. This is the multi-time counterpart of Eq.~\eqref{eq:channel-complete-positivity}. It guarantees that the process remains physically meaningful when it is embedded inside a larger circuit, rather than only for the isolated sequence used to define it.
 
-Finally, the process tensor is \emph{causal}. A choice made at a later time cannot alter statistics already recorded at an earlier time. Operationally, once the future slots are filled with deterministic trace-preserving operations and their outputs are discarded, the probabilities assigned to the earlier interventions cannot depend on which future operations were chosen. This no-signalling-from-the-future condition also supplies the appropriate multi-time notion of normalisation: every deterministic sequence must preserve total probability. In the Choi representation it becomes a hierarchy of partial-trace constraints, which we introduce in the following subsection. Together, linearity, complete positivity, and causality distinguish a physical time-ordered process from an arbitrary multilinear tensor with matching dimensions.
+Finally, the process tensor is \emph{causal}. A choice made at a later time cannot alter statistics already recorded at an earlier time. Operationally, once the future slots are filled with deterministic trace-preserving operations and their outputs are discarded, the reduced state (or outcome statistics) at time \(t_k\) cannot depend on which future operations were chosen:
+%
+\begin{equation}
+    \operatorname{Tr}_{>k}\,
+    \mathcal T_{n:0}
+    \bigl[\mathcal A_{n-1},\ldots,\mathcal A_0\bigr]
+    =
+    \mathcal T_{k:0}
+    \bigl[\mathcal A_{k-1},\ldots,\mathcal A_0\bigr],
+    \label{eq:process-tensor-causality}
+\end{equation}
+%
+for every \(k\) and every pair of future CPTP fillings of the remaining slots. This no-signalling-from-the-future condition also supplies the appropriate multi-time notion of normalisation: every deterministic sequence must preserve total probability. In the Choi representation it becomes a hierarchy of partial-trace constraints, which we introduce in the following subsection. Together, linearity, complete positivity, and causality distinguish a physical time-ordered process from an arbitrary multilinear tensor with matching dimensions.
 
 A point worth emphasising is that an individual trajectory selected from a process tensor need not be deterministic. An operation inserted at an intermediate time may represent a probabilistic event, which would then, reduce the trace of the outcome quantum state. Unit trace is determined by the choice of instruments, and so, trace-preserving trajectory is not a requirement for a process tensor. We return to this distinction in Sec.~\ref{sec:quantum-instruments}, where instruments are defined as families of completely positive maps that need not preserve the trace individually, while the complete experiment remains CPTP.
 
