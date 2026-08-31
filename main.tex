@@ -409,47 +409,67 @@ We present ProcessTensors.jl, a Julia package for learning, constructing, and us
 % =========================================================================
 
 % =========================================================================
-\section{Common process-tensor workflows}
+\section{Examples of process-tensor workflows}
 \label{sec:workflows}
 % =========================================================================
 
-\markedsubsection{\tocjulia}{Final reduced density matrices}
+\markedsubsection{\tocjulia}{Reduced dynamics and observable trajectories}
 
-\markedsubsection{\tocjulia}{Observable expectation values}
+\markedsubsection{\tocboth}{Probabilistic measurements and conditional states}
 
-\markedsubsection{\tocboth}{Probabilities and trace-non-preserving branches}
+\markedsubsection{\tocboth}{Two-time correlation functions}
 
-\markedsubsection{\tocboth}{Multi-time correlation functions}
-
-
-% =========================================================================
-\section{Characterising process tensors and quantum memory}
-\label{sec:characterisation}
-% =========================================================================
-
-\textbf{Section lead: Aaron Sander.  The text below is a structural placeholder and
-should not be read as claiming currently released package functionality.}
+\markedsubsection{\tocjulia}{General multi-time experiments}
 
 
 % =========================================================================
-\section{Validation and ACE benchmarks}
+\section{Diagnosing memory in process tensors}
+\label{sec:memory-diagnosis}
+% =========================================================================
+
+\markedsubsection{\toctheory}{Temporal cuts and memory spaces}
+
+\markedsubsection{\tocboth}{Memory spectrum and temporal compressibility}
+
+\markedsubsection{\tocboth}{Memory diagnosis in a non-Markovian example}
+
+
+% =========================================================================
+\section{Benchmarks of the ACE algorithm}
 \label{sec:benchmarks}
 % =========================================================================
 
-\markedsubsection{\tocboth}{Correctness against dense and exact references}
+% \markedsubsection{\tocboth}{Correctness against dense and exact references}
 
-\markedsubsection{\tocboth}{Compression accuracy and temporal bond dimension}
+% \markedsubsection{\tocjulia}{Compression accuracy and temporal bond dimensions}
 
-\markedsubsection{\tocjulia}{Runtime and memory scaling}
+% \markedsubsection{\tocjulia}{Scaling with bath size and process duration}
 
-\markedsubsection{\tocboth}{Comparison with the C++ ACE toolkit}
+% \subsection{Comparison with the C++ ACE implementation}
+
 
 % =========================================================================
-\section{Conclusion and outlook}
+\section{Extensibility of \texttt{ProcessTensors.jl} and its roadmap}
+\label{sec:extensibility}
+% =========================================================================
+
+\markedsubsection{\tocboth}{A common interface for process-tensor builders}
+
+\markedsubsection{\toctheory}{Gaussian influence-functional builders}
+
+\markedsubsection{\tocboth}{Chain-mapped and explicit-environment constructions}
+
+\markedsubsection{\toctheory}{Fermionic process tensors}
+
+\markedsubsection{\tocboth}{Characterising and reconstructing process tensors}
+
+\markedsubsection{\tocjulia}{Quantum memory witness generation}
+
+
+% =========================================================================
+\section{Conclusion}
 \label{sec:conclusion}
 % =========================================================================
-
-You must include a conclusion.
 
 \section*{Acknowledgements}
 Acknowledgements should follow immediately after the conclusion.
@@ -484,6 +504,12 @@ cite an immutable release and archive the scripts/data used for all benchmark fi
 \textbf{[TODO: insert release DOI/Zenodo or SciPost codebase DOI at submission.]}
 
 
+% =========================================================================
+% Bibliography
+% =========================================================================
+\bibliography{main}
+
+
 \begin{appendix}
 \numberwithin{equation}{section}
 
@@ -492,11 +518,5 @@ cite an immutable release and archive the scripts/data used for all benchmark fi
 \input{A2_time_dynamics}
 
 \end{appendix}
-
-
-% =========================================================================
-% Bibliography
-% =========================================================================
-\bibliography{main}
 
 \end{document}
