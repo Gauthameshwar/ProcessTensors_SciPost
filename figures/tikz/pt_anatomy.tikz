@@ -37,7 +37,7 @@
   % #1 = node name, #2 = centre, #3 = display label.
   \newcommand{\QACore}[3]{%
     \PTTensor[
-      fill=PTProcess,
+      fill=QAMPOcore,
       minimum width=\QACoreW,
       minimum height=\QACoreH,
       font=\normalsize,

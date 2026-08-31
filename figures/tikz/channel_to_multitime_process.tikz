@@ -49,11 +49,13 @@
       minimum height=\mapSide,
     ] at #2 {};
     \begin{scope}[on PTforeground layer]
+      \PTSetTriangleRound{\ketAlt}{\mapSide}%
       \filldraw[
         draw=black,
         fill=PTLiouville!16,
         line width=\PTCoreStroke,
         line join=round,
+        rounded corners=\PTRelRound,
       ]
         (#1.west |- #1.south) -- (#1.east) -- (#1.west |- #1.north) -- cycle;
       \node[
@@ -75,11 +77,13 @@
       minimum height=\Uhgt,
     ] at #2 {};
     \begin{scope}[on PTforeground layer]
+      \PTSetTriangleRound{\Uwid}{\Uhgt}%
       \filldraw[
         draw=black,
         fill=PTLiouville!16,
         line width=\PTCoreStroke,
         line join=round,
+        rounded corners=\PTRelRound,
       ]
         (#1.west |- #1.south) -- (#1.east) -- (#1.west |- #1.north) -- cycle;
       \node[font=\small, text=PTLabel, inner sep=0.3pt, align=center]

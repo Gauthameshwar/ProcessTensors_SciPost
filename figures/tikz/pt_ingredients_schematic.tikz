@@ -4,7 +4,7 @@
   \definecolor{PTQubit}{HTML}{42B3F5}
   \definecolor{PTBlochVec}{HTML}{1D50C4}
   \definecolor{PTSpin}{HTML}{E36A5C}
-  \definecolor{PTBoson}{HTML}{8FCB8A}
+  \definecolor{PTBoson}{HTML}{B78AE3}
 
   \tikzset{
     ingred box/.style={
@@ -176,7 +176,7 @@
   % ---- Environment (south aligned with bath modes) -------------------------
   \node[
     bath group,
-    fill=PTBoson!16,
+    fill=PTBoson!18,
     minimum width=3.20cm,
     minimum height=1.32cm,
     anchor=south,
@@ -210,7 +210,7 @@
   \begin{scope}[shift={(pt-orig)}]
     \foreach \k in {0,1,2} {
       \PTTensor[
-        fill=PTProcess,
+        fill=QAMPOcore,
         minimum width=7.6mm,
         minimum height=14.4mm,
       ]{ing-Q-\k}{(-\k*1.32,0)}{}

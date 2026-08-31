@@ -116,7 +116,11 @@
 \definecolor{PTLink}{HTML}{009E73}
 \definecolor{PTTensor}{HTML}{E8E8E8}
 \definecolor{PTProcess}{HTML}{DCEAF7}
+\definecolor{QAMPOcore}{HTML}{ACE8AE}
 \definecolor{PTInstrument}{HTML}{F6E8A6}
+\definecolor{PTInstIn}{HTML}{F7E58B}
+\definecolor{PTInstOut}{HTML}{FCB06D}
+\definecolor{PTInstMap}{HTML}{AD9986}
 \definecolor{PTTrace}{HTML}{CC79A7}
 \definecolor{PTMeasurement}{HTML}{E69F00}
 \definecolor{PTLabel}{HTML}{333333}
@@ -147,8 +151,36 @@
 \newlength{\PTBondLW}         \setlength{\PTBondLW}{1.35pt}
 \newlength{\PTClassicalLW}    \setlength{\PTClassicalLW}{1.15pt}
 \newlength{\PTCoreStroke}     \setlength{\PTCoreStroke}{1.45pt}
+% Fallback only; \PTTensor computes a size-relative radius from Fig. 8
+% (1.2mm on an 11mm square, 0.8mm on an 11mm-tall triangle).
 \newlength{\PTCoreRadius}     \setlength{\PTCoreRadius}{1.3pt}
 \newlength{\PTBridgeHalo}     \setlength{\PTBridgeHalo}{4.2pt}
+\newlength{\PTRelRound}
+\newlength{\PTRndCmpA}
+\newlength{\PTRndCmpB}
+
+% Fig. 8 reference ratios: square 1.2/11, triangle 0.8/11, of min(width,height).
+\newcommand{\PTSetSquareRound}[2]{%
+  \setlength{\PTRndCmpA}{#1}%
+  \setlength{\PTRndCmpB}{#2}%
+  \ifdim\PTRndCmpA>\PTRndCmpB
+    \pgfmathsetlength{\PTRelRound}{(1.2/11)*\PTRndCmpB}%
+  \else
+    \pgfmathsetlength{\PTRelRound}{(1.2/11)*\PTRndCmpA}%
+  \fi
+}
+\newcommand{\PTSetTriangleRound}[2]{%
+  \setlength{\PTRndCmpA}{#1}%
+  \setlength{\PTRndCmpB}{#2}%
+  \ifdim\PTRndCmpA>\PTRndCmpB
+    \pgfmathsetlength{\PTRelRound}{(0.8/11)*\PTRndCmpB}%
+  \else
+    \pgfmathsetlength{\PTRelRound}{(0.8/11)*\PTRndCmpA}%
+  \fi
+}
+\newlength{\PTTraceNodeRound}
+\PTSetSquareRound{7.2mm}{7.2mm}
+\setlength{\PTTraceNodeRound}{\PTRelRound}
 
 % Scratch length for the MPO drawer (not a public tuning knob).
 \newlength{\PTMPOspacing}
@@ -294,7 +326,7 @@
   PTTraceNode/.style={
     draw=black,
     fill=PTTrace!18,
-    rounded corners=\PTCoreRadius,
+    rounded corners=\PTTraceNodeRound,
     minimum width=7.2mm,
     minimum height=7.2mm,
     inner sep=1.4pt,
@@ -383,11 +415,13 @@
     font=\small,
   ] at #2 {};
   \begin{scope}[on PTforeground layer]
+    \PTSetTriangleRound{\PTKetWidth}{\PTKetHeight}
     \filldraw[
       draw=black,
       fill=PTHilbertKet!18,
       line width=\PTCoreStroke,
       line join=round,
+      rounded corners=\PTRelRound,
     ] (#1.west |- #1.south) -- (#1.east) -- (#1.west |- #1.north) -- cycle;
     \node[font=\small, text=PTLabel, inner sep=0.4pt]
       at ($ (#1.west)!0.36!(#1.east) $) {#3};
@@ -404,11 +438,13 @@
     font=\small,
   ] at #2 {};
   \begin{scope}[on PTforeground layer]
+    \PTSetTriangleRound{\PTKetWidth}{\PTKetHeight}
     \filldraw[
       draw=black,
       fill=PTHilbertBra!18,
       line width=\PTCoreStroke,
       line join=round,
+      rounded corners=\PTRelRound,
     ] (#1.east |- #1.south) -- (#1.west) -- (#1.east |- #1.north) -- cycle;
     \node[font=\small, text=PTLabel, inner sep=0.4pt]
       at ($ (#1.east)!0.36!(#1.west) $) {#3};
@@ -425,11 +461,13 @@
     font=\small,
   ] at #2 {};
   \begin{scope}[on PTforeground layer]
+    \PTSetTriangleRound{\PTKetWidth}{\PTKetHeight}
     \filldraw[
       draw=black,
       fill=PTLiouville!16,
       line width=\PTCoreStroke,
       line join=round,
+      rounded corners=\PTRelRound,
     ] (#1.west |- #1.south) -- (#1.east) -- (#1.west |- #1.north) -- cycle;
     \node[font=\small, text=PTLabel, inner sep=0.4pt]
       at ($ (#1.west)!0.36!(#1.east) $) {#3};
@@ -446,11 +484,13 @@
     font=\small,
   ] at #2 {};
   \begin{scope}[on PTforeground layer]
+    \PTSetTriangleRound{\PTKetWidth}{\PTKetHeight}
     \filldraw[
       draw=black,
       fill=PTLiouville!16,
       line width=\PTCoreStroke,
       line join=round,
+      rounded corners=\PTRelRound,
     ] (#1.east |- #1.south) -- (#1.west) -- (#1.east |- #1.north) -- cycle;
     \node[font=\small, text=PTLabel, inner sep=0.4pt]
       at ($ (#1.east)!0.36!(#1.west) $) {#3};
@@ -478,9 +518,15 @@
   \def\PTTensorDrawCol{black}%
   \def\PTTensorMinW{\PTCoreWidth}%
   \def\PTTensorMinH{\PTCoreHeight}%
-  \def\PTTensorRnd{\PTCoreRadius}%
+  \def\PTTensorRnd{PTAUTO}%
   \def\PTTensorFont{\small}%
   \setkeys{pttensor}{#1}%
+  \def\PTAuto{PTAUTO}%
+  \ifx\PTTensorRnd\PTAuto
+    \PTSetSquareRound{\PTTensorMinW}{\PTTensorMinH}%
+  \else
+    \setlength{\PTRelRound}{\PTTensorRnd}%
+  \fi
   \begin{scope}[on PTforeground layer]
     \node[
       name=#2,
@@ -489,7 +535,7 @@
       draw=\PTTensorDrawCol,
       minimum width=\PTTensorMinW,
       minimum height=\PTTensorMinH,
-      rounded corners=\PTTensorRnd,
+      rounded corners=\PTRelRound,
       font=\PTTensorFont,
     ] at #3 {#4};
   \end{scope}
@@ -518,12 +564,7 @@
 }
 
 \newcommand{\PTInstrument}[4][]{%
-  \PTTensor[
-    fill=PTInstrument,
-    minimum width=\PTCoreWidth,
-    minimum height=\PTCoreWidth,
-    #1
-  ]{#2}{#3}{#4}%
+  \PTTensor[fill=PTInstrument,minimum width=\PTCoreWidth,minimum height=\PTCoreWidth,#1]{#2}{#3}{#4}%
 }
 
 % Vertical Hilbert ket (north) and bra (south) stubs on an operator.
@@ -555,6 +596,7 @@
   \else
     \def\PTCombRot{0}%
   \fi\fi\fi
+  \PTSetTriangleRound{\PTCombinerSize}{\PTCombinerSize}%
   \begin{scope}[on PTforeground layer]
     \node[
       name=#2,
@@ -567,6 +609,7 @@
       draw=black,
       fill=white,
       line width=\PTCoreStroke,
+      rounded corners=\PTRelRound,
       font=\scriptsize,
       text=PTLabel,
     ] at #3 {};
@@ -791,6 +834,7 @@
 \define@key{ptinst}{classical}{\def\PTInstClassDir{#1}}
 \define@key{ptinst}{classical label}{\def\PTInstClassLab{#1}}
 \define@key{ptinst}{classical length}{\def\PTInstClassLen{#1}}
+\define@key{ptinst}{rounded}{\def\PTInstRnd{#1}}
 \makeatother
 
 % Generic constructor.  Quantum legs are NOT auto-drawn: connect to the
@@ -805,9 +849,11 @@
   \def\PTInstClassDir{none}%
   \def\PTInstClassLab{}%
   \def\PTInstClassLen{6.2mm}%
+  \def\PTInstRnd{PTAUTO}%
   \setkeys{ptinst}{#1}%
   \def\PTInstNone{none}%
   \ifx\PTInstKind\PTInstKindKet
+    \PTSetTriangleRound{\PTKetWidth}{\PTKetHeight}%
     \node[
       name=#2,
       inner sep=0pt,
@@ -821,12 +867,14 @@
         fill=\PTInstFill,
         line width=\PTCoreStroke,
         line join=round,
+        rounded corners=\PTRelRound,
       ] (#2.west |- #2.south) -- (#2.east) -- (#2.west |- #2.north) -- cycle;
       \node[font=\small, text=PTLabel, inner sep=0.4pt]
         at ($ (#2.west)!0.36!(#2.east) $) {#4};
     \end{scope}
   \else
     \ifx\PTInstKind\PTInstKindBra
+      \PTSetTriangleRound{\PTKetWidth}{\PTKetHeight}%
       \node[
         name=#2,
         inner sep=0pt,
@@ -840,6 +888,7 @@
           fill=\PTInstFill,
           line width=\PTCoreStroke,
           line join=round,
+          rounded corners=\PTRelRound,
         ] (#2.east |- #2.south) -- (#2.west) -- (#2.east |- #2.north) -- cycle;
         \node[font=\small, text=PTLabel, inner sep=0.4pt]
           at ($ (#2.east)!0.36!(#2.west) $) {#4};
@@ -850,6 +899,12 @@
           \node[name=#2, PTTraceNode] at #3 {#4};
         \end{scope}
       \else
+        \def\PTAuto{PTAUTO}%
+        \ifx\PTInstRnd\PTAuto
+          \PTSetSquareRound{\PTInstMinW}{\PTInstMinH}%
+        \else
+          \setlength{\PTRelRound}{\PTInstRnd}%
+        \fi
         \begin{scope}[on PTforeground layer]
           \node[
             name=#2,
@@ -858,6 +913,7 @@
             draw=\PTInstDraw,
             minimum width=\PTInstMinW,
             minimum height=\PTInstMinH,
+            rounded corners=\PTRelRound,
           ] at #3 {#4};
         \end{scope}
       \fi
