@@ -1,0 +1,198 @@
+% Fig. 9: evaluate_process return types (a,b) and one evolve snapshot (c).
+% Time runs right to left.  PT-MPO anatomy as in Fig. 6a; comb as in
+% Fig. 5c without the left semicircle bulge.
+% Requires pt_tikz_styles.tex in the preamble.
+\begin{tikzpicture}[PTPicture]
+  \def\QACoreW{10.2mm}%
+  \def\QACoreH{16.8mm}%
+  \def\QAIORaise{3.5mm}%
+  \def\QABondRaise{3.6mm}%
+  \def\QAdx{3.10}%
+  \def\QAoff{0.92}%
+  \def\cPad{2.3mm}%
+  \def\GNineLabX{-2.55}%
+  \def\GNineLhsX{-1.15}%
+  \definecolor{PTScalarFill}{HTML}{FF4A62}
+  \tikzset{
+    g9lab/.style={
+      font=\large\bfseries,
+      text=PTLabel,
+      inner sep=1.0pt,
+      anchor=north west,
+    },
+    g9leg/.style={
+      font=\footnotesize,
+      text=PTLabel,
+      inner sep=0.5pt,
+    },
+    g9eq/.style={
+      font=\footnotesize,
+      text=PTLabel,
+      align=center,
+      inner sep=0.4pt,
+    },
+    g9mem/.style={
+      draw=PTBond,
+      line width=\PTLinkLW,
+      line cap=butt,
+      line join=round,
+      double=none,
+      on background layer,
+    },
+    g9scalar/.style={
+      circle,
+      draw=black,
+      fill=PTScalarFill,
+      minimum size=6.0mm,
+      inner sep=0pt,
+      outer sep=0pt,
+      line width=\PTCoreStroke,
+    },
+  }
+
+  \newcommand{\QACore}[3]{%
+    \PTTensor[
+      fill=QAMPOcore,
+      minimum width=\QACoreW,
+      minimum height=\QACoreH,
+      font=\normalsize,
+    ]{#1}{#2}{#3}%
+    \coordinate (#1-o) at ([yshift=\QAIORaise]#1.south west);
+    \coordinate (#1-i) at ([yshift=\QAIORaise]#1.south east);
+    \coordinate (#1-L) at ([yshift=\QABondRaise]#1.west);
+    \coordinate (#1-R) at ([yshift=\QABondRaise]#1.east);
+  }
+
+  % Three-core PT-MPO and dashed comb.  #1 = name prefix.
+  \newcommand{\GNinePT}[1]{%
+    \QACore{#1-Q2}{(0.00,0)}{\(Q^{[2]}\)}
+    \QACore{#1-Q1}{(\QAdx,0)}{\(Q^{[1]}\)}
+    \QACore{#1-Q0}{(2*\QAdx,0)}{\(Q^{[0]}\)}
+    \draw[g9mem] (#1-Q2-R) -- (#1-Q1-L) coordinate[midway] (#1-chi2);
+    \draw[g9mem] (#1-Q1-R) -- (#1-Q0-L) coordinate[midway] (#1-chi1);
+    \node[g9leg, above=2.8pt] at (#1-chi2) {\(\chi_2\)};
+    \node[g9leg, above=2.8pt] at (#1-chi1) {\(\chi_1\)};
+    \coordinate (#1-roof) at ([yshift=\cPad]#1-Q0.north);
+    \coordinate (#1-TL) at ([xshift=-\cPad]#1-Q2.west |- #1-roof);
+    \coordinate (#1-TR) at ([xshift=\cPad]#1-Q0.east |- #1-roof);
+    \coordinate (#1-Q0SE) at ($ (#1-Q0.south east)+(\cPad,-\cPad) $);
+    \coordinate (#1-Q0SW) at ($ (#1-Q0.south west)+(-\cPad,-\cPad) $);
+    \coordinate (#1-Q1SE) at ($ (#1-Q1.south east)+(\cPad,-\cPad) $);
+    \coordinate (#1-Q1SW) at ($ (#1-Q1.south west)+(-\cPad,-\cPad) $);
+    \coordinate (#1-Q2SE) at ($ (#1-Q2.south east)+(\cPad,-\cPad) $);
+    \coordinate (#1-Q2SW) at ($ (#1-Q2.south west)+(-\cPad,-\cPad) $);
+    % Slot height sits above the instruments (U, I/d, identity wire).
+    \coordinate (#1-slot) at ([yshift=1.6mm]#1-Q0.center);
+    \coordinate (#1-g0R) at ([xshift=-\cPad]#1-Q0.west |- #1-slot);
+    \coordinate (#1-g0L) at ([xshift=\cPad]#1-Q1.east |- #1-slot);
+    \coordinate (#1-g1R) at ([xshift=-\cPad]#1-Q1.west |- #1-slot);
+    \coordinate (#1-g1L) at ([xshift=\cPad]#1-Q2.east |- #1-slot);
+    \begin{scope}[on background layer]
+      \filldraw[
+        draw=green!28!black,
+        fill=green!38!black!18!white,
+        fill opacity=1,
+        draw opacity=1,
+        dash pattern=on 1.7pt off 1.25pt,
+        line width=0.85pt,
+        rounded corners=5.2pt,
+      ]
+        (#1-TL) -- (#1-TR)
+        -- (#1-Q0SE) -- (#1-Q0SW)
+        -- (#1-g0R) -- (#1-g0L)
+        -- (#1-Q1SE) -- (#1-Q1SW)
+        -- (#1-g1R) -- (#1-g1L)
+        -- (#1-Q2SE) -- (#1-Q2SW)
+        -- cycle;
+    \end{scope}
+    % i/o tags sit below the comb teeth, not on the instruments.
+    \coordinate (#1-iolab) at ([yshift=-2.8mm]#1-Q2SW);
+    \node[g9leg, anchor=north] at (#1-Q2-o |- #1-iolab) {\(o_2\)};
+    \node[g9leg, anchor=north] at (#1-Q2-i |- #1-iolab) {\(i_2\)};
+    \node[g9leg, anchor=north] at (#1-Q1-o |- #1-iolab) {\(o_1\)};
+    \node[g9leg, anchor=north] at (#1-Q1-i |- #1-iolab) {\(i_1\)};
+    \node[g9leg, anchor=north] at (#1-Q0-o |- #1-iolab) {\(o_0\)};
+    \node[g9leg, anchor=north] at (#1-Q0-i |- #1-iolab) {\(i_0\)};
+  }
+
+  % rho0 ket on i_0.  #1 = prefix.
+  \newcommand{\GNineRho}[1]{%
+    \PTInstrumentNode[kind=ket,fill=PTInstIn]
+      {#1-rho}{($ (#1-Q0-i)+(\QAoff,0) $)}{\(\rho_0\)}
+    \draw[PTLiouvilleLeg primed] (#1-Q0-i) -- (#1-rho.west);
+  }
+
+  % Identity: join o_0 to i_1 by a double wire.  #1 = prefix.
+  \newcommand{\GNineId}[1]{%
+    \draw[PTLiouvilleLeg] (#1-Q0-o) -- (#1-Q1-i);
+  }
+
+  % Unitary between Q^{[1]} and Q^{[2]}.  #1 = prefix.
+  \newcommand{\GNineU}[1]{%
+    \PTTensor[fill=PTInstMap,minimum width=7.2mm,minimum height=7.2mm]
+      {#1-U}{($ (#1-Q1-o)!0.5!(#1-Q2-i) $)}{\(U\)}
+    \draw[PTLiouvilleLeg] (#1-Q1-o) -- (#1-U.east);
+    \draw[PTLiouvilleLeg primed] (#1-U.west) -- (#1-Q2-i);
+  }
+
+  % ===================================================================== (a)
+  \begin{scope}[shift={(0.05, 7.00)}]
+    \node[g9lab] at (\GNineLabX, 1.42) {(a)};
+    \node[g9scalar] (a-lhs) at (\GNineLhsX, 0.08) {};
+    \node[g9eq, anchor=north] at ([yshift=-2.8mm]a-lhs.south)
+      {\(\langle O(t_3\vert U,\mathbb{I},\rho_0)\rangle\)};
+    \begin{scope}[shift={(2.85, 0.12)}]
+      \GNinePT{a}
+      \GNineRho{a}
+      \GNineId{a}
+      \GNineU{a}
+      \PTInstrumentNode[kind=bra,fill=PTInstOut]
+        {a-O}{($ (a-Q2-o)+(-\QAoff,0) $)}{\(O\)}
+      \draw[PTLiouvilleLeg] (a-Q2-o) -- (a-O.east);
+    \end{scope}
+    \node[font=\normalsize, text=PTLabel]
+      at ($ (a-lhs) !0.5! (a-Q2.west |- a-lhs) $) {\(=\)};
+  \end{scope}
+
+  % ===================================================================== (b)
+  \begin{scope}[shift={(0.05, 3.50)}]
+    \node[g9lab] at (\GNineLabX, 1.42) {(b)};
+    \PTInstrumentNode[kind=ket,fill=PTInstIn]{b-lhs}{(\GNineLhsX,0.08)}{}
+    \draw[PTLiouvilleLeg] (b-lhs.west) -- ++(-0.52,0) coordinate (b-lhs-leg);
+    \node[g9leg, anchor=east, xshift=-1.4pt] at (b-lhs-leg) {\(o_2\)};
+    \node[g9eq, anchor=north] at ([yshift=-2.8mm]b-lhs.south)
+      {\(\lvert\rho(t_3\vert U,\mathbb{I},\rho_0)\rangle\!\rangle\)};
+    \begin{scope}[shift={(2.85, 0.12)}]
+      \GNinePT{b}
+      \GNineRho{b}
+      \GNineId{b}
+      \GNineU{b}
+      \draw[PTLiouvilleLeg] (b-Q2-o) -- ++(-0.78,0);
+    \end{scope}
+    \node[font=\normalsize, text=PTLabel]
+      at ($ (b-lhs) !0.5! (b-Q2.west |- b-lhs) $) {\(=\)};
+  \end{scope}
+
+  % ===================================================================== (c)
+  \begin{scope}[shift={(0.05, 0.15)}]
+    \node[g9lab] at (\GNineLabX, 1.42) {(c)};
+    \PTInstrumentNode[kind=ket,fill=PTInstIn]{c-lhs}{(\GNineLhsX,0.08)}{}
+    \draw[PTLiouvilleLeg] (c-lhs.west) -- ++(-0.52,0) coordinate (c-lhs-leg);
+    \node[g9leg, anchor=east, xshift=-1.4pt] at (c-lhs-leg) {\(o_1\)};
+    \node[g9eq, anchor=north] at ([yshift=-2.8mm]c-lhs.south)
+      {\(\lvert\rho(t_2)\rangle\!\rangle\)};
+    \begin{scope}[shift={(2.85, 0.12)}]
+      \GNinePT{c}
+      \GNineRho{c}
+      \GNineId{c}
+      \draw[PTLiouvilleLeg] (c-Q1-o) -- ++(-0.55,0);
+      \PTTraceOut{c-tr}{($ (c-Q2-o)+(-0.52,0) $)}
+      \draw[PTLiouvilleLeg] (c-Q2-o) -- (c-tr-east);
+      \PTInstrumentNode[kind=ket,fill=PTInstIn]
+        {c-Id}{($ (c-Q2-i)+(\QAoff,0) $)}{\(\rho_{\mathrm{M}}\)}
+      \draw[PTLiouvilleLeg primed] (c-Q2-i) -- (c-Id.west);
+    \end{scope}
+    \node[font=\normalsize, text=PTLabel]
+      at ($ (c-lhs) !0.5! (c-Q2.west |- c-lhs) $) {\(=\)};
+  \end{scope}
+\end{tikzpicture}

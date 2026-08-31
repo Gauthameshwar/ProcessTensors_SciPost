@@ -1,0 +1,308 @@
+% Fig. 8: instrument anatomy.  Time runs right to left.
+% (a) input single leg, (b) output single leg, (c) two-leg map,
+% (d) tester: rho_SA ket, then C_0,C_1,C_2 (no C_3); dual of Fig. 5c.
+% Requires pt_tikz_styles.tex in the preamble.
+\begin{tikzpicture}[PTPicture]
+  \def\envY{0.96}%  reused as system-rail height in (d)
+  \def\sysY{0.96}%
+  \def\ancY{0.00}%
+  \def\midY{0.48}%
+  \def\Uwid{8.6mm}%
+  \def\Uhgt{16.4mm}%
+  \def\mapSide{11.0mm}%
+  \def\ketAlt{9.526mm}%
+  \def\sqSide{6.4mm}%
+  \tikzset{
+    g8lab/.style={
+      font=\small\bfseries,
+      text=PTLabel,
+      inner sep=1.0pt,
+      anchor=north west,
+    },
+    g8eq/.style={
+      font=\footnotesize,
+      text=PTLabel,
+      align=center,
+      inner sep=0.4pt,
+      anchor=north,
+    },
+    g8sub/.style={
+      font=\scriptsize,
+      text=PTLabel,
+      inner sep=0.4pt,
+    },
+    g8leg/.style={
+      font=\footnotesize,
+      text=PTLabel,
+      inner sep=0.5pt,
+    },
+  }
+  \definecolor{PTTesterInit}{HTML}{E4B4F0}
+
+  % Instrument ket (right-pointing); #1 = fill, wire attaches at .west.
+  \newcommand{\GEightInstKet}[4]{%
+    \node[
+      name=#2,
+      inner sep=0pt,
+      outer sep=0pt,
+      minimum width=\ketAlt,
+      minimum height=\mapSide,
+    ] at #3 {};
+    \begin{scope}[on PTforeground layer]
+      \PTSetTriangleRound{\ketAlt}{\mapSide}%
+      \filldraw[
+        draw=black,
+        fill=#1,
+        line width=\PTCoreStroke,
+        line join=round,
+        rounded corners=\PTRelRound,
+      ]
+        (#2.west |- #2.south) -- (#2.east) -- (#2.west |- #2.north) -- cycle;
+      \node[
+        font=\small,
+        text=PTLabel,
+        inner sep=0pt,
+        outer sep=0pt,
+      ]
+        at ($ (#2.west)!0.40!(#2.east) $) {#4};
+    \end{scope}
+  }
+  % Joint initial state: isosceles ket, base = core height, altitude = core width.
+  \newcommand{\GEightRhoSA}[3]{%
+    \node[
+      name=#1,
+      inner sep=0pt,
+      outer sep=0pt,
+      minimum width=\Uwid,
+      minimum height=\Uhgt,
+    ] at #2 {};
+    \begin{scope}[on PTforeground layer]
+      \PTSetTriangleRound{\Uwid}{\Uhgt}%
+      \filldraw[
+        draw=black,
+        fill=PTTesterInit,
+        line width=\PTCoreStroke,
+        line join=round,
+        rounded corners=\PTRelRound,
+      ]
+        (#1.west |- #1.south) -- (#1.east) -- (#1.west |- #1.north) -- cycle;
+      \node[
+        font=\footnotesize,
+        text=PTLabel,
+        inner sep=0pt,
+        outer sep=0pt,
+      ]
+        at ($ (#1.west)!0.38!(#1.east) $) {#3};
+    \end{scope}
+  }
+  % Instrument bra (left-pointing); #1 = fill, wire attaches at .east.
+  \newcommand{\GEightInstBra}[4]{%
+    \node[
+      name=#2,
+      inner sep=0pt,
+      outer sep=0pt,
+      minimum width=\ketAlt,
+      minimum height=\mapSide,
+    ] at #3 {};
+    \begin{scope}[on PTforeground layer]
+      \PTSetTriangleRound{\ketAlt}{\mapSide}%
+      \filldraw[
+        draw=black,
+        fill=#1,
+        line width=\PTCoreStroke,
+        line join=round,
+        rounded corners=\PTRelRound,
+      ]
+        (#2.east |- #2.south) -- (#2.west) -- (#2.east |- #2.north) -- cycle;
+      \node[
+        font=\small,
+        text=PTLabel,
+        inner sep=0pt,
+        outer sep=0pt,
+      ]
+        at ($ (#2.east)!0.40!(#2.west) $) {#4};
+    \end{scope}
+  }
+
+  % =====================================================================
+  % Top row: (a) (b) (c)
+  % =====================================================================
+  \begin{scope}[shift={(1.55, 3.58)}]
+    \node[g8lab] at (-0.22, 1.48) {(a)};
+    \node[g8lab] at (3.38, 1.48) {(b)};
+    \node[g8lab] at (6.72, 1.48) {(c)};
+
+    % (a) input single leg: primed i_k on a preparation ket
+    \begin{scope}[shift={(0.00, 0.22)}]
+      \GEightInstKet{PTInstIn}{a-rho}{(1.55, 0.48)}{\(\rho_k\)}
+      \draw[PTLiouvilleLeg primed]
+        (a-rho.west) -- ++(-0.68,0) coordinate (a-i);
+      \node[g8leg, anchor=east, xshift=-1.6pt] at (a-i) {\(i_k\)};
+      \node[g8eq] at (1.05,-0.44)
+        {\(\lvert\rho_k\rangle\!\rangle_{i_k}\)};
+    \end{scope}
+
+    % (b) output single leg: unprimed o_k on an effect bra
+    \begin{scope}[shift={(3.40, 0.22)}]
+      \GEightInstBra{PTInstOut}{b-E}{(0.72, 0.48)}{\(E_k\)}
+      \draw[PTLiouvilleLeg]
+        (b-E.east) -- ++(0.68,0) coordinate (b-o);
+      \node[g8leg, anchor=west, xshift=1.6pt] at (b-o) {\(o_k\)};
+      \node[g8eq] at (1.22,-0.44)
+        {\(\langle\!\langle E_k\rvert_{o_k}\)};
+    \end{scope}
+
+    % (c) two-leg map: primed i_k (left) to unprimed o_{k-1} (right)
+    \begin{scope}[shift={(6.55, 0.22)}]
+      \PTInstrument[fill=PTInstMap, minimum width=\mapSide, minimum height=\mapSide]
+        {c-A}{(1.55, 0.48)}{\(\mathcal A_k\)}
+      \draw[PTLiouvilleLeg primed]
+        (c-A.west) -- ++(-0.52,0) coordinate (c-i);
+      \draw[PTLiouvilleLeg]
+        (c-A.east) -- ++(0.52,0) coordinate (c-o);
+      \node[g8leg, anchor=east, xshift=-1.6pt] at (c-i) {\(i_k\)};
+      \node[g8leg, anchor=west, xshift=1.6pt] at (c-o) {\(o_{k-1}\)};
+      \node[g8eq] at (1.55,-0.44)
+        {\([\mathcal A_k]_{i_k o_{k-1}}\)};
+    \end{scope}
+  \end{scope}
+
+  % (d) label shares (a)'s x; tester is centred under (a)--(c)
+  \node[g8lab] at (1.33, 2.28) {(d)};
+  \begin{scope}[shift={(0.62, 0.58)}]
+    \coordinate (d-sy) at (0, \sysY);
+    \coordinate (d-ay) at (0, \ancY);
+    \def\cPad{2.3mm}%
+    \def\cSlot{5.0mm}%
+    % Yellow comb: high behind every C (covers the block), dipping to
+    % half-height in the open i/o gaps. Dual of Fig. 5c with I/O on top.
+
+    % Joint maps C_0 earliest after the initial state (right), C_2 latest (left).
+    \PTTensor[fill=PTTensor,minimum width=\Uwid,minimum height=\Uhgt]
+      {d-C2}{(2.15, \midY)}{\(\mathcal C_2\)}
+    \PTTensor[fill=PTTensor,minimum width=\Uwid,minimum height=\Uhgt]
+      {d-C1}{(4.55, \midY)}{\(\mathcal C_1\)}
+    \PTTensor[fill=PTTensor,minimum width=\Uwid,minimum height=\Uhgt]
+      {d-C0}{(6.95, \midY)}{\(\mathcal C_0\)}
+    \GEightRhoSA{d-rho}{(9.35, \midY)}{\(\rho_{SA}\)}
+
+    % Ancilla-only operations in the gaps, on the A rail.
+    \PTInstrument[fill=PTInstIn,minimum width=\sqSide,minimum height=\sqSide,font=\scriptsize]
+      {d-V2}{(3.35, \ancY)}{\(\mathcal V_2\)}
+    \PTInstrument[fill=PTInstIn,minimum width=\sqSide,minimum height=\sqSide,font=\scriptsize]
+      {d-V1}{(5.75, \ancY)}{\(\mathcal V_1\)}
+    \PTInstrument[fill=PTInstIn,minimum width=\sqSide,minimum height=\sqSide,font=\scriptsize]
+      {d-V0}{(8.15, \ancY)}{\(\mathcal V_0\)}
+
+    \coordinate (d-floor) at ([yshift=-\cPad]d-rho.south);
+    \coordinate (d-roof) at ([yshift=\cPad]d-rho.north);
+    \coordinate (d-dip) at (0, \midY);
+    \coordinate (d-BL) at ([xshift=-\cPad]d-C2.west |- d-floor);
+    \coordinate (d-BR) at ([xshift=\cPad]d-rho.east |- d-floor);
+    \coordinate (d-rhoEr) at ([xshift=\cPad]d-rho.east |- d-roof);
+    \coordinate (d-rhoWr) at ([xshift=-\cPad]d-rho.west |- d-roof);
+    \coordinate (d-g0R) at ([xshift=-\cPad]d-rho.west |- d-dip);
+    \coordinate (d-g0L) at ([xshift=\cPad]d-C0.east |- d-dip);
+    \coordinate (d-C0Er) at ([xshift=\cPad]d-C0.east |- d-roof);
+    \coordinate (d-C0Wr) at ([xshift=-\cPad]d-C0.west |- d-roof);
+    \coordinate (d-g1R) at ([xshift=-\cPad]d-C0.west |- d-dip);
+    \coordinate (d-g1L) at ([xshift=\cPad]d-C1.east |- d-dip);
+    \coordinate (d-C1Er) at ([xshift=\cPad]d-C1.east |- d-roof);
+    \coordinate (d-C1Wr) at ([xshift=-\cPad]d-C1.west |- d-roof);
+    \coordinate (d-g2R) at ([xshift=-\cPad]d-C1.west |- d-dip);
+    \coordinate (d-g2L) at ([xshift=\cPad]d-C2.east |- d-dip);
+    \coordinate (d-C2Er) at ([xshift=\cPad]d-C2.east |- d-roof);
+    \coordinate (d-C2Wr) at ([xshift=-\cPad]d-C2.west |- d-roof);
+
+    \begin{scope}[on background layer]
+      \filldraw[
+        draw=PTMeasurement!45!black,
+        fill=PTInstrument!58!white,
+        fill opacity=1,
+        draw opacity=1,
+        dash pattern=on 1.7pt off 1.25pt,
+        line width=0.85pt,
+      ]
+        (d-BL)
+        [rounded corners=5.2pt]
+        -- (d-BR) -- (d-rhoEr) -- (d-rhoWr)
+        -- (d-g0R) -- (d-g0L)
+        -- (d-C0Er) -- (d-C0Wr)
+        -- (d-g1R) -- (d-g1L)
+        -- (d-C1Er) -- (d-C1Wr)
+        -- (d-g2R) -- (d-g2L)
+        -- (d-C2Er) -- (d-C2Wr)
+        -- cycle;
+    \end{scope}
+
+    % Ancilla rail: only between the C and V blocks, no open end stubs
+    \draw[PTLiouvilleLeg]
+      (d-C2.east |- d-ay) -- (d-V2.west);
+    \draw[PTLiouvilleLeg]
+      (d-V2.east) -- (d-C1.west |- d-ay);
+    \draw[PTLiouvilleLeg]
+      (d-C1.east |- d-ay) -- (d-V1.west);
+    \draw[PTLiouvilleLeg]
+      (d-V1.east) -- (d-C0.west |- d-ay);
+    \draw[PTLiouvilleLeg]
+      (d-C0.east |- d-ay) -- (d-V0.west);
+    \draw[PTLiouvilleLeg]
+      (d-V0.east) -- (d-rho.west |- d-ay);
+
+    % S and A sit outside the comb; arrows mark the rail heights.
+    \coordinate (d-SarrL) at ([xshift=1.4mm]d-rhoEr |- d-sy);
+    \coordinate (d-SarrR) at ([xshift=5.4mm]d-rhoEr |- d-sy);
+    \coordinate (d-AarrL) at ([xshift=1.4mm]d-rhoEr |- d-ay);
+    \coordinate (d-AarrR) at ([xshift=5.4mm]d-rhoEr |- d-ay);
+    \draw[
+      -{Stealth[length=1.7mm, width=1.2mm]},
+      line width=0.85pt,
+      draw=PTLabel,
+      line cap=round,
+    ] (d-SarrR) -- (d-SarrL);
+    \draw[
+      -{Stealth[length=1.7mm, width=1.2mm]},
+      line width=0.85pt,
+      draw=PTLabel,
+      line cap=round,
+    ] (d-AarrR) -- (d-AarrL);
+    \node[g8sub, anchor=west, xshift=1.8pt] at (d-SarrR) {\(S\)};
+    \node[g8sub, anchor=west, xshift=1.8pt] at (d-AarrR) {\(A\)};
+
+    % Open system slots ABOVE the yellow comb:
+    % in each gap, o_k (unprimed) comes from the earlier (right) block,
+    % i_k (primed) enters the later (left) block.
+    \draw[PTLiouvilleLeg]
+      (d-rho.west |- d-sy) -- ++(-\cSlot,0) coordinate (d-o0);
+    \draw[PTLiouvilleLeg primed]
+      (d-C0.east |- d-sy) -- ++(\cSlot,0) coordinate (d-i0);
+    \draw[PTLiouvilleLeg]
+      (d-C0.west |- d-sy) -- ++(-\cSlot,0) coordinate (d-o1);
+    \draw[PTLiouvilleLeg primed]
+      (d-C1.east |- d-sy) -- ++(\cSlot,0) coordinate (d-i1);
+    \draw[PTLiouvilleLeg]
+      (d-C1.west |- d-sy) -- ++(-\cSlot,0) coordinate (d-o2);
+    \draw[PTLiouvilleLeg primed]
+      (d-C2.east |- d-sy) -- ++(\cSlot,0) coordinate (d-i2);
+
+    \node[g8leg, above=2.6pt] at (d-o0) {\(o_0\)};
+    \node[g8leg, above=2.6pt] at (d-i0) {\(i_0\)};
+    \node[g8leg, above=2.6pt] at (d-o1) {\(o_1\)};
+    \node[g8leg, above=2.6pt] at (d-i1) {\(i_1\)};
+    \node[g8leg, above=2.6pt] at (d-o2) {\(o_2\)};
+    \node[g8leg, above=2.6pt] at (d-i2) {\(i_2\)};
+
+    \node[font=\small, text=PTLabel, inner sep=0.4pt, anchor=north]
+      at ($(d-BL)!0.5!(d-BR)+(0,-4.4mm)$) {\(T_y\)};
+
+    \coordinate (d-tR) at ([yshift=-7.2mm, xshift=1.2mm]d-rho.south east);
+    \coordinate (d-tL) at ([yshift=-7.2mm, xshift=-8.8mm]d-rho.south east);
+    \draw[
+      -{Stealth[length=2.0mm, width=1.4mm]},
+      line width=1.0pt,
+      draw=PTLabel,
+      line cap=round,
+    ] (d-tR) -- (d-tL);
+    \node[g8sub, anchor=south] at ($(d-tR)!0.5!(d-tL)+(0,1.2pt)$) {time};
+  \end{scope}
+\end{tikzpicture}
