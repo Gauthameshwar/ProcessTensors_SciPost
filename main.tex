@@ -26,6 +26,7 @@
 \usepackage{xcolor}
 \usepackage{colortbl}
 \usepackage{float}
+\usepackage[section]{placeins}
 \usepackage{caption}
 \usepackage{keyval}
 \usepackage[outputdir=out,cachedir=minted]{minted}
@@ -409,29 +410,9 @@ We present ProcessTensors.jl, a Julia package for learning, constructing, and us
 % =========================================================================
 
 % =========================================================================
-\section{Examples of process-tensor workflows}
-\label{sec:workflows}
+%%%%%%%%%%%%%%%%%%%%%% PROCESS-TENSOR WORKFLOWS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{05_pt_workflows}
 % =========================================================================
-
-\markedsubsection{\tocjulia}{Reduced dynamics and observable trajectories}
-
-\markedsubsection{\tocboth}{Probabilistic measurements and conditional states}
-
-\markedsubsection{\tocboth}{Two-time correlation functions}
-
-\markedsubsection{\tocjulia}{General multi-time experiments}
-
-
-% =========================================================================
-\section{Diagnosing memory in process tensors}
-\label{sec:memory-diagnosis}
-% =========================================================================
-
-\markedsubsection{\toctheory}{Temporal cuts and memory spaces}
-
-\markedsubsection{\tocboth}{Memory spectrum and temporal compressibility}
-
-\markedsubsection{\tocboth}{Memory diagnosis in a non-Markovian example}
 
 
 % =========================================================================
@@ -447,6 +428,17 @@ We present ProcessTensors.jl, a Julia package for learning, constructing, and us
 
 % \subsection{Comparison with the C++ ACE implementation}
 
+
+% =========================================================================
+\section{Diagnosing memory in process tensors}
+\label{sec:memory-diagnosis}
+% =========================================================================
+
+\markedsubsection{\toctheory}{Temporal cuts and memory spaces}
+
+\markedsubsection{\tocboth}{Memory spectrum and temporal compressibility}
+
+\markedsubsection{\tocboth}{Memory diagnosis in a non-Markovian example}
 
 % =========================================================================
 \section{Extensibility of \texttt{ProcessTensors.jl} and its roadmap}
