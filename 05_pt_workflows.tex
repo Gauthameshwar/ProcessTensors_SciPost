@@ -32,12 +32,10 @@ A central spin-$1/2$, $\mathbf S$, interacts isotropically with $N$ noninteracti
     \includegraphics[width=\linewidth]{figures/central_spin.pdf}
     \caption{%
         \textbf{(a)~Fully polarised central-spin dynamics.}
-        Reduced dynamics of the system spin coupled to a finite number of bath spins. Finite baths of the model in Eq.~\eqref{eq:central-spin-hamiltonian}
-        approach the analytical $N\rightarrow\infty$ precession in
-        Eq.~\eqref{eq:central-spin-limit} as $N$ increases.
+        Reduced dynamics of the system spin coupled to a finite number of bath spins.
+        Finite baths of the model in Eq.~\eqref{eq:central-spin-hamiltonian} approach the analytical $N\rightarrow\infty$ precession in Eq.~\eqref{eq:central-spin-limit} as $N$ increases.
         \textbf{(b)~Trace and hermiticity errors of $\rho$.}
-        The lower panel records $\lvert\operatorname{Tr}\rho-1\rvert$ and
-        $\lVert\rho-\rho^\dagger\rVert/\lVert\rho\rVert$.
+        The lower panel records $\lvert\operatorname{Tr}\rho-1\rvert$ and $\lVert\rho-\rho^\dagger\rVert/\lVert\rho\rVert$.
     }
     \label{fig:workflow-central-spin}
 \end{figure}
@@ -158,7 +156,7 @@ Each outcome map in Eq.~\eqref{eq:ramsey-measure-reset} is instead assembled fro
 The package overloads \texttt{*} for this purpose. 
 Provided the two instruments have opposite prime levels---one with \(\operatorname{plev}=0\) and one with \(\operatorname{plev}=1\)---their product is a \texttt{ProductInstrument}, a two-leg object inserted at a single evolve slot of an \texttt{InstrumentSeq}. 
 If we perform this POVM measurement and reset three times, we obtain the joint probability \(p(x_1,x_2,x_3)\) of the record \(\lvert x_1\rangle_x\), \(\lvert x_2\rangle_x\), \(\lvert x_3\rangle_x\).
-
+%
 \begin{juliacode}[
     caption={POVM-and-reset \texttt{ProductInstrument}s for three Ramsey readouts.},
     label={lst:workflow-ramsey},
@@ -182,6 +180,7 @@ for record in Iterators.product((-1, 1), (-1, 1), (-1, 1))
     probabilities[record] = real(evaluate_process(process_tensor, seq))
 end
 \end{juliacode}
+%
 
 Evaluating the process tensor for each of the above records, the returned scalar is the joint probability 
 %
@@ -205,19 +204,16 @@ Evaluating the process tensor for each of the above records, the returned scalar
     \includegraphics[width=\linewidth]{figures/ramsey_readouts.pdf}
     \caption{%
         \textbf{(a)~Timeline of the Ramsey readout protocol.}
-        Three repeated readouts of the thermally dephasing qubit in
-        Eq.~\eqref{eq:ramsey-spin-boson}, each followed by the same active
-        reset, Eq.~\eqref{eq:ramsey-measure-reset}. The time exposed to the environment between each prepare and measure is the same for all three readouts. The green fill between the PT and QUBIT line depicts constant interaction between them. 
+        Three repeated readouts of the thermally dephasing qubit in Eq.~\eqref{eq:ramsey-spin-boson}, each followed by the same active reset, Eq.~\eqref{eq:ramsey-measure-reset}.
+        The time exposed to the environment between each prepare and measure is the same for all three readouts.
+        The green fill between the PT and QUBIT line depicts constant interaction between them.
         \textbf{(b)~Outcome-record probabilities $p(x_1,x_2,x_3)$.}
-        For some three-shot records the process-tensor probabilities do not
-        coincide with the products of the single-round marginals, indicating
-        correlations between successive readouts.
+        For some three-shot records the process-tensor probabilities do not coincide with the products of the single-round marginals, indicating correlations between successive readouts.
     }
     \label{fig:workflow-ramsey}
 \end{figure}
 %
-The eight probabilities in Fig.~\ref{fig:workflow-ramsey} are non-negative and sum
-to unity, as required by Eq.~\eqref{eq:ramsey-complete-instrument}.  
+The eight probabilities in Fig.~\ref{fig:workflow-ramsey} are non-negative and sum to unity, as required by Eq.~\eqref{eq:ramsey-complete-instrument}.
 % Since the time for which the qubit is exposed to the noisy environment between each prepare and measure is the same for all three readouts, we would expect the joint probability \(p(x_1,x_2,x_3)\) to be the product of the single-round probabilities \(p(x_1)p(x_2)p(x_3)\). 
 For a memoryless process, the active reset makes the three identically timed rounds independent, so that the joint distribution factorises as \(p(x_1,x_2,x_3)=\prod_jp(x_j)\).
 Deviations from the product of the measured single-round marginals therefore reveal information retained by the environment across causal breaks.
@@ -283,24 +279,25 @@ On a five-step process with \((n_2,n_1)=(3,1)\), the resulting schedule is
     caption={Instrument sequence for \(C_{zz}(t_3,t_1)\) on a five-step process.},
     label={lst:workflow-correlations-seq},
 ]
-\begin{juliacode}[paired]
+    \begin{juliacode}[paired]
 seq = two_time_correlation_seq(
     process_tensor, (sigma_z, 3), (sigma_z, 1);
     rho0=rho_S0,
 )
 println(seq)
-\end{juliacode}
-\begin{juliaoutput}[paired]
+    \end{juliacode}
+    \begin{juliaoutput}[paired]
 InstrumentSeq(default=IdentityOperation, nsteps=5, 4 explicit entries)
   tstep=0 => StatePreparation{MPO{Hilbert, Nothing}}
   tstep=2 => LeftRightOperator{MPO{Hilbert, Nothing}, MPO{Hilbert, Nothing}}
   tstep=4 => LeftRightOperator{MPO{Hilbert, Nothing}, MPO{Hilbert, Nothing}}
   tstep=5 => TraceOut
-\end{juliaoutput}
+    \end{juliaoutput}
 \end{julialistingpair}
 %
 The default identity fills the idle slots \(1\) and \(3\).  
-The left-action at \texttt{tstep=2} is \(B=\sigma_z\) at \(t_1\), and that at \texttt{tstep=4} is \(A=\sigma_z\) at \(t_2\).  If \(t_1>t_2\), the early insertion becomes a right action; if \(t_1=t_2\), the two operators are multiplied on the same temporal leg.
+The left-action at \texttt{tstep=2} is \(B=\sigma_z\) at \(t_1\), and that at \texttt{tstep=4} is \(A=\sigma_z\) at \(t_2\).
+If \(t_1>t_2\), the early insertion becomes a right action; if \(t_1=t_2\), the two operators are multiplied on the same temporal leg.
 
 Several expectations follow without solving the dynamics.  
 Hermiticity and $\sigma_z^2=\mathbb I$ give
@@ -324,24 +321,19 @@ The equal-time cross-correlations instead follow from
 %
 Consequently, the real parts of the corresponding equal-time correlations vanish. 
 The numerical grids in Fig.~\ref{fig:workflow-correlations} reproduce these correlation properties faithfully.
-
+%
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{figures/multitime_correlations.pdf}
     \caption{%
         \textbf{Two-time spin correlations from a reused process tensor.}
-        Panels (a)--(c) show the real parts of
-        $C_{zz}$, $C_{zx}$, and $C_{xy}$ for the two-spin model in
-        Eq.~\eqref{eq:correlation-spin-model}; (d)--(f) show the corresponding
-        imaginary parts.  The autocorrelation (a) has a unit real diagonal and the
-        conjugate symmetry of Eq.~\eqref{eq:czz-structure} in (d); the
-        cross-correlation diagonals follow
-        Eq.~\eqref{eq:cross-correlation-diagonal}.  Every pixel is obtained by
-        changing only the two operator-insertion times of the same stored
-        process tensor.
+        Panels (a)--(c) show the real parts of $C_{zz}$, $C_{zx}$, and $C_{xy}$ for the two-spin model in Eq.~\eqref{eq:correlation-spin-model}; (d)--(f) show the corresponding imaginary parts.
+        The autocorrelation (a) has a unit real diagonal and the conjugate symmetry of Eq.~\eqref{eq:czz-structure} in (d); the cross-correlation diagonals follow Eq.~\eqref{eq:cross-correlation-diagonal}.
+        Every pixel is obtained by changing only the two operator-insertion times of the same stored process tensor.
     }
     \label{fig:workflow-correlations}
 \end{figure}
+%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Memory-assisted control with a quantum tester}
@@ -383,19 +375,14 @@ trajectory = evolve(
     \includegraphics[width=\linewidth]{figures/tester_instrument.pdf}
     \caption{%
         \textbf{(a)~Transverse magnetisation of the SWAP--phase--SWAP protocol.}
-        The first SWAP transfers $\langle X\rangle$ from the noisy processor
-        $S$ to the isolated ancilla $A$, the $Z_A$ gate reverses its sign, and
-        the second SWAP returns it; the uncontrolled system continues to
-        dephase on the processor.
+        The first SWAP transfers $\langle X\rangle$ from the noisy processor $S$ to the isolated ancilla $A$, the $Z_A$ gate reverses its sign, and the second SWAP returns it; the uncontrolled system continues to dephase on the processor.
         \textbf{(b)~System--ancilla correlation.}
-        The first SWAP parks the logical state in $A$ while the environment
-        retains the processor history; later evolution and the retrieval SWAP
-        convert part of that history into $I(S{:}A)\approx 0.02$ bits. The
-        small magnitude reflects the weak-coupling parameters used here.
+        The first SWAP parks the logical state in $A$ while the environment retains the processor history; later evolution and the retrieval SWAP convert part of that history into $I(S{:}A)\approx 0.02$ bits.
+        The small magnitude reflects the weak-coupling parameters used here.
     }
     \label{fig:workflow-tester}
 \end{figure}
-
+%
 
 The output of evolving a PT-MPO with a tester contains the reduced states $\rho_S(t)$ and $\rho_A(t)$ by default. 
 The joint trajectory $\rho_{SA}(t)$ is obtained by setting \texttt{return\_joint=true}. 
@@ -417,5 +404,4 @@ Its peak value of about $0.02$ bits is small because the spin--boson coupling us
 The two memories remain distinct: environmental memory is compressed into the PT-MPO, whereas the experimenter's controllable memory is carried by the tester ancilla.
 
 Taken together, these workflows move from an unobserved reduced trajectory to outcome-resolved causal breaks, operator insertions at two times, and finally a coherent intervention with its own memory.  
-Their common implementation is the central design choice of \texttt{ProcessTensors.jl}: the expensive environment is
-encoded once, while the experiment is changed by replacing the instruments attached to its temporal legs.
+Their common implementation is the central design choice of \texttt{ProcessTensors.jl}: the expensive environment is encoded once, while the experiment is changed by replacing the instruments attached to its temporal legs.

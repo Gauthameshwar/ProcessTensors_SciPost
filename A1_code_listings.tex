@@ -6,30 +6,17 @@
 
 Code examples throughout this paper are displayed in framed Julia listings.
 A blue \textbf{Julia} badge in the top-right corner identifies the language.
-Printed program output is shown in a matching gray box with a
-\textbf{Terminal} badge; that text is not syntax-highlighted.
-Line numbers on the left are the ones referred to in the text
-(for example, Listing~\ref{lst:listing-legend}, lines~4--6).
-Syntax highlighting is chosen to make the origin of each identifier visible at a
-glance, rather than to reproduce a particular editor theme.
+Printed program output is shown in a matching gray box with a \textbf{Terminal} badge; that text is not syntax-highlighted.
+Line numbers on the left are the ones referred to in the text (for example, Listing~\ref{lst:listing-legend}, lines~4--6).
+Syntax highlighting is chosen to make the origin of each identifier visible at a glance, rather than to reproduce a particular editor theme.
 
 The colour roles are as follows.
 \begin{itemize}
     \item \textbf{Blue, bold:} Julia keywords such as \jlinline{using}.
     \item \textbf{Violet, bold:} names exported by \texttt{ProcessTensors.jl}.
-    This includes package-specific constructors and converters
-    (\jlinline{to_dm}, \jlinline{liouv_sites}, \jlinline{liouvillian_mpo},
-    \jlinline{tester}, \ldots), tensor-network types such as \jlinline{MPS},
-    \jlinline{MPO}, and \jlinline{OpSum}, and re-exported ITensorMPS inspection
-    routines such as \jlinline{siteinds}, \jlinline{linkinds}, and
-    \jlinline{inner}.
-    \item \textbf{Teal, bold:} functions that belong to \texttt{ITensors.jl}
-    and are \emph{not} part of the \texttt{ProcessTensors.jl} export list
-    (\jlinline{Index}, \jlinline{ITensor}, \jlinline{dag}, \jlinline{prime},
-    \jlinline{delta}, \jlinline{op}, \jlinline{apply}, \ldots).
-    \item \textbf{Orange, bold:} package types and backends such as
-    \jlinline{Hilbert}, \jlinline{Liouville}, \jlinline{Dense},
-    \jlinline{ACE}, \jlinline{InstrumentSeq}, and \jlinline{TesterSeq}.
+    This includes package-specific constructors and converters (\jlinline{to_dm}, \jlinline{liouv_sites}, \jlinline{liouvillian_mpo}, \jlinline{tester}, \ldots), tensor-network types such as \jlinline{MPS}, \jlinline{MPO}, and \jlinline{OpSum}, and re-exported ITensorMPS inspection routines such as \jlinline{siteinds}, \jlinline{linkinds}, and \jlinline{inner}.
+    \item \textbf{Teal, bold:} functions that belong to \texttt{ITensors.jl} and are \emph{not} part of the \texttt{ProcessTensors.jl} export list (\jlinline{Index}, \jlinline{ITensor}, \jlinline{dag}, \jlinline{prime}, \jlinline{delta}, \jlinline{op}, \jlinline{apply}, \ldots).
+    \item \textbf{Orange, bold:} package types and backends such as \jlinline{Hilbert}, \jlinline{Liouville}, \jlinline{Dense}, \jlinline{ACE}, \jlinline{InstrumentSeq}, and \jlinline{TesterSeq}.
     \item \textbf{Near-black:} ordinary variables.
     \item \textbf{Green, bold:} numeric literals.
     \item \textbf{Crimson:} string literals.
@@ -37,13 +24,11 @@ The colour roles are as follows.
 \end{itemize}
 
 Listing~\ref{lst:listing-legend} collects these conventions in one place.
-Violet names are the objects a user of \texttt{ProcessTensors.jl} is expected
-to call; teal names are the underlying ITensor primitives on which those
-objects are built.
-
+Violet names are the objects a user of \texttt{ProcessTensors.jl} is expected to call; teal names are the underlying ITensor primitives on which those objects are built.
+%
 \begin{juliacode}[
-  caption={Colour legend for the listings in this paper.},
-  label={lst:listing-legend},
+    caption={Colour legend for the listings in this paper.},
+    label={lst:listing-legend},
 ]
 using ITensors, ProcessTensors
 
@@ -56,3 +41,4 @@ H = OpSum()
 H += 0.7, "Sx", 1
 L = liouvillian_mpo(H, liouv_sites(sites))
 \end{juliacode}
+%

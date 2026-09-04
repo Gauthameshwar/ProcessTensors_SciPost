@@ -14,6 +14,7 @@ figures/tikz/*.toc
 .DS_Store
 
 # Internal planning
+.cursor/*
 *draft*
 *prompt*
 *todo*

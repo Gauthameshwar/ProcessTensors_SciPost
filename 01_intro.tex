@@ -1,62 +1,118 @@
 \section{Introduction}
 \label{sec:intro}
-In principle, describing an open quantum system is easy: write down a giant wavefunction for the entire universe, place it in an even more gigantic Hilbert space, and evolve it according to the Schrödinger equation. Somewhere inside that wavefunction lies everything one could wish to know about the system of interest. In practice, of course, we cannot keep track of every surrounding particle, lattice vibration, stray electromagnetic field, or experimental imperfection and calculate their joint correlated dynamics. We therefore do what physicists have always done when the universe becomes inconveniently large: draw a boundary. The degrees of freedom we wish to study are called the \emph{system}; everything beyond this boundary is called the \emph{environment} or \emph{bath}. Open quantum-system theory asks how the bath affects the system without requiring us to simulate the bath in all its microscopic detail.
+In principle, describing an open quantum system is easy: write down a giant wavefunction for the entire universe, place it in an even more gigantic Hilbert space, and evolve it according to the Schrödinger equation.
+Somewhere inside that wavefunction lies everything one could wish to know about the system of interest.
+In practice, of course, we cannot keep track of every surrounding particle, lattice vibration, stray electromagnetic field, or experimental imperfection and calculate their joint correlated dynamics.
+We therefore do what physicists have always done when the universe becomes inconveniently large: draw a boundary.
+The degrees of freedom we wish to study are called the \emph{system}; everything beyond this boundary is called the \emph{environment} or \emph{bath}.
+Open quantum-system theory asks how the bath affects the system without requiring us to simulate the bath in all its microscopic detail.
 
-The most familiar answers we would see in this regard are those that rely on weak-coupling, short-memory, or related approximations on the baths that lead to time-local master equations. In the Markovian limit, the system does not need a record of its earlier history in order to determine what happens next. Markovian master equations provide an extremely successful workhorse for open quantum dynamics, with the Gorini--Kossakowski--Sudarshan--Lindblad form supplying the standard generator of quantum dynamical semigroups~\cite{Gorini1976,Lindblad1976}. Nevertheless, weak coupling and a clean separation of timescales are not available in every problem. Structured reservoirs, strong system--bath coupling, slow environmental modes, and delayed feedback can all preserve information about earlier dynamics~\cite{Rivas2014,deVega2017}. In these regimes, memory is part of the physics rather than a correction that can safely be ignored.
+The most familiar answers we would see in this regard are those that rely on weak-coupling, short-memory, or related approximations on the baths that lead to time-local master equations.
+In the Markovian limit, the system does not need a record of its earlier history in order to determine what happens next.
+Markovian master equations provide an extremely successful workhorse for open quantum dynamics, with the Gorini--Kossakowski--Sudarshan--Lindblad form supplying the standard generator of quantum dynamical semigroups~\cite{Gorini1976,Lindblad1976}.
+Nevertheless, weak coupling and a clean separation of timescales are not available in every problem.
+Structured reservoirs, strong system--bath coupling, slow environmental modes, and delayed feedback can all preserve information about earlier dynamics~\cite{Rivas2014,deVega2017}.
+In these regimes, memory is part of the physics rather than a correction that can safely be ignored.
 
-The difficulty is not merely that the environment remembers, but that the system may give us no indication of \emph{what} it remembers if we trace out the bath. To see this, consider two joint system--environment states at some time $t_1$,
+The difficulty is not merely that the environment remembers, but that the system may give us no indication of \emph{what} it remembers if we trace out the bath.
+To see this, consider two joint system--environment states at some time $t_1$,
+%
 \begin{equation}
-\rho_{SE}^{(1)}(t_1)
-\qquad\text{and}\qquad
-\rho_{SE}^{(2)}(t_1),
+    \rho_{SE}^{(1)}(t_1)
+    \qquad\text{and}\qquad
+    \rho_{SE}^{(2)}(t_1),
 \end{equation}
+%
 which reduce to exactly the same system state,
+%
 \begin{equation}
-\operatorname{Tr}_E\!\left[\rho_{SE}^{(1)}(t_1)\right]
-=
-\operatorname{Tr}_E\!\left[\rho_{SE}^{(2)}(t_1)\right]
-=
-\rho_S(t_1).
+    \operatorname{Tr}_E\!\left[\rho_{SE}^{(1)}(t_1)\right]
+    =
+    \operatorname{Tr}_E\!\left[\rho_{SE}^{(2)}(t_1)\right]
+    =
+    \rho_S(t_1).
 \end{equation}
-As far as the system density matrix is concerned, these two situations are indistinguishable. The environment, however, may disagree. It can retain different states or different correlations with the system in the two cases. Consequently, evolving both joint states with the same system--environment unitary need not produce the same reduced state at a later time:
+%
+As far as the system density matrix is concerned, these two situations are indistinguishable.
+The environment, however, may disagree.
+It can retain different states or different correlations with the system in the two cases.
+Consequently, evolving both joint states with the same system--environment unitary need not produce the same reduced state at a later time:
+%
 \begin{equation}
-\operatorname{Tr}_E\!\left[
-U_{2:1}\rho_{SE}^{(1)}(t_1)U_{2:1}^{\dagger}
-\right]
-\neq
-\operatorname{Tr}_E\!\left[
-U_{2:1}\rho_{SE}^{(2)}(t_1)U_{2:1}^{\dagger}
-\right].
+    \operatorname{Tr}_E\!\left[
+        U_{2:1}\rho_{SE}^{(1)}(t_1)U_{2:1}^{\dagger}
+    \right]
+    \neq
+    \operatorname{Tr}_E\!\left[
+        U_{2:1}\rho_{SE}^{(2)}(t_1)U_{2:1}^{\dagger}
+    \right].
 \end{equation}
-Thus, even perfect knowledge of the present system state need not be sufficient to predict its future. The information distinguishing the two experiments has simply moved somewhere beyond the boundary we drew earlier.
+%
+Thus, even perfect knowledge of the present system state need not be sufficient to predict its future.
+The information distinguishing the two experiments has simply moved somewhere beyond the boundary we drew earlier.
 
-The limitation becomes sharper when we intervene our system along the way. Imagine performing two experiments with different histories and, at an intermediate time $t_1$, discarding the system state and preparing the same fresh state $P$ in both. This operation---often called a \emph{causal break}---removes any information that could pass directly from the past to the future through the system. Immediately afterward, both experiments therefore contain the same reduced state,
+The limitation becomes sharper when we intervene our system along the way.
+Imagine performing two experiments with different histories and, at an intermediate time $t_1$, discarding the system state and preparing the same fresh state $P$ in both.
+This operation---often called a \emph{causal break}---removes any information that could pass directly from the past to the future through the system.
+Immediately afterward, both experiments therefore contain the same reduced state,
+%
 \begin{equation}
-\rho_S^{(1)}(t_1^+)
-=
-\rho_S^{(2)}(t_1^+)
-=
-P.
+    \rho_S^{(1)}(t_1^+)
+    =
+    \rho_S^{(2)}(t_1^+)
+    =
+    P.
 \end{equation}
-Nevertheless, the intervention acts on a system that may already be correlated with its environment. A measurement outcome, for example, can condition the environment into a corresponding state, while repreparing $P$ makes the system look identical in every run. If the later dynamics still depends on the earlier preparation or measurement outcome, then the memory must have travelled across the causal break through the environment. Such memory can remain hidden in an uninterrupted reduced trajectory, and can even occur when familiar two-time criteria describe the unperturbed evolution as Markovian~\cite{Pollock2018Markov}.
+%
+Nevertheless, the intervention acts on a system that may already be correlated with its environment.
+A measurement outcome, for example, can condition the environment into a corresponding state, while repreparing $P$ makes the system look identical in every run.
+If the later dynamics still depends on the earlier preparation or measurement outcome, then the memory must have travelled across the causal break through the environment.
+Such memory can remain hidden in an uninterrupted reduced trajectory, and can even occur when familiar two-time criteria describe the unperturbed evolution as Markovian~\cite{Pollock2018Markov}.
 
-This leaves a state-to-state description with an awkward question. What map should take $P$ at $t_1$ to the state at $t_2$, if the same $P$ can lead to different futures depending on what happened before it was prepared? There is no contradiction in quantum mechanics here; rather, we have asked the reduced state to remember information that it no longer contains. The missing input is the history of interventions---the preparations, controls, and measurements through which the system and its environment arrived at the present experiment. A complete description of the quantum process must therefore accept an entire ordered sequence of operations, rather than only a density matrix at one particular time.
+This leaves a state-to-state description with an awkward question.
+What map should take $P$ at $t_1$ to the state at $t_2$, if the same $P$ can lead to different futures depending on what happened before it was prepared?
+There is no contradiction in quantum mechanics here; rather, we have asked the reduced state to remember information that it no longer contains.
+The missing input is the history of interventions---the preparations, controls, and measurements through which the system and its environment arrived at the present experiment.
+A complete description of the quantum process must therefore accept an entire ordered sequence of operations, rather than only a density matrix at one particular time.
 
-The process tensor provides precisely such a description~\cite{Pollock2018Framework,Milz2021,Taranto2025}. For a sequence of interventions
-$(\mathcal{A}_0,\mathcal{A}_1,\ldots,\mathcal{A}_{n-1})$, it returns the final system state,
+The process tensor provides precisely such a description~\cite{Pollock2018Framework,Milz2021,Taranto2025}.
+For a sequence of interventions $(\mathcal{A}_0,\mathcal{A}_1,\ldots,\mathcal{A}_{n-1})$, it returns the final system state,
+%
 \begin{equation}
-\rho_S(t_n)
-=
-\mathcal{T}_{n:0}
-\bigl[
-\mathcal{A}_{n-1},\ldots,\mathcal{A}_0
-\bigr],
+    \rho_S(t_n)
+    =
+    \mathcal{T}_{n:0}
+    \bigl[
+        \mathcal{A}_{n-1},\ldots,\mathcal{A}_0
+    \bigr],
 \end{equation}
-or, when the interventions contain measurements, the corresponding outcome probabilities and conditional states. A reduced trajectory tells us what happened under one prescribed history; a process tensor tells us what could have happened had we intervened differently along the way. It does not reveal every microscopic bath degree of freedom, but retains their complete influence on experiments performed through the system (the mathematical construction behind this statement---including its Choi representation and temporal input and output spaces---will be developed carefully in Sec.~\ref{sec:process-tensors}. For the present discussion, its operational meaning is enough). This makes causal breaks, multi-time correlations, instrument sequences, Markov order, and correlations across temporal partitions accessible within one description. In the Markovian limit, the process separates into independent transformations between successive times; otherwise, its temporal parts remain correlated, recording how information stored in the environment can return later. Memory thus becomes part of the object being manipulated rather than a feature inferred from a single trajectory. 
+%
+or, when the interventions contain measurements, the corresponding outcome probabilities and conditional states.
+A reduced trajectory tells us what happened under one prescribed history; a process tensor tells us what could have happened had we intervened differently along the way.
+It does not reveal every microscopic bath degree of freedom, but retains their complete influence on experiments performed through the system (the mathematical construction behind this statement---including its Choi representation and temporal input and output spaces---will be developed carefully in Sec.~\ref{sec:process-tensors}.
+For the present discussion, its operational meaning is enough).
+This makes causal breaks, multi-time correlations, instrument sequences, Markov order, and correlations across temporal partitions accessible within one description.
+In the Markovian limit, the process separates into independent transformations between successive times; otherwise, its temporal parts remain correlated, recording how information stored in the environment can return later.
+Memory thus becomes part of the object being manipulated rather than a feature inferred from a single trajectory.
 
-The generality of a process tensor comes at an exponential cost: every additional intervention time introduces another pair of system indices, thus causing the exponential growth of the representation space of a process tensor, similar to how a many-body wavefunction space grows with the number of particles. Tensor networks make this manageable by representing the process as a matrix product operator in time, or PT-MPO~\cite{Jorgensen2019}. The open legs provide the slots for system operations, while the internal bonds carry correlations between different parts of the process. When these temporal correlations are compressible, singular-value truncations reduce the representation to a controllable bond dimension. Different algorithms construct this PT-MPO by exploiting different structures of the environment: PT-TEMPO contracts the influence functional of Gaussian bosonic baths~\cite{Strathearn2018,Jorgensen2019}, ACE combines and compresses the influence of independent bath modes~\cite{Cygorek2022}, and time-translation-invariant approaches target long-time processes using repeating tensors~\cite{Link2024Infinite}. The process tensor is therefore not made small by assumption; it is made useful whenever the environment stores its relevant memory in a compressible temporal space.
+The generality of a process tensor comes at an exponential cost: every additional intervention time introduces another pair of system indices, thus causing the exponential growth of the representation space of a process tensor, similar to how a many-body wavefunction space grows with the number of particles.
+Tensor networks make this manageable by representing the process as a matrix product operator in time, or PT-MPO~\cite{Jorgensen2019}.
+The open legs provide the slots for system operations, while the internal bonds carry correlations between different parts of the process.
+When these temporal correlations are compressible, singular-value truncations reduce the representation to a controllable bond dimension.
+Different algorithms construct this PT-MPO by exploiting different structures of the environment: PT-TEMPO contracts the influence functional of Gaussian bosonic baths~\cite{Strathearn2018,Jorgensen2019}, ACE combines and compresses the influence of independent bath modes~\cite{Cygorek2022}, and time-translation-invariant approaches target long-time processes using repeating tensors~\cite{Link2024Infinite}.
+The process tensor is therefore not made small by assumption; it is made useful whenever the environment stores its relevant memory in a compressible temporal space.
 
-The principal open-source packages that construct reusable PT-MPOs are \texttt{OQuPy}, which implements PT-TEMPO for Gaussian bosonic environments~\cite{Fux2024}, and the C++ \texttt{ACE} toolkit, which supports ACE, PT-TEMPO, and related contraction schemes for a broader class of independent bath modes~\cite{CygorekGauger2024}. Packages such as \texttt{QuantumDynamics.jl} and \texttt{MPSDynamics.jl} provide complementary influence-functional and explicit-environment tensor-network methods~\cite{Bose2023,Lacroix2024}. Broader comparisons of these algorithms, software packages, and their detailed applicable regimes are already available in recent reviews~\cite{Keeling2026,LacroixReview2026}.
+The principal open-source packages that construct reusable PT-MPOs are \texttt{OQuPy}, which implements PT-TEMPO for Gaussian bosonic environments~\cite{Fux2024}, and the C++ \texttt{ACE} toolkit, which supports ACE, PT-TEMPO, and related contraction schemes for a broader class of independent bath modes~\cite{CygorekGauger2024}.
+Packages such as \texttt{QuantumDynamics.jl} and \texttt{MPSDynamics.jl} provide complementary influence-functional and explicit-environment tensor-network methods~\cite{Bose2023,Lacroix2024}.
+Broader comparisons of these algorithms, software packages, and their detailed applicable regimes are already available in recent reviews~\cite{Keeling2026,LacroixReview2026}.
 
-Then enters the hero of this paper, ProcessTensors.jl. BA BA BAA BAAMMMMMM. We are so easy to use. We also have a lot of documentation and examples. Someone just after learning basic Julia and reading this paper, can already install and use our software to fiddle with process tensors. We are the best. Just Kidding. The remaining part of the intro will be completed once we finalise the main contents of this scipost paper. Stay tuned!
+Then enters the hero of this paper, ProcessTensors.jl.
+BA BA BAA BAAMMMMMM.
+We are so easy to use.
+We also have a lot of documentation and examples.
+Someone just after learning basic Julia and reading this paper, can already install and use our software to fiddle with process tensors.
+We are the best.
+Just Kidding.
+The remaining part of the intro will be completed once we finalise the main contents of this scipost paper.
+Stay tuned!
 
