@@ -16,12 +16,8 @@ A quantum operation describes one possible transformation of a system, including
 For an outcome \(x\), it is a completely positive, trace-non-increasing map
 %
 \begin{equation}
-    \mathcal A_x : \mathcal B(\mathcal H_{\mathrm{in}})
-    \longrightarrow \mathcal B(\mathcal H_{\mathrm{out}}),
-    \qquad
-    \mathcal A_x(\rho)
-    =
-    \sum_{\mu} K_{x\mu}\rho K_{x\mu}^{\dagger},
+    \mathcal A_x : \mathcal B(\mathcal H_{\mathrm{in}}) \longrightarrow \mathcal B(\mathcal H_{\mathrm{out}}), \qquad \mathcal A_x(\rho)
+    = \sum_{\mu} K_{x\mu}\rho K_{x\mu}^{\dagger},
     \label{eq:instrument-operation-kraus}
 \end{equation}
 %
@@ -36,8 +32,7 @@ Here, \(\mu\) labels the unresolved Kraus components associated with that outcom
 Complete positivity guarantees that
 %
 \begin{equation}
-    (\mathcal A_x\otimes\mathcal I_R)(X)\geq0
-    \qquad\text{for every }X\geq0
+    (\mathcal A_x\otimes\mathcal I_R)(X)\geq0 \qquad\text{for every }X\geq0
     \label{eq:instrument-cp}
 \end{equation}
 %
@@ -46,10 +41,7 @@ This requirement is essential in a multi-time setting: the system on which an in
 The inequality in Eq.~\eqref{eq:instrument-tni} then ensures that the trace of the unnormalised output can be interpreted as the probability of the selected event,
 %
 \begin{equation}
-    p(x)=\operatorname{Tr}[\mathcal A_x(\rho)],
-    \qquad
-    \rho_x=\frac{\mathcal A_x(\rho)}{p(x)}
-    \quad\text{when }p(x)>0.
+    p(x)=\operatorname{Tr}[\mathcal A_x(\rho)], \qquad \rho_x=\frac{\mathcal A_x(\rho)}{p(x)} \quad\text{when }p(x)>0.
     \label{eq:instrument-outcome-state}
 \end{equation}
 %
@@ -57,10 +49,7 @@ The inequality in Eq.~\eqref{eq:instrument-tni} then ensures that the trace of t
 A quantum instrument is the complete family of such outcome maps,
 %
 \begin{equation}
-    \mathfrak I=\{\mathcal A_x\}_{x\in\mathsf X},
-    \qquad
-    \sum_{x\in\mathsf X}\mathcal A_x
-    \text{ is completely positive and trace preserving},
+    \mathfrak I=\{\mathcal A_x\}_{x\in\mathsf X}, \qquad \sum_{x\in\mathsf X}\mathcal A_x \text{ is completely positive and trace preserving},
     \label{eq:quantum-instrument-family}
 \end{equation}
 %
@@ -81,24 +70,21 @@ A measurement outcome \(x\), by contrast, is represented by a positive operator 
 The effects associated with all possible outcomes form a positive operator-valued measure (POVM),
 %
 \begin{equation}
-    E_x\geq0,
-    \qquad
-    \sum_x E_x=\mathbb I,
+    E_x\geq0, \qquad \sum_x E_x=\mathbb I,
 \end{equation}
 %
 so each \(E_x\) is referred to, henceforth, as a POVM element and satisfies \(0\leq E_x\leq\mathbb I\).
 For an input state \(\rho\), this POVM element assigns the outcome probability
 %
-$$
+\[
 p(x)=\operatorname{Tr}(E_x\rho).
-$$
+\]
 %
 Combining the POVM element with a newly prepared state \(\sigma_x\) gives the measure-and-prepare operation
 %
 \begin{equation}
     \mathcal A_x^{\mathrm{MP}}(\rho)
-    =
-    \operatorname{Tr}(E_x\rho),\sigma_x,
+    = \operatorname{Tr}(E_x\rho),\sigma_x,
     \label{eq:measure-and-prepare}
 \end{equation}
 %
@@ -119,17 +105,8 @@ For a sequence of outcomes \(\boldsymbol{x}=(x_0,\ldots,x_{N-1})\), the process 
 %
 \begin{equation}
     \widetilde\rho_S^{(\boldsymbol{x})}(t_N)
-    =
-    \mathcal T_{N:0}
-    \bigl[
-    \mathcal A_{x_{N-1}}^{(N-1)},\ldots,
-    \mathcal A_{x_0}^{(0)}
-    \bigr],
-    \qquad
-    p(\boldsymbol{x})
-    =
-    \operatorname{Tr}
-    \widetilde\rho_S^{(\boldsymbol{x})}(t_N).
+    = \mathcal T_{N:0} \bigl[ \mathcal A_{x_{N-1}}^{(N-1)},\ldots, \mathcal A_{x_0}^{(0)} \bigr], \qquad p(\boldsymbol{x})
+    = \operatorname{Tr} \widetilde\rho_S^{(\boldsymbol{x})}(t_N).
     \label{eq:instrument-trajectory}
 \end{equation}
 %
@@ -170,9 +147,7 @@ Using the notation of Eq.~\eqref{eq:pt-mpo-decomposition}, the unprimed system i
 Their ITensor tags contain the same \texttt{tstep=k}; their prime levels distinguish the two roles,
 %
 \begin{equation}
-    \operatorname{plev}(o_k)=0,
-    \qquad
-    \operatorname{plev}(i_k)=1.
+    \operatorname{plev}(o_k)=0, \qquad \operatorname{plev}(i_k)=1.
     \label{eq:instrument-prime-convention}
 \end{equation}
 %
@@ -186,9 +161,7 @@ A schedule entry at logical step \(k\geq1\) connects \(o_{k-1}\) to \(i_k\),
 while the initial preparation and terminal effect have only one leg,
 %
 \begin{equation}
-    [\mathcal P_{\rho_0}]_{i_0}=\lvert\rho_0\rangle\!\rangle_{i_0},
-    \qquad
-    [\mathcal M]_{o_{N-1}}=\langle\!\langle M\rvert_{o_{N-1}}.
+    [\mathcal P_{\rho_0}]_{i_0}=\lvert\rho_0\rangle\!\rangle_{i_0}, \qquad [\mathcal M]_{o_{N-1}}=\langle\!\langle M\rvert_{o_{N-1}}.
     \label{eq:single-leg-instrument-indices}
 \end{equation}
 %
@@ -244,14 +217,7 @@ They materialise as the scalar tensor \texttt{ITensor(1.0)} during contraction, 
 They are different from \texttt{identity\_operation()}.
 The former retains two independent indices, whereas the latter contracts them through an identity channel.
 Selective opening is important because \texttt{evaluate\_process} returns a dense tensor whenever several system legs remain.
-If \(m\) Liouville legs of a \(d\)-dimensional system are open, the dense object contains
-%
-\begin{equation}
-    d^{2m}
-    \label{eq:open-leg-scaling}
-\end{equation}
-%
-complex entries.
+If \(m\) Liouville legs of a \(d\)-dimensional system are open, the dense object contains \(d^{2m}\) complex entries.
 For a qubit, sixteen open legs already require \(4^{16}\) complex numbers, or \(64\,\mathrm{GiB}\) in \texttt{ComplexF64} before tensor overhead.
 Open-leg schedules should therefore expose only the temporal indices required by the calculation.
 
@@ -265,8 +231,7 @@ Its three fields are
 %
 \begin{equation}
     \texttt{InstrumentSeq}
-    =
-    (\texttt{default},\texttt{entries},\texttt{nsteps}).
+    = (\texttt{default},\texttt{entries},\texttt{nsteps}).
     \label{eq:instrument-seq-fields}
 \end{equation}
 %
@@ -307,21 +272,18 @@ The schedule in Listing~\ref{lst:instrument-seq-example} corresponds to the scal
 %
 \begin{equation}
     z
-    =
-    \langle\!\langle S^z\rvert_{o_2}
-    Q^{[2]}
-    \mathcal U_{\mathrm c}
-    Q^{[1]}
-    \mathcal I
-    Q^{[0]}
-    \lvert\rho_0\rangle\!\rangle_{i_0},
+    = \langle\!\langle S^z\rvert_{o_2}
+    Q^{[2]} \mathcal U_{\mathrm c}
+    Q^{[1]} \mathcal I
+    Q^{[0]} \lvert\rho_0\rangle\!\rangle_{i_0},
     \label{eq:instrument-seq-example}
 \end{equation}
 %
 where the tensor contraction over the temporal memory indices \(\chi_1,\chi_2\) and the joined system indices is implicit.
 The default identity supplies \(\mathcal I\) at step 1, the explicit entry at step 2 supplies \(\mathcal U_{\mathrm c}\), and the terminal observable closes the last output.
 Replacing the terminal observable by \texttt{open\_output()} turns the same history into a final reduced state; changing an intermediate entry to a measurement and preparation pair implements a causal break.
-The PT-MPO itself is unchanged in all three experiments.
+The
+PT-MPO itself is unchanged in all three experiments.
 
 During materialisation, consecutive single-leg output and input entries form their two-leg product.
 This allows a measurement at one side of a temporal cut and a preparation at the other to be written separately while retaining the product structure in Eq.~\eqref{eq:measure-and-prepare}.
@@ -339,32 +301,21 @@ A constructive realisation of such a tester is specified by
 %
 \begin{equation}
     \mathbf T
-    =
-    \left(
-    \rho_{SA},\;
-    \{\mathcal C_k^{SA}\}_{k=0}^{N-1},\;
-    \{\mathcal V_k^{A}\}_{k=0}^{N-1}
-    \right),
+    = \left( \rho_{SA},\; \{\mathcal C_k^{SA}\}_{k=0}^{N-1},\; \{\mathcal V_k^{A}\}_{k=0}^{N-1} \right),
     \label{eq:tester-sequential-realisation}
 \end{equation}
 %
 where \(\rho_{SA}\) is the initial joint system--ancilla state,
 %
 \begin{equation}
-    \mathcal C_k^{SA}:
-    \mathcal B(\mathcal H_S\otimes\mathcal H_A)
-    \longrightarrow
-    \mathcal B(\mathcal H_S\otimes\mathcal H_A)
+    \mathcal C_k^{SA}: \mathcal B(\mathcal H_S\otimes\mathcal H_A) \longrightarrow \mathcal B(\mathcal H_S\otimes\mathcal H_A)
     \label{eq:tester-joint-map}
 \end{equation}
 %
 is a joint system--ancilla operation, and
 %
 \begin{equation}
-    \mathcal V_k^{A}:
-    \mathcal B(\mathcal H_A)
-    \longrightarrow
-    \mathcal B(\mathcal H_A)
+    \mathcal V_k^{A}: \mathcal B(\mathcal H_A) \longrightarrow \mathcal B(\mathcal H_A)
     \label{eq:tester-ancilla-map}
 \end{equation}
 %
@@ -376,10 +327,7 @@ The system legs between successive joint maps remain available for contraction w
 Because the ancillary degree of freedom is not reset between interventions, the Choi tensor of a correlated tester generally does not factorise into time-local operations,
 %
 \begin{equation}
-    \mathbf T
-    \neq
-    \bigotimes_{k=0}^{N-1}
-    \widehat{\mathcal A}_k .
+    \mathbf T \neq \bigotimes_{k=0}^{N-1} \widehat{\mathcal A}_k .
     \label{eq:correlated-tester}
 \end{equation}
 %
@@ -387,13 +335,8 @@ The product form is recovered when the ancilla is trivial or is independently re
 An outcome-valued tester is obtained by terminating the network with a POVM \(\{F_y\}\),
 %
 \begin{equation}
-    F_y\geq0,
-    \qquad
-    \sum_yF_y=\mathbb I_{SA},
-    \qquad
-    p(y\vert\Upsilon)
-    =
-    \operatorname{Tr}\!\left[F_y\,\omega_{SA}(\Upsilon)\right],
+    F_y\geq0, \qquad \sum_yF_y=\mathbb I_{SA}, \qquad p(y\vert\Upsilon)
+    = \operatorname{Tr}\!\left[F_y\,\omega_{SA}(\Upsilon)\right],
     \label{eq:tester-terminal-povm}
 \end{equation}
 %
@@ -401,11 +344,7 @@ where \(\omega_{SA}(\Upsilon)\) is the final state produced after contracting th
 Absorbing this sequential realisation and its terminal POVM into Choi operators gives the process-POVM elements \cite{Ziman2008ProcessPOVM,Chiribella2009}
 %
 \begin{equation}
-    T_y\geq0,
-    \qquad
-    p(y\vert\Upsilon)=T_y\star\Upsilon,
-    \qquad
-    \sum_yT_y=T_{\mathrm{det}},
+    T_y\geq0, \qquad p(y\vert\Upsilon)=T_y\star\Upsilon, \qquad \sum_yT_y=T_{\mathrm{det}},
     \label{eq:tester-generalised-born-rule}
 \end{equation}
 %
@@ -452,14 +391,7 @@ Abstractly,
 %
 \begin{equation}
     R_{\mathbf A}
-    =
-    \operatorname{Contr}
-    \!\left[
-    \Upsilon,
-    \mathcal P_{\rho_0},
-    \mathcal A_1,\ldots,\mathcal A_{N-1},
-    \mathcal M_N
-    \right],
+    = \operatorname{Contr} \!\left[ \Upsilon, \mathcal P_{\rho_0}, \mathcal A_1,\ldots,\mathcal A_{N-1}, \mathcal M_N \right],
     \label{eq:evaluate-process-contraction}
 \end{equation}
 %
@@ -467,21 +399,16 @@ where the nature of \(R_{\mathbf A}\) is determined by the system indices that t
 Figure~\ref{fig:evaluate-evolve-schedules} shows the three return cases and the related sequence of snapshot contractions used by \texttt{evolve}.
 %
 \begin{table}[h]
-    \centering
-    \small
+    \centering \small
     \begin{tabular}{@{}p{0.20\linewidth}p{0.29\linewidth}p{0.42\linewidth}@{}}
         \hline
-        Open system legs & Julia return type & Interpretation \\
-        \hline
+        Open system legs & Julia return type & Interpretation \\ \hline
         0 & \texttt{ComplexF64} & Probability, trace, expectation value, or correlation scalar \\
         1 & \texttt{MPS\{Liouville\}} & Reduced state-like Liouville vector \\
-        2 or more & \texttt{ITensor} & Dense partially contracted multi-time object \\
-        \hline
+        2 or more & \texttt{ITensor} & Dense partially contracted multi-time object \\ \hline
     \end{tabular}
-    \caption{
-        Return type of one \texttt{evaluate\_process} call.
-        A batch of fully contracted schedules returns one \texttt{Vector\{ComplexF64\}}.
-    }
+    \caption{Return type of one \texttt{evaluate\_process} call.
+    A batch of fully contracted schedules returns one \texttt{Vector\{ComplexF64\}}.}
     \label{tab:evaluate-return-types}
 \end{table}
 %
@@ -493,9 +420,9 @@ A fully contracted result is a probability only when the terminal and intermedia
 The function \texttt{open\_leg\_info} predicts which input and output times remain unresolved before a contraction is attempted.
 In the following schedule, \texttt{open\_inout()} at step 2 leaves \(o_1\) and \(i_2\) independent while the initial preparation and final trace close the remaining boundary legs:
 
+%
 \begin{julialistingpair}[
-    caption={Inspecting the open legs before constructing a dense reduced process.},
-    label={lst:open-leg-info},
+    caption={Inspecting the open legs before constructing a dense reduced process.}, label={lst:open-leg-info},
     ]
 %
     \begin{juliacode}[paired]
@@ -526,6 +453,7 @@ return type: ITensor
     \end{juliaoutput}
 %
 \end{julialistingpair}
+%
 
 This diagnostic turns the scaling in Eq.~\eqref{eq:open-leg-scaling} into an immediate memory estimate.
 For example, the dimensions in Listing~\ref{lst:open-leg-info} predict a \(4\times4\) dense object before the PT contraction begins.
@@ -539,7 +467,8 @@ The helper also reports missing input or output coverage, allowing malformed sch
         The dashed comb is the process tensor, while \(\lvert\rho_0\rangle\!\rangle\), \(\mathbb{I}\), \(U\), and \(\langle\!\langle O \rvert\) are the instruments that sit on the open system legs.
         (a)~\texttt{evaluate\_process} with an expectation of an observable: every system leg is closed and the process returns the conditional scalar \(\langle O(t_3\vert U,\mathbb{I},\rho_0)\rangle\).
         (b)~The same history with \texttt{open\_output()} at the last slot: \(o_2\) remains unresolved and the process returns the conditional Liouville state \(\lvert\rho(t_3\vert U,\mathbb{I},\rho_0)\rangle\!\rangle\).
-        (c)~An \texttt{evolve} snapshot at \(t_2\): past controls are retained, the output \(o_1\) is left open, and the unused future core \(Q^{[2]}\) is closed by a trace-out on \(o_2\) and a preparation \(\lvert\rho_{\mathrm{M}}\rangle\!\rangle^{i_2} =\lvert\mathbb{I}/d\rangle\!\rangle^{i_2}\).
+        (c)~An \texttt{evolve} snapshot at \(t_2\): past controls are retained, the output \(o_1\) is left open, and the unused future core \(Q^{[2]}\) is closed by a trace-out on \(o_2\) and a preparation \(\lvert\rho_{\mathrm{M}}\rangle\!\rangle^{i_2}
+        =\lvert\mathbb{I}/d\rangle\!\rangle^{i_2}\).
     }
     \label{fig:evaluate-evolve-schedules}
 \end{figure}
@@ -591,9 +520,7 @@ Figure~\ref{fig:evaluate-evolve-schedules} depicts the schedule for one snapshot
 The past preparation and controls are retained, the required output is left open, and every later core is discarded through the disconnected CPTP closure
 %
 \begin{equation}
-    \langle\!\langle\mathbb I\rvert_{o_j}
-    \otimes
-    \lvert\mathbb I/d\rangle\!\rangle^{i_{j+1}}.
+    \langle\!\langle\mathbb I\rvert_{o_j} \otimes \lvert\mathbb I/d\rangle\!\rangle^{i_{j+1}}.
     \label{eq:evolve-future-closure}
 \end{equation}
 %

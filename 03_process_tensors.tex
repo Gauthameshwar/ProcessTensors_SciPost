@@ -19,15 +19,7 @@ Writing
 %
 \begin{equation}
     \rho'
-    =
-    \Phi[\rho],
-    \qquad
-    \Phi:
-    \mathcal B(\mathcal H_{
-    \mathrm{in}})
-    \longrightarrow
-    \mathcal B(\mathcal H_{
-    \mathrm{out}}),
+    = \Phi[\rho], \qquad \Phi: \mathcal B(\mathcal H_{ \mathrm{in}}) \longrightarrow \mathcal B(\mathcal H_{ \mathrm{out}}),
 \end{equation}
 %
 the map \(\Phi\) is required to be completely positive and trace preserving (CPTP),
@@ -37,8 +29,7 @@ the map \(\Phi\) is required to be completely positive and trace preserving (CPT
     &&\text{for every }X\geq0,
     \label{eq:channel-complete-positivity}\\
     \operatorname{Tr}\!\left(\Phi[\rho]\right)
-    &=
-    \operatorname{Tr}(\rho).
+    &= \operatorname{Tr}(\rho).
     \label{eq:channel-trace-preservation}
 \end{align}
 %
@@ -51,22 +42,13 @@ In Sec.~\ref{sec:liouville-foundations}, Markovian open-system dynamics was gene
 %
 \begin{equation}
     \frac{\mathrm d\rho}{\mathrm dt}
-    =
-    \mathcal L_t[\rho]
+    = \mathcal L_t[\rho]
     =
     -\mathrm i[H(t),\rho]
-    +
-    \sum_{\mu}\gamma_{\mu}(t)
-    \left(
-    L_{\mu}\rho L_{\mu}^{\dagger}
-    -
-    \frac{1}{2}
-    \left\{
-    L_{\mu}^{\dagger}L_{\mu},\rho
-    \right\}
-    \right),
-    \qquad
-    \gamma_{\mu}(t)\geq0.
+    + \sum_{\mu}\gamma_{\mu}(t) \left(
+        L_{\mu}\rho L_{\mu}^{\dagger}
+        - \frac{1}{2} \left\{
+            L_{\mu}^{\dagger}L_{\mu},\rho \right\} \right), \qquad \gamma_{\mu}(t)\geq0.
     \label{eq:gkls-generator-channel}
 \end{equation}
 %
@@ -75,13 +57,7 @@ The corresponding propagator
 %
 \begin{equation}
     \Phi_{t:s}
-    =
-    \overleftarrow{\mathcal T}
-    \exp\!\left[
-    \int_s^t \mathrm d\tau\,\mathcal L_{\tau}
-    \right],
-    \qquad
-    \rho(t)=\Phi_{t:s}[\rho(s)],
+    = \overleftarrow{\mathcal T} \exp\!\left[ \int_s^t \mathrm d\tau\,\mathcal L_{\tau} \right], \qquad \rho(t)=\Phi_{t:s}[\rho(s)],
     \label{eq:gkls-propagator-channel}
 \end{equation}
 %
@@ -94,15 +70,10 @@ If the system begins uncorrelated with an environment in a fixed state \(\rho_E\
 %
 \begin{equation}
     \Phi_{t:s}[\rho_S]
-    =
-    \operatorname{Tr}_E
-    \left[
-    U_{t:s}
-    (\rho_S\otimes\rho_E)
-    U_{t:s}^{\dagger}
-    \right]
-    =
-    \sum_{\mu}
+    = \operatorname{Tr}_E \left[
+        U_{t:s} (\rho_S\otimes\rho_E)
+        U_{t:s}^{\dagger} \right]
+    = \sum_{\mu}
     K_{\mu}\rho_S K_{\mu}^{\dagger},
     \label{eq:channel-dilation-kraus}
 \end{equation}
@@ -124,8 +95,7 @@ For a memoryless evolution, this state-to-state picture may be applied successiv
 %
 \begin{equation}
     \rho_S(t_{k+1})
-    =
-    \Phi_{k+1:k}[\rho_S(t_k)].
+    = \Phi_{k+1:k}[\rho_S(t_k)].
     \label{eq:stepwise-channel-picture}
 \end{equation}
 %
@@ -141,22 +111,8 @@ Starting from a possibly correlated state \(\rho_{SE}(t_0)\), the final reduced 
 %
 \begin{align}
     \rho_S(t_n)
-    ={}&
-    \operatorname{Tr}_E
-    \Bigl[
-    \mathcal U_{n:n-1}
-    (\mathcal A_{n-1}\otimes\mathcal I_E)
-    \cdots
-    \mathcal U_{1:0}
-    (\mathcal A_0\otimes\mathcal I_E)
-    [\rho_{SE}(t_0)]
-    \Bigr]
-    \nonumber\\
-    =:{}&
-    \mathcal T_{n:0}
-    \bigl[
-    \mathcal A_{n-1},\ldots,\mathcal A_0
-    \bigr].
+    ={}& \operatorname{Tr}_E \Bigl[ \mathcal U_{n:n-1} (\mathcal A_{n-1}\otimes\mathcal I_E) \cdots \mathcal U_{1:0} (\mathcal A_0\otimes\mathcal I_E) [\rho_{SE}(t_0)] \Bigr] \nonumber\\
+    =:{}& \mathcal T_{n:0} \bigl[ \mathcal A_{n-1},\ldots,\mathcal A_0 \bigr].
     \label{eq:process-tensor-operational-definition}
 \end{align}
 %
@@ -168,11 +124,11 @@ If the final output is also measured or traced, the same object instead returns 
 \begin{figure}[t]
     \centering
     \input{figures/tikz/channel_to_multitime_process.tikz}
-    \caption{
-        (a)~A CPTP map \(\hat{\Phi}_{t:s}\) takes a Liouville state \(\lvert\rho(s)\rangle\!\rangle\) to \(\lvert\rho(t)\rangle\!\rangle\).
+    \caption{ (a)~A CPTP map \(\hat{\Phi}_{t:s}\) takes a Liouville state \(\lvert\rho(s)\rangle\!\rangle\) to \(\lvert\rho(t)\rangle\!\rangle\).
         (b)~Joint system--environment evolution with interventions \(\mathcal A_k\) on the system only; both rails are Liouville wires, the environment is traced out, and the final system leg is left open.
         Time runs from right to left.
-        (c)~The same network with the interventions removed: the remaining object is the process tensor \(\mathcal T_{3:0}\), with open Liouville slots at each intervention time.
+        (c)~The same network with the interventions removed: the remaining object is the process tensor \(\mathcal T_{3:0}\), with open
+        Liouville slots at each intervention time.
     }
     \label{fig:channel-to-multitime-process}
 \end{figure}
@@ -184,20 +140,9 @@ If an operation at time \(t_k\) is chosen as a probabilistic mixture \(p\mathcal
 For example,
 %
 \begin{align}
-    &\mathcal T_{n:0}
-    \bigl[
-    \ldots,
-    p\mathcal A_k+(1-p)\mathcal B_k,
-    \ldots
-    \bigr]
-    \nonumber\\
-    &\qquad=
-    p\,
-    \mathcal T_{n:0}
-    \bigl[\ldots,\mathcal A_k,\ldots\bigr]
-    +(1-p)\,
-    \mathcal T_{n:0}
-    \bigl[\ldots,\mathcal B_k,\ldots\bigr].
+    &\mathcal T_{n:0} \bigl[ \ldots, p\mathcal A_k+(1-p)\mathcal B_k, \ldots \bigr] \nonumber\\
+    &\qquad= p\, \mathcal T_{n:0} \bigl[\ldots,\mathcal A_k,\ldots\bigr]
+    +(1-p)\, \mathcal T_{n:0} \bigl[\ldots,\mathcal B_k,\ldots\bigr].
     \label{eq:process-tensor-linearity}
 \end{align}
 %
@@ -212,12 +157,8 @@ A choice made at a later time cannot alter statistics already recorded at an ear
 Operationally, once the future slots are filled with deterministic trace-preserving operations and their outputs are discarded, the reduced state (or outcome statistics) at time \(t_k\) cannot depend on which future operations were chosen:
 %
 \begin{equation}
-    \operatorname{Tr}_{>k}\,
-    \mathcal T_{n:0}
-    \bigl[\mathcal A_{n-1},\ldots,\mathcal A_0\bigr]
-    =
-    \mathcal T_{k:0}
-    \bigl[\mathcal A_{k-1},\ldots,\mathcal A_0\bigr],
+    \operatorname{Tr}_{>k}\, \mathcal T_{n:0} \bigl[\mathcal A_{n-1},\ldots,\mathcal A_0\bigr]
+    = \mathcal T_{k:0} \bigl[\mathcal A_{k-1},\ldots,\mathcal A_0\bigr],
     \label{eq:process-tensor-causality}
 \end{equation}
 %
@@ -235,74 +176,60 @@ We return to this distinction in Sec.~\ref{sec:quantum-instruments}, where instr
 \markedsubsection{\toctheory}{Choi representation, instruments, and process contraction}
 \label{subsec:choi-instruments}
 
-% Purpose: provide exactly enough formalism to explain what is stored and how it is evaluated.
+The Choi representation recalled in Sec.~\ref{subsec:left-right-actions} extends naturally to multi-time processes.
+For the construction used below, we consider an initially uncorrelated system and environment and supply the system preparation \(\rho_S(t_0)\) separately.
+Each dynamical step from \(t_k\) to \(t_{k+1}\) has an input space \(\mathcal{H}_{\mathrm{in},k}\) and an output space \(\mathcal{H}_{\mathrm{out},k}\).
+The process Choi operator therefore belongs to
+%
+\begin{equation*}
+    \Upsilon_{n:0} \in \mathcal{B}\left[\bigotimes_{k=0}^{n-1}(\mathcal{H}_{\mathrm{in},k} \otimes \mathcal{H}_{\mathrm{out},k})\right].
+\end{equation*}
+%
+The intervention \(\mathcal{A}_k\) connects the output of step \(k-1\) to the input of step \(k\), so its Choi operator \(J(\mathcal{A}_k)\) acts on \(\mathcal H_{\mathrm{out},k-1}\otimes\mathcal H_{\mathrm{in},k}\).
 
-% Chronology:
-% \begin{itemize}
-%     \item Recall the channel--state correspondence.
-%     \item Apply it at every temporal slot to obtain the process Choi operator \(\Upsilon_{n:0}\).
-%     \item Identify the input and output space belonging to each intervention time.
-%     \item Introduce quantum instruments as collections of CP operations,
-%     \[
-%         \mathcal J_k
-%         =
-%         \bigl\{\mathcal A_k^{(x_k)}\bigr\}_{x_k},
-%         \qquad
-%         \sum_{x_k}\mathcal A_k^{(x_k)}
-%         \ \text{is CPTP}.
-%     \]
-%     \item State the generalized Born rule.
-%     \item Explain the three possible results of a contraction:
-%     \begin{itemize}
-%         \item an open final leg gives a state;
-%         \item a completely closed network gives a probability or expectation value;
-%         \item selecting measurement outcomes gives an unnormalized conditional state.
-%     \end{itemize}
-% \end{itemize}
+The action of the process tensor in Eq.~\ref{eq:process-tensor-operational-definition} in terms of its Choi operator is expressed as
+%
+\begin{equation}
+    \rho_S(t_n)
+    = \operatorname{Tr}_{\overline{\mathrm{out},n-1}}[\Upsilon_{n:0}(\rho_S(t_0)^T \otimes J(\mathcal{A}_1)^T \otimes \cdots \otimes J(\mathcal{A}_{n-1})^T \otimes I)].
+\end{equation}
+%
+Here \(\operatorname{Tr}_{\overline{\mathrm{out},n-1}}\) traces over all subsystems except the final output space \(\mathcal H_{\mathrm{out},n-1}\), on which \(I\) acts.
 
-% Essential equations:
-% \begin{align}
-%     J_{\mathcal A}
-%     &=
-%     (\mathcal A\otimes I)\bigl[\lvert\Omega\rangle\langle\Omega\rvert\bigr],
-%     \\
-%     \rho_S(t_n)
-%     &=
-%     \Upsilon_{n:0}
-%     \ast J_{\mathcal A_{n-1}}
-%     \ast\cdots\ast J_{\mathcal A_0},
-%     \\
-%     p(x)
-%     &=
-%     \operatorname{Tr}
-%     \Bigl[
-%         \Upsilon_{n:0}
-%         \Bigl(
-%             \bigotimes_{k=0}^{n-1}
-%             J_{\mathcal A_k^{(x_k)}}
-%         \Bigr)^{T_{\mathrm{slots}}}
-%     \Bigr].
-% \end{align}
-% The transpose/link-product convention must be derived from the column-major convention fixed in Section~2.
+The properties discussed in Sec~\ref{subsec:from-channels} translate into conditions on \(\Upsilon_{n:0}\).
+Complete positivity is equivalent to positive semidefiniteness, and the unnormalized Choi convention gives
+%
+\begin{equation}
+    \Upsilon_{n:0} \succeq 0, \qquad \operatorname{Tr} \Upsilon_{n:0} = d^n_S,
+\end{equation}
+%
+for deterministic dynamics.
+Causality additionally requires the recursive partial trace conditions
+%
+\begin{equation}
+    \begin{aligned}
+        \operatorname{Tr}_{\mathrm{out},k-1} \Upsilon_{k:0} &= \Upsilon_{k-1:0} \otimes I_{\mathrm{in},k-1}, \qquad k = 2, \dots, n, \\ \operatorname{Tr}_{\mathrm{out},0} \Upsilon_{1:0} &= I_{\mathrm{in},0}.
+    \end{aligned}
+\end{equation}
+%
+These constraints impose that later interventions cannot affect past statistics and ensure normalization under trace-preserving interventions.
 
-% Figure~2: ``The Born rule across time''.
-% \begin{itemize}
-%     \item State + effect \(\to\) probability.
-%     \item Channel Choi tensor + state \(\to\) output state.
-%     \item Process Choi tensor + instrument sequence \(\to\) conditional state or probability.
-% \end{itemize}
-
-% Package connection: the diagram and code should perform the identical contraction.
-% The constructor names below can be replaced by the final public API.
-% \begin{verbatim}
-% seq = InstrumentSeq(pt)
-% add!(seq, 0, prepare(rho0))
-% add!(seq, k, measure(M))
-% add!(seq, nsteps, trace_out())
-% result = evaluate_process(pt, seq)
-% \end{verbatim}
-\textcolor{red}{TODO: Fidel: add the content on the Choi representation of a PT, and connecting it with our theory.}
-
+% \textcolor{red}{NOTES: I intentionally made this subsection sparse so this section doesn't drag on.
+% You could make the discussion more verbose, or include additional details like how a Markovian process corresponds to a Choi operator that can be written as a tensor product of regular channel Choi operators, etc. There's also relating the Choi representation to the MPS representation, which would be better placed in the next section:}
+% %
+% \begin{equation*}
+%     \left[\Upsilon_{n:0}^\mathrm{Choi}\right]_{(a_0b_0\dots a_{n-1}b_{n-1}),(a_0'b_0'\dots a_{n-1}'b_{n-1}')}
+%     = \left[\Upsilon_{n:0}^\mathrm{Liouville}\right]_{(o_0\dots o_{n-1}),(i_0\dots i_{n-1})}
+% \end{equation*}
+% %
+% where we've unpacked the Liouville indices,
+% %
+% \begin{equation*}
+%     i_k = (a_k', a_k), \qquad o_k (b_k', b_k).
+% \end{equation*}
+%
+Instruments, outcome-resolved probabilities, and the numerical contraction of a schedule against a stored process tensor are developed in Sec.~\ref{sec:quantum-instruments}.
+The object stored by the package is not the dense Choi matrix, but its Liouville-space matrix-product representation, which we turn to now.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \markedsubsection{\tocjulia}{Anatomy of a \texttt{ProcessTensor}}
 \label{subsec:pt-anatomy}
@@ -316,20 +243,12 @@ The outcome is an MPO whose physical indices are ordered in time rather than in 
 \begin{equation}
     \bigl[\Upsilon_{n:0}\bigr]_%
     {\boldsymbol{o},\boldsymbol{i}}
-    =
-    \sum_{\chi_1,\ldots,\chi_{n-1}}
-    [Q^{[n-1]}]_{o_{n-1} i_{n-1}}^{\chi_{n-1}}
-    [Q^{[n-2]}]_{o_{n-2} i_{n-2}}^{\chi_{n-1} \chi_{n-2}}
-    \cdots
-    [Q^{[1]}]_{o_1 i_1}^{\chi_2 \chi_1}
-    [Q^{[0]}]_{o_0 i_0}^{\chi_1}
+    = \sum_{\chi_1,\ldots,\chi_{n-1}} [Q^{[n-1]}]_{o_{n-1} i_{n-1}}^{\chi_{n-1}} [Q^{[n-2]}]_{o_{n-2} i_{n-2}}^{\chi_{n-1} \chi_{n-2}} \cdots [Q^{[1]}]_{o_1 i_1}^{\chi_2 \chi_1} [Q^{[0]}]_{o_0 i_0}^{\chi_1}
     \label{eq:pt-mpo-decomposition}
 \end{equation}
 %
 \begin{figure}[H]
-    \centering
-    \scalebox{1.0}{\input{figures/tikz/pt_anatomy.tikz}}
-    \caption{
+    \centering \scalebox{1.0}{\input{figures/tikz/pt_anatomy.tikz}} \caption{
         Matrix-product representation of a process tensor.
         (a)~A three-step PT-MPO with time running from right to left: each core \(Q^{[k]}\) carries a pair of double-wired system legs (output \(o_k\), input \(i_k\)) and neighbouring cores are joined by a thick memory link \(\chi_k\).
         (b)~Index anatomy of a generic interior core.
@@ -340,15 +259,15 @@ The outcome is an MPO whose physical indices are ordered in time rather than in 
 %
 Here \(i_k\) and \(o_k\) are the system input and output indices at time step \(k\), while \(\chi_k\) is an internal memory index joining neighbouring cores.
 The bond dimensions \(D_k=\dim(\chi_k)\) quantify how large an effective space must be carried across each temporal cut.
-A Markovian process factorises across time and needs only trivial memory links, whereas a non-Markovian process generally has \(D_k>1\).
+A Markovian process factorises into independent channels, so its Choi operator is a tensor product of ordinary single-step Choi operators and the corresponding PT-MPO needs only trivial memory links.
+A non-Markovian process generally has \(D_k>1\).
 A small value of \(D_k\) does not imply the absence of memory; it means that the relevant memory is compressible~\cite{Pollock2018Framework,Jorgensen2019}.
 
 To illustrate the indices that exist in our Process-Tensor MPO (PT-MPO), let us consider a three-step dense process tensor with one bath spin and a system spin (we will see how to construct this in the next subsection).
 The first core contains the following site indices:
 %
 \begin{julialistingpair}[
-    caption={Site indices of the first PT-MPO core.},
-    label={lst:pt-anatomy-siteinds},
+    caption={Site indices of the first PT-MPO core.}, label={lst:pt-anatomy-siteinds},
     ]
 %
     \begin{juliacode}[paired]
@@ -369,8 +288,7 @@ The numerical ID is generated at runtime and can change from what is shown above
 The temporal memory indices are equally direct:
 %
 \begin{julialistingpair}[
-    caption={Memory-link indices of the three-step process tensor.},
-    label={lst:pt-anatomy-linkinds},
+    caption={Memory-link indices of the three-step process tensor.}, label={lst:pt-anatomy-linkinds},
     ]
 %
     \begin{juliacode}[paired]
@@ -395,6 +313,26 @@ For example, \texttt{linkdims(pt)} and \texttt{maxlinkdim(pt)} inspect the tempo
 The package-specific helpers \texttt{input\_sites}, \texttt{output\_sites}, and \texttt{coupling\_times} then expose the exact temporal legs on which instruments will act.
 We postpone those contractions to the later sections.
 
+Finally, connecting this object back to its Choi representation, the Liouville legs \(i_k\) and \(o_k\) are simply the column-major packing of the Hilbert-space Choi indices of Sec.~\ref{subsec:choi-instruments}.
+Let \(a_k\) (\(a_k'\)) label the unprimed (primed) basis of \(\mathcal H_{\mathrm{in},k}\) and \(b_k\) (\(b_k'\)) likewise for \(\mathcal H_{\mathrm{out},k}\).
+Eq.~\eqref{eq:column-vectorisation} then identifies
+%
+\begin{equation}
+    i_k=(a_k',a_k),\qquad o_k=(b_k',b_k),
+    \label{eq:choi-liouville-index-map}
+\end{equation}
+%
+and the two representations of the same process are related by the reshuffling
+%
+\begin{equation}
+    \bigl[\Upsilon_{n:0}^{\mathrm{Choi}}\bigr]_{(a_0 b_0\dots a_{n-1}b_{n-1}),(a_0' b_0'\dots a_{n-1}'b_{n-1}')}
+    =
+    \bigl[\Upsilon_{n:0}^{\mathrm{Liouville}}\bigr]_{(o_0\dots o_{n-1}),(i_0\dots i_{n-1})}.
+    \label{eq:choi-to-liouville}
+\end{equation}
+%
+ITensor primes on a PT core distinguish the input leg \(i_k\) from the output leg \(o_k\); they should not be confused with the Hilbert-space primes packed inside each Liouville index.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \markedsubsection{\tocjulia}{Ingredients to construct a \texttt{ProcessTensor}}
 \label{subsec:pt-ingredients}
@@ -411,16 +349,14 @@ The system's free Hamiltonian is also used by the constructor to append the free
 In our small example, we use a single \texttt{Spin-1/2} system with the Hamiltonian
 %
 \begin{equation}
-    H_S=hS_S^x,
-    \qquad h=0.7.
+    H_S=hS_S^x, \qquad h=0.7.
     \label{eq:dense-example-system-hamiltonian}
 \end{equation}
 %
 It is constructed from an ordinary Hilbert-space spin index:
 %
 \begin{julialistingpair}[
-    caption={System Hamiltonian and \texttt{SpinSystem} constructor.},
-    label={lst:pt-ingredients-system},
+    caption={System Hamiltonian and \texttt{SpinSystem} constructor.}, label={lst:pt-ingredients-system},
     ]
 %
     \begin{juliacode}[paired]
@@ -461,20 +397,15 @@ Our current implementation of PTs exclude the scenario where we start with initi
 In our example, we take
 %
 \begin{equation}
-    H_E=\frac{\omega_E}{2}S_E^z,
-    \qquad
-    H_{SE}=gS_E^zS_S^z,
-    \qquad
-    \rho_E(0)=\lvert\!\downarrow\rangle
-    \langle\downarrow\!\rvert,
+    H_E=\frac{\omega_E}{2}S_E^z, \qquad
+    H_{SE}=gS_E^zS_S^z, \qquad \rho_E(0)=\lvert\!\downarrow\rangle \langle\downarrow\!\rvert,
     \label{eq:dense-example-bath-model}
 \end{equation}
 %
 with \(\omega_E=1.1\) and \(g=0.35\):
 %
 \begin{julialistingpair}[
-    caption={Bath Hamiltonian, initial state, coupling, and \texttt{SpinBath} constructor.},
-    label={lst:pt-ingredients-bath},
+    caption={Bath Hamiltonian, initial state, coupling, and \texttt{SpinBath} constructor.}, label={lst:pt-ingredients-bath},
     ]
 %
     \begin{juliacode}[paired]
@@ -529,17 +460,14 @@ Two Liouville indices with the same dimension and tags are not interchangeable i
 Time grid}: The last physical ingredient is the time grid,
 %
 \begin{equation}
-    t_k=k\Delta t,
-    \qquad
-    k=0,\ldots,n_{\mathrm{steps}},
+    t_k=k\Delta t, \qquad k=0,\ldots,n_{\mathrm{steps}},
     \label{eq:process-tensor-time-grid}
 \end{equation}
 %
 which is specified by
 %
 \begin{julialistingpair}[
-    caption={Time grid for the dense process-tensor example.},
-    label={lst:pt-ingredients-time},
+    caption={Time grid for the dense process-tensor example.}, label={lst:pt-ingredients-time},
     ]
 %
     \begin{juliacode}[paired]
@@ -562,9 +490,7 @@ Fig.~\ref{fig:pt-ingredients-schematic} summarises how these ingredients combine
 
 %
 \begin{figure}[t]
-    \centering
-    \resizebox{\linewidth}{!}{\input{figures/tikz/pt_ingredients_schematic.tikz}}
-    \caption{
+    \centering \resizebox{\linewidth}{!}{\input{figures/tikz/pt_ingredients_schematic.tikz}} \caption{
         Microscopic ingredients of a \texttt{ProcessTensor}.
     }
     \label{fig:pt-ingredients-schematic}
@@ -584,17 +510,9 @@ Between two consecutive intervention times, the system and environment evolve to
 %
 \begin{equation}
     \mathcal G_{S+E}(\Delta t)
-    =
-    \exp \left[
-    \Delta t
-    \left(
-    \mathcal L_S
-    +
-    \mathcal L_E
-    +
-    \mathcal L_{SE}
-    \right)
-    \right].
+    = \exp \left[ \Delta t \left( \mathcal L_S
+    + \mathcal L_E
+    + \mathcal L_{SE} \right) \right].
     \label{eq:complete-system-environment-step}
 \end{equation}
 %
@@ -609,9 +527,7 @@ For \(N_E\) modes with local dimensions \(d_m\), the complete joint Liouville di
 %
 \begin{equation}
     D_{S+E}^{(L)}
-    =
-    d_S^2
-    \prod_{m=1}^{N_E}d_m^2,
+    = d_S^2 \prod_{m=1}^{N_E}d_m^2,
     \label{eq:dense-joint-liouville-dimension}
 \end{equation}
 %
@@ -622,12 +538,8 @@ Instead, it writes
 %
 \begin{equation}
     \mathcal L_{S+E}
-    =
-    \mathcal L_S+\mathcal L_{E+SE},
-    \qquad
-    \mathcal L_{E+SE}
-    :=
-    \mathcal L_E+\mathcal L_{SE}.
+    = \mathcal L_S+\mathcal L_{E+SE}, \qquad \mathcal L_{E+SE}
+    := \mathcal L_E+\mathcal L_{SE}.
     \label{eq:system-environment-generator-separation}
 \end{equation}
 %
@@ -641,38 +553,22 @@ Defining
 %
 \begin{equation}
     \mathcal M_S(\tau)
-    =
-    \exp(\tau\mathcal L_S),
-    \qquad
-    \mathcal Q_{E+SE}(\tau)
-    =
-    \exp(\tau\mathcal L_{E+SE}),
+    = \exp(\tau\mathcal L_S), \qquad \mathcal Q_{E+SE}(\tau)
+    = \exp(\tau\mathcal L_{E+SE}),
 \end{equation}
 %
 the exact one-step map and the two available splittings are
 %
 \begin{equation}
     \begin{aligned}
-        \mathcal G_{S+E}(\Delta t)
-        &=
-        \exp \left[
-        \Delta t
-        \left(
-        \mathcal L_S+\mathcal L_{E+SE}
-        \right)
-        \right]
-        \\[1em]
-        &\approx
-        \begin{cases}
-            \mathcal Q_{E+SE}(\Delta t)\,
-            \mathcal M_S(\Delta t)
-            &\quad \text{for \texttt{Trotter\{1\}()}},
-            \\[0.8em]
-            \mathcal M_S(\Delta t/2)\,
-            \mathcal Q_{E+SE}(\Delta t)\,
-            \mathcal M_S(\Delta t/2)
-            &\quad \text{for \texttt{Trotter\{2\}()}}.
-        \end{cases}
+    \mathcal G_{S+E}(\Delta t)
+    &= \exp \left[ \Delta t \left( \mathcal L_S+\mathcal L_{E+SE} \right) \right] \\[1em]
+    &\approx
+    \begin{cases}
+        \mathcal Q_{E+SE}(\Delta t)\, \mathcal M_S(\Delta t)
+        &\quad \text{for \texttt{Trotter\{1\}()}}, \\[0.8em] \mathcal M_S(\Delta t/2)\, \mathcal Q_{E+SE}(\Delta t)\, \mathcal M_S(\Delta t/2)
+        &\quad \text{for \texttt{Trotter\{2\}()}}.
+    \end{cases}
     \end{aligned}
     \label{eq:system-bath-splitting}
 \end{equation}
@@ -684,8 +580,7 @@ It does not eliminate time-discretisation error, so physical results will be mor
 With this construction, the process tensor for the one-spin example is obtained by
 %
 \begin{julialistingpair}[
-    caption={Dense construction of the one-spin-bath process tensor.},
-    label={lst:pt-build-dense},
+    caption={Dense construction of the one-spin-bath process tensor.}, label={lst:pt-build-dense},
     ]
 %
     \begin{juliacode}[paired]
@@ -723,8 +618,7 @@ However, when the environment constructed in Sec.~\ref{subsec:pt-ingredients} is
 %
 \begin{equation}
     \mathcal L_{E+SE}
-    =
-    \sum_{m=1}^{N_E}\mathcal L_{E_m+SE_m},
+    = \sum_{m=1}^{N_E}\mathcal L_{E_m+SE_m},
     \label{eq:ace-independent-mode-decomposition}
 \end{equation}
 %
@@ -734,13 +628,7 @@ After joining mode \(m\), ACE compresses the temporal links by SVD:
 %
 \begin{equation}
     \widetilde{\Upsilon}^{(m)}_{n:0}
-    =
-    \mathcal C_{\varepsilon,\chi_{\max}}
-    \!\left[
-    \widetilde{\Upsilon}^{(m-1)}_{n:0}
-    \star
-    \Upsilon^{(m)}_{n:0}
-    \right],
+    = \mathcal C_{\varepsilon,\chi_{\max}} \!\left[ \widetilde{\Upsilon}^{(m-1)}_{n:0} \star \Upsilon^{(m)}_{n:0} \right],
     \label{eq:ace-sequential-update}
 \end{equation}
 %
@@ -749,9 +637,7 @@ When their generators do not commute, \texttt{combine\_alg=Trotter\{2\}()} perfo
 The map \(\mathcal C_{\varepsilon,\chi_{\max}}\) then compresses each temporal cut with
 %
 \begin{equation}
-    \sigma_j>\varepsilon\sigma_1,
-    \qquad
-    \chi_k\leq\chi_{\max}.
+    \sigma_j>\varepsilon\sigma_1, \qquad \chi_k\leq\chi_{\max}.
     \label{eq:ace-relative-truncation}
 \end{equation}
 %

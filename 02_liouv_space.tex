@@ -60,8 +60,8 @@ This distinction becomes important when we use an unprimed index for the input a
 
 %
 \begin{juliacode}[
-    caption={ITensor codes to realise tensor operations in Fig.~\ref{fig:graphical-dictionary}(a)--(h).},
-    label={lst:itensor-grammar},
+  caption={ITensor codes to realise tensor operations in Fig.~\ref{fig:graphical-dictionary}(a)--(h).},
+  label={lst:itensor-grammar},
 ]
 using ITensors
 
@@ -98,8 +98,7 @@ Associated with it is the operator space
 %
 \begin{equation}
     \mathcal B(\mathcal H)
-    =
-    \{A:\mathcal H\rightarrow\mathcal H\},
+    = \{A:\mathcal H\rightarrow\mathcal H\},
 \end{equation}
 %
 containing all linear operators acting on \(\mathcal H\).
@@ -108,8 +107,7 @@ The operator space becomes a \(d^2\)-dimensional Hilbert space when equipped wit
 %
 \begin{equation}
     \langle\!\langle B\vert A\rangle\!\rangle
-    =
-    \operatorname{Tr}(B^\dagger A).
+    = \operatorname{Tr}(B^\dagger A).
     \label{eq:hilbert-schmidt-inner-product}
 \end{equation}
 %
@@ -119,9 +117,7 @@ The name reflects the historical description of dynamics directly in operator sp
 To use ordinary vector and tensor-network operations in this space, we choose a vector representation
 %
 \begin{equation}
-    A\in\mathcal B(\mathcal H)
-    \longmapsto
-    \lvert A\rangle\!\rangle\in\mathcal L(\mathcal H),
+    A\in\mathcal B(\mathcal H) \longmapsto \lvert A\rangle\!\rangle\in\mathcal L(\mathcal H),
 \end{equation}
 %
 called \emph{vectorisation}.
@@ -146,12 +142,8 @@ The package follows Julia's column-major ordering.
 For \(a_{jk}=\langle j\vert A\vert k\rangle\), we define
 %
 \begin{equation}
-    \lvert A\rangle\!\rangle
-    \equiv
-    \operatorname{vec}(A)
-    =
-    \sum_{j,k} a_{jk}
-    \lvert k\rangle\otimes\lvert j\rangle,
+    \lvert A\rangle\!\rangle \equiv \operatorname{vec}(A)
+    = \sum_{j,k} a_{jk} \lvert k\rangle\otimes\lvert j\rangle,
     \label{eq:column-vectorisation}
 \end{equation}
 %
@@ -174,10 +166,8 @@ Equivalently, if we look at the matrix elements of \(A\) as a 2D array, the colu
 Thus,
 %
 \begin{equation}
-    \operatorname{vec}
-    \bigl(\lvert j\rangle\langle k\rvert\bigr)
-    =
-    \lvert k\rangle\otimes\lvert j\rangle.
+    \operatorname{vec} \bigl(\lvert j\rangle\langle k\rvert\bigr)
+    = \lvert k\rangle\otimes\lvert j\rangle.
 \end{equation}
 %
 
@@ -186,9 +176,7 @@ Graphically, it is represented as a bent wire with two indices pointing in the s
 %
 \begin{equation}
     \lvert I\rangle\!\rangle
-    =
-    \sum_j
-    \lvert j\rangle\otimes\lvert j\rangle,
+    = \sum_j \lvert j\rangle\otimes\lvert j\rangle,
     \label{eq:vectorised-identity}
 \end{equation}
 %
@@ -197,8 +185,7 @@ Using Eq.~\eqref{eq:hilbert-schmidt-inner-product} and substituting $B$ with the
 %
 \begin{equation}
     \operatorname{Tr}(A)
-    =
-    \langle\!\langle I\vert A\rangle\!\rangle.
+    = \langle\!\langle I\vert A\rangle\!\rangle.
 \end{equation}
 %
 The identity operator, \(I\), is the maximally mixed state up to a normalisation \(\rho_{\mathrm{mm}}=I/d\).
@@ -207,14 +194,9 @@ More generally, an observable \(O=O^\dagger\) closes the same Liouville leg and 
 %
 \begin{equation}
     \operatorname{Tr}(\rho)
-    =
-    \langle\!\langle I\vert\rho\rangle\!\rangle,
-    \qquad
-    \langle O\rangle
-    =
-    \operatorname{Tr}(O\rho)
-    =
-    \langle\!\langle O\vert\rho\rangle\!\rangle.
+    = \langle\!\langle I\vert\rho\rangle\!\rangle, \qquad \langle O\rangle
+    = \operatorname{Tr}(O\rho)
+    = \langle\!\langle O\vert\rho\rangle\!\rangle.
     \label{eq:liouville-trace-expectation}
 \end{equation}
 %
@@ -225,8 +207,8 @@ Listing~\ref{lst:fig2-vectorisation} realises the four panels of Fig.~\ref{fig:w
 
 %
 \begin{juliacode}[
-    caption={Vectorisation, the identity, and Liouville closures matching Fig.~\ref{fig:wire-bending-vectorisation}(a)--(d).},
-    label={lst:fig2-vectorisation},
+  caption={Vectorisation, the identity, and Liouville closures matching Fig.~\ref{fig:wire-bending-vectorisation}(a)--(d).},
+  label={lst:fig2-vectorisation},
 ]
 using ProcessTensors
 
@@ -262,38 +244,24 @@ The transpose appearing below is the bookkeeping rule that keeps the two descrip
 
 This viewpoint is closely related to the Choi--Jamio\l{}kowski isomorphism \cite{choi1975completely,jamiolkowski1972linear}.
 A linear map \(\Phi:\mathcal B(\mathcal H)\rightarrow\mathcal B(\mathcal H)\) can be represented in several equivalent ways.
-It may be described by its action on operators,
-\[
-    \rho\longmapsto\Phi(\rho),
-\]
-by a Liouville-space superoperator \(\mathsf S_{\Phi}\),
-\[
-    \lvert\Phi(\rho)\rangle\!\rangle
-    =
-    \mathsf S_{\Phi}\lvert\rho\rangle\!\rangle,
-\]
-or by its Choi operator,
-\[
+It may be described by its action on operators, \[ \rho\longmapsto\Phi(\rho), \] by a Liouville-space superoperator \(\mathsf S_{\Phi}\), \[ \lvert\Phi(\rho)\rangle\!\rangle
+    = \mathsf S_{\Phi}\lvert\rho\rangle\!\rangle, \] or by its Choi operator, \[
     J(\Phi)
-    =
-    (\mathcal I\otimes\Phi)
-    \bigl(
-        \lvert I\rangle\!\rangle
-        \langle\!\langle I\rvert
-    \bigr).
+    = (\mathcal I\otimes\Phi) \bigl( \lvert I\rangle\!\rangle \langle\!\langle I\rvert \bigr).
 \]
-The Liouville-space matrix and the Choi operator contain the same map, but organise its input and output indices differently.
-In this work, we use the Liouville-space representation because it is the form that can be applied directly to tensor-network states.
-The Choi representation is particularly useful when studying complete positivity and quantum channels; introductory discussions can be found in Refs.~\cite{nielsenchuang2010,watrous2018theory}.
-\textcolor{red}{Fidel: Check if this para is sound, and see if you need more elaboration/correction.}
+The Liouville-space matrix and the Choi operator are two representations of the same linear map, where one can be obtained from the other via index reshuffling.
+Here we primarily use the Liouville representation, in which maps act on vectorized operators by ordinary matrix multiplication.
+The Choi representation is useful because it connects properties of maps to properties of operators, as discussed in Sec.~\ref{subsec:choi-instruments}.
+Introductory material can be found in Refs.~\cite{nielsenchuang2010,watrous2018theory}.
+
+% The Liouville-space matrix and the Choi operator contain the same map, but organise its input and output indices differently. In this work, we use the Liouville-space representation because it is the form that can be applied directly to tensor-network states. The Choi representation is particularly useful when studying complete positivity and quantum channels; introductory discussions can be found in Refs.~\cite{nielsenchuang2010,watrous2018theory}. \textcolor{red}{Fidel: Check if this para is sound, and see if you need more elaboration/correction.}
 
 The connection between operator multiplication and Liouville-space action is most easily seen by sliding an operator around the same bend used to vectorise the identity in Fig.~\ref{fig:wire-bending-vectorisation}b.
 For the vectorised identity,
 %
 \begin{equation}
     (I\otimes A)\lvert I\rangle\!\rangle
-    =
-    (A^{\mathsf T}\otimes I)\lvert I\rangle\!\rangle.
+    = (A^{\mathsf T}\otimes I)\lvert I\rangle\!\rangle.
     \label{eq:operator-sliding}
 \end{equation}
 %
@@ -303,20 +271,13 @@ Applying this identity to a product gives Roth's lemma,
 %
 \begin{equation}
     \operatorname{vec}(A\rho B)
-    =
-    (B^{\mathsf T}\otimes A)
-    \lvert\rho\rangle\!\rangle.
+    = (B^{\mathsf T}\otimes A) \lvert\rho\rangle\!\rangle.
     \label{eq:roth-lemma}
 \end{equation}
 %
 Figure~\ref{fig:left-right-wire-sliding}b draws the same statement: \(A\), \(\rho\), and \(B\) on the ket rail are equivalent to \(B^{\mathsf T}\) and \(A\) acting on the two legs of the bent \(\rho\), which after connecting to Fig.~\ref{fig:graphical-dictionary}f, gives the Liouville operator \(B^{\mathsf T}\otimes A\) on \(\lvert\rho\rangle\!\rangle\).
-Thus the same transformation can be viewed in three equivalent ways,
-\[
-    A\rho B
-    \quad\longleftrightarrow\quad
-    \Phi_{A,B}(\rho)=A\rho B
-    \quad\longleftrightarrow\quad
-    \mathsf S_{A,B}=B^{\mathsf T}\otimes A.
+Thus the same transformation can be viewed in three equivalent ways, \[
+    A\rho B \quad\longleftrightarrow\quad \Phi_{A,B}(\rho)=A\rho B \quad\longleftrightarrow\quad \mathsf S_{A,B}=B^{\mathsf T}\otimes A.
 \]
 The first expression is ordinary operator multiplication, the second is a linear map acting on operator space, and the third is its matrix representation in Liouville space.
 %
@@ -334,15 +295,11 @@ The two special cases used throughout the package are
 %
 \begin{align}
     A\rho
-    &\longleftrightarrow
-    (I\otimes A)\lvert\rho\rangle\!\rangle
-    \equiv
+    &\longleftrightarrow (I\otimes A)\lvert\rho\rangle\!\rangle \equiv
     A_{\mathrm L}\lvert\rho\rangle\!\rangle,
     \label{eq:left-action}\\
     \rho B
-    &\longleftrightarrow
-    (B^{\mathsf T}\otimes I)\lvert\rho\rangle\!\rangle
-    \equiv
+    &\longleftrightarrow (B^{\mathsf T}\otimes I)\lvert\rho\rangle\!\rangle \equiv
     B_{\mathrm R}\lvert\rho\rangle\!\rangle.
     \label{eq:right-action}
 \end{align}
@@ -381,10 +338,7 @@ A many-body system brings several of them together: if site \(j\) has a local Hi
 %
 \begin{equation}
     \mathcal H
-    =
-    \bigotimes_{j=1}^{N}\mathcal H_j,
-    \qquad
-    \dim\mathcal H=\prod_{j=1}^{N}d_j.
+    = \bigotimes_{j=1}^{N}\mathcal H_j, \qquad \dim\mathcal H=\prod_{j=1}^{N}d_j.
     \label{eq:many-body-hilbert-space}
 \end{equation}
 %
@@ -393,10 +347,8 @@ Tensor networks tame this growth by storing the local degrees of freedom in the 
 %
 \begin{equation}
     \lvert\psi\rangle
-    =
-    \sum_{s_1,\ldots,s_N}
-    A_1^{s_1}A_2^{s_2}\cdots A_N^{s_N}
-    \lvert s_1\cdots s_N\rangle.
+    = \sum_{s_1,\ldots,s_N}
+    A_1^{s_1}A_2^{s_2}\cdots A_N^{s_N} \lvert s_1\cdots s_N\rangle.
     \label{eq:many-body-mps}
 \end{equation}
 %
@@ -408,11 +360,7 @@ A mixed many-body state is described by a density operator on this joint Hilbert
 %
 \begin{equation}
     \rho
-    =
-    \sum_{\boldsymbol{s},\boldsymbol{s}'}
-    \rho_{\boldsymbol{s},\boldsymbol{s}'}
-    \lvert s_1\cdots s_N\rangle
-    \langle s'_1\cdots s'_N\rvert,
+    = \sum_{\boldsymbol{s},\boldsymbol{s}'} \rho_{\boldsymbol{s},\boldsymbol{s}'} \lvert s_1\cdots s_N\rangle \langle s'_1\cdots s'_N\rvert,
     \label{eq:many-body-density-operator}
 \end{equation}
 %
@@ -424,14 +372,8 @@ As shown in Fig.~\ref{fig:mpo-to-liouville-mps}, bending each bra wire towards i
 A local combiner \(C_j\) then fuses this pair into the Liouville index
 %
 \begin{equation}
-    \alpha_j=(s'_j,s_j),
-    \qquad
-    C_j:
-    \mathcal H_j^*\otimes\mathcal H_j
-    \longrightarrow
-    \mathcal L_j,
-    \qquad
-    \dim\mathcal L_j=d_j^2.
+    \alpha_j=(s'_j,s_j), \qquad
+    C_j: \mathcal H_j^*\otimes\mathcal H_j \longrightarrow \mathcal L_j, \qquad \dim\mathcal L_j=d_j^2.
     \label{eq:local-liouville-combiner}
 \end{equation}
 %
@@ -453,8 +395,8 @@ The resulting Liouville MPS can then be contracted with vectorised observables o
 
 %
 \begin{juliacode}[
-    caption={Three-site mixed state matching Fig.~\ref{fig:mpo-to-liouville-mps}.},
-    label={lst:hilbert-to-liouville},
+  caption={Three-site mixed state matching Fig.~\ref{fig:mpo-to-liouville-mps}.},
+  label={lst:hilbert-to-liouville},
 ]
 using ProcessTensors
 
@@ -499,10 +441,7 @@ Using the left and right actions from Eqs.~\eqref{eq:left-action} and~\eqref{eq:
 %
 \begin{equation}
     \frac{d}{dt}\lvert\rho(t)\rangle\!\rangle
-    =
-    \mathcal L_H\lvert\rho(t)\rangle\!\rangle,
-    \qquad
-    \mathcal L_H=-i\bigl(H_{\mathrm L}-H_{\mathrm R}\bigr).
+    = \mathcal L_H\lvert\rho(t)\rangle\!\rangle, \qquad \mathcal L_H=-i\bigl(H_{\mathrm L}-H_{\mathrm R}\bigr).
     \label{eq:hamiltonian-liouvillian}
 \end{equation}
 %
@@ -516,13 +455,10 @@ Going beyond the unitary time evolution, the most common Markovian open-system g
     \frac{d\rho}{dt}
     =
     -i[H,\rho]
-    +
-    \sum_{\mu}\gamma_{\mu}
-    \left(
+    + \sum_{\mu}\gamma_{\mu} \left(
         L_{\mu}\rho L_{\mu}^{\dagger}
         -\frac{1}{2}L_{\mu}^{\dagger}L_{\mu}\rho
-        -\frac{1}{2}\rho L_{\mu}^{\dagger}L_{\mu}
-    \right).
+        -\frac{1}{2}\rho L_{\mu}^{\dagger}L_{\mu} \right).
     \label{eq:gkls-master-equation}
 \end{equation}
 %
@@ -532,13 +468,9 @@ The dictionary developed above translates it directly into
     \mathcal L
     =
     -i\bigl(H_{\mathrm L}-H_{\mathrm R}\bigr)
-    +
-    \sum_{\mu}\gamma_{\mu}
-    \left[
-        (L_{\mu})_{\mathrm{Jump}}
+    + \sum_{\mu}\gamma_{\mu} \left[ (L_{\mu})_{\mathrm{Jump}}
         -\frac{1}{2}(L_{\mu}^{\dagger}L_{\mu})_{\mathrm L}
-        -\frac{1}{2}(L_{\mu}^{\dagger}L_{\mu})_{\mathrm R}
-    \right],
+        -\frac{1}{2}(L_{\mu}^{\dagger}L_{\mu})_{\mathrm R} \right],
     \label{eq:gkls-liouville-generator}
 \end{equation}
 %
@@ -547,8 +479,8 @@ The package suffixes \texttt{\_Jump}, \texttt{\_LdagL\_L}, and \texttt{\_LdagL\_
 
 %
 \begin{juliacode}[
-    caption={Constructing Hamiltonian and dissipative Liouville MPOs.},
-    label={lst:liouvillian-construction},
+  caption={Constructing Hamiltonian and dissipative Liouville MPOs.},
+  label={lst:liouvillian-construction},
 ]
 H = OpSum()
 H += 0.7, "Sx", 1
@@ -569,9 +501,7 @@ Over a short interval \(\Delta t\), the time-evolution operator is given by
 %
 \begin{equation}
     \lvert\rho(t+\Delta t)\rangle\!\rangle
-    =
-    e^{\Delta t\mathcal L}
-    \lvert\rho(t)\rangle\!\rangle.
+    = e^{\Delta t\mathcal L} \lvert\rho(t)\rangle\!\rangle.
     \label{eq:liouville-time-step}
 \end{equation}
 %
@@ -580,46 +510,33 @@ Appendix~\ref{app:time-dynamics} gives minimal examples where we can use the exi
 
 %
 \begin{table}[H]
-    \centering
-    \caption{Hilbert-space expressions, Liouville-space representations, and their \texttt{ProcessTensors.jl} counterparts.}
+    \centering \caption{Hilbert-space expressions, Liouville-space representations, and their \texttt{ProcessTensors.jl} counterparts.}
     \label{tab:liouville-dictionary}
     \begin{tabular}{p{0.25\linewidth}p{0.38\linewidth}p{0.25\linewidth}}
         \hline
         Hilbert-space object
         & Liouville-space object
-        & Package representation \\
-        \hline
-        \(\lvert\psi\rangle\)
+        & Package representation \\ \hline \(\lvert\psi\rangle\)
         & state vector
-        & \texttt{MPS}\{\texttt{Hilbert}\} \\
-        \(\rho\)
+        & \texttt{MPS}\{\texttt{Hilbert}\} \\ \(\rho\)
         & \(\lvert\rho\rangle\!\rangle\)
-        & \texttt{MPS}\{\texttt{Liouville}\} \\
-        density operator
+        & \texttt{MPS}\{\texttt{Liouville}\} \\ density operator
         & ket--bra legs fused locally
-        & \texttt{to\_liouville} \\
-        \(A\rho\)
+        & \texttt{to\_liouville} \\ \(A\rho\)
         & \(A_{\mathrm L}\lvert\rho\rangle\!\rangle\)
-        & \texttt{"A\_L"} \\
-        \(\rho A\)
+        & \texttt{"A\_L"} \\ \(\rho A\)
         & \(A_{\mathrm R}\lvert\rho\rangle\!\rangle\)
-        & \texttt{"A\_R"} \\
-        \(A\rho B\)
+        & \texttt{"A\_R"} \\ \(A\rho B\)
         & \((B^{\mathsf T}\otimes A)\lvert\rho\rangle\!\rangle\)
-        & left--right action \\
-        \(A\rho A^\dagger\)
+        & left--right action \\ \(A\rho A^\dagger\)
         & \((A^*\otimes A)\lvert\rho\rangle\!\rangle\)
-        & \texttt{"A\_Jump"} \\
-        \(\operatorname{Tr}\rho\)
+        & \texttt{"A\_Jump"} \\ \(\operatorname{Tr}\rho\)
         & \(\langle\!\langle I\vert\rho\rangle\!\rangle\)
-        & \texttt{inner(Id\_L,rho\_L)} \\
-        \(\langle O\rangle\)
+        & \texttt{inner(Id\_L,rho\_L)} \\ \(\langle O\rangle\)
         & \(\langle\!\langle O\vert\rho\rangle\!\rangle\)
-        & \texttt{inner(O\_L,rho\_L)} \\
-        \(-i[H,\rho]\)
+        & \texttt{inner(O\_L,rho\_L)} \\ \(-i[H,\rho]\)
         & \(\mathcal L_H\lvert\rho\rangle\!\rangle\)
-        & \texttt{liouvillian\_mpo} \\
-        \hline
+        & \texttt{liouvillian\_mpo} \\ \hline
     \end{tabular}
 \end{table}
 %

@@ -26,7 +26,6 @@
 \usepackage{xcolor}
 \usepackage{colortbl}
 \usepackage{float}
-\usepackage[section]{placeins}
 \usepackage{caption}
 \usepackage{keyval}
 \usepackage[outputdir=out,cachedir=minted]{minted}
@@ -425,14 +424,14 @@ Our goal is to make process tensors approachable for new users while providing a
 \label{sec:benchmarks}
 % =========================================================================
 
-% \markedsubsection{\tocboth}{Correctness against dense and exact references}
+\subsection{Correctness against dense and exact references}
 
-% \markedsubsection{\tocjulia}{Compression accuracy and temporal bond dimensions}
+\subsection{Compression accuracy and temporal bond dimensions}
 
-% \markedsubsection{\tocjulia}{Scaling with bath size and process duration}
+\subsection{Scaling with bath size and process duration}
 
-% \subsection{Comparison with the C++ ACE implementation}
-
+\subsection{Comparison with the C++ ACE implementation}
+% =========================================================================
 
 % =========================================================================
 \section{Diagnosing memory in process tensors}
@@ -444,6 +443,7 @@ Our goal is to make process tensors approachable for new users while providing a
 \markedsubsection{\tocboth}{Memory spectrum and temporal compressibility}
 
 \markedsubsection{\tocboth}{Memory diagnosis in a non-Markovian example}
+
 
 % =========================================================================
 \section{Extensibility of \texttt{ProcessTensors.jl} and its roadmap}
@@ -473,8 +473,8 @@ Acknowledgements should follow immediately after the conclusion.
 
 \paragraph{Disclosure of generative AI use}
 The authors disclose that the following generative AI tools have been used in the preparation of this submission.
-Large language models accessed through coding assistants (including Cursor and ChatGPT) were used to draft \texttt{TikZ} figures, to generate example code in the listings that were subsequently verified by hand, and to assist in the construction of \texttt{ProcessTensors.jl} package.
-All AI-generated source, including figure code, listing code, and package code, was examined thoroughly by the authors, tested against the intended mathematical and numerical behaviour, and is not left in an unverified ``vibe-coded'' state.
+Large language models accessed through coding assistants were used to draft \texttt{TikZ} figures, to generate example code listings that were subsequently verified by hand, and to assist in the construction of \texttt{ProcessTensors.jl} package.
+All AI-generated source, including figure code, listing code, and package code, was examined thoroughly by the authors, tested against the intended mathematical and numerical behaviour.
 The authors take full responsibility for the contents of the manuscript and of the software.
 
 % TODO: include author contributions
