@@ -112,7 +112,7 @@ For a sequence of outcomes \(\boldsymbol{x}=(x_0,\ldots,x_{N-1})\), the process 
 %
 Summing over every outcome at every time replaces the selected maps by deterministic CPTP operations and restores unit total probability.
 Thus, a process tensor itself is causally normalised, but a trajectory obtained from it need not have unit trace.
-This is precisely the distinction anticipated at the end of Sec.~3.1 and formalised by the operational process-tensor framework \cite{Pollock2018Framework}.
+This is precisely the distinction anticipated at the end of Sec.~3.1 and formalised by the operational process tensor framework \cite{Pollock2018Framework}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \markedsubsection{\tocjulia}{Instrument organisation in \texttt{ProcessTensors.jl}}
@@ -141,7 +141,7 @@ As of v0.3.0, complete positivity and trace preservation are not inferred for an
 %
 
 Two abstract subtypes encode the first structural distinction: \texttt{SingleLegInstrument} and \texttt{TwoLegInstrument}.
-The first occupies one process-tensor leg and therefore begins or terminates a system wire.
+The first occupies one process tensor leg and therefore begins or terminates a system wire.
 The second joins an output of one PT core to the input of the next and acts as a map between adjacent intervention slots.
 Using the notation of Eq.~\eqref{eq:pt-mpo-decomposition}, the unprimed system index \(o_k\) is the output of the core \(Q^{[k]}\), whereas the primed index \(i_k\) is its input.
 Their ITensor tags contain the same \texttt{tstep=k}; their prime levels distinguish the two roles,
@@ -322,7 +322,7 @@ is a joint system--ancilla operation, and
 acts only on the retained ancilla.
 These ingredients correspond directly to Fig.~\ref{fig:instrument-anatomy}(d): \(\rho_{SA}\) enters at the right boundary, the maps \(\mathcal C_k^{SA}\) span the system and ancillary rails, and the maps \(\mathcal V_k^A\) act on the persistent ancillary wire as \(\mathcal I_S\otimes\mathcal V_k^A\).
 Numerically, the former become two-site Liouville tensors and the latter one-site tensors, while the same ancillary index is contracted forward through the complete network.
-The system legs between successive joint maps remain available for contraction with the PT-MPO and therefore carry the opposite prime-level orientation to the matching process-tensor legs.
+The system legs between successive joint maps remain available for contraction with the PT-MPO and therefore carry the opposite prime-level orientation to the matching process tensor legs.
 
 Because the ancillary degree of freedom is not reset between interventions, the Choi tensor of a correlated tester generally does not factorise into time-local operations,
 %

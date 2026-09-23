@@ -263,7 +263,7 @@ A Markovian process factorises into independent channels, so its Choi operator i
 A non-Markovian process generally has \(D_k>1\).
 A small value of \(D_k\) does not imply the absence of memory; it means that the relevant memory is compressible~\cite{Pollock2018Framework,Jorgensen2019}.
 
-To illustrate the indices that exist in our Process-Tensor MPO (PT-MPO), let us consider a three-step dense process tensor with one bath spin and a system spin (we will see how to construct this in the next subsection).
+To illustrate the indices that exist in our Process Tensor MPO (PT-MPO), let us consider a three-step dense process tensor with one bath spin and a system spin (we will see how to construct this in the next subsection).
 The first core contains the following site indices:
 %
 \begin{julialistingpair}[
@@ -383,8 +383,8 @@ ProcessTensors.SpinSystem
 The first line identifies the model type.
 Although we supplied a Hilbert index of dimension \(2\), \texttt{spin\_system} converted it internally into a Liouville index of dimension \(2^2=4\); this accounts for the next three lines.
 The final line reports that no Lindblad jump operators were supplied.
-The present process-tensor builder requires a single-site system because the free-system propagation is embedded into every temporal core.
-An initial system state is intentionally absent: it is an experimental preparation and will later be inserted into the first open process-tensor leg as an instrument.
+The present process tensor builder requires a single-site system because the free-system propagation is embedded into every temporal core.
+An initial system state is intentionally absent: it is an experimental preparation and will later be inserted into the first open process tensor leg as an instrument.
 
 \textbf{2.
 Environment}: The next ingredient is the non-Markovian environment and its microscopic content that dictates how it influences the system.
@@ -467,7 +467,7 @@ Time grid}: The last physical ingredient is the time grid,
 which is specified by
 %
 \begin{julialistingpair}[
-    caption={Time grid for the dense process-tensor example.}, label={lst:pt-ingredients-time},
+    caption={Time grid for the dense process tensor example.}, label={lst:pt-ingredients-time},
     ]
 %
     \begin{juliacode}[paired]
@@ -543,7 +543,7 @@ Instead, it writes
     \label{eq:system-environment-generator-separation}
 \end{equation}
 %
-This separation reflects the architecture shared by the process-tensor builders.
+This separation reflects the architecture shared by the process tensor builders.
 The bath and interaction generator \(\mathcal L_{E+SE}\) constructs the environmental influence and its temporal memory links, whereas \(\mathcal L_S\) generates the deterministic free evolution of the accessible system.
 Free-system evolution does not itself create environmental memory, but it changes how the system interacts with that memory and must therefore remain part of the final process tensor.
 Accordingly, \texttt{ProcessTensors.jl} constructs the environmental slab first and embeds the free-system map into every PT-MPO core afterwards; the system evolution is separated during construction, not discarded.

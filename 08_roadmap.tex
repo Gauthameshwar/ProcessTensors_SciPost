@@ -3,7 +3,7 @@
 
 So far, we have demonstrated a broad range of workflows already available in \texttt{ProcessTensors.jl}, from the construction and compression of process tensors to their interrogation with instruments and testers.
 Nevertheless, the present implementation should be viewed as a foundation rather than a complete endpoint.
-A central motivation for developing \texttt{ProcessTensors.jl} as an open-source package is to provide an interface that can continue to grow with new process-tensor algorithms, new classes of environments, and new operational tools, while retaining a common ITensor-based language.
+A central motivation for developing \texttt{ProcessTensors.jl} as an open-source package is to provide an interface that can continue to grow with new process tensor algorithms, new classes of environments, and new operational tools, while retaining a common ITensor-based language.
 We have therefore designed the present API with room for extensions that may be contributed and refined by the wider community.
 Below we outline several directions that we consider particularly natural continuations of the current architecture, both for broadening the physical problems that can be represented and for improving the numerical construction of PT--MPOs.
 
@@ -17,7 +17,7 @@ A paradigmatic example is the resonant-level model, which has already been treat
 The ITensor ecosystem already provides \texttt{Fermion} and \texttt{Electron} site types together with fermionic creation and annihilation operators, fermion-parity quantum numbers, and Jordan--Wigner string operators required to represent anticommutation relations in tensor-network calculations.
 A natural extension of \texttt{ProcessTensors.jl} would therefore be to introduce corresponding fermionic Hilbert-space sites and to carry their parity structure consistently through the existing Hilbert-to-Liouville mapping.
 In Liouville space, left and right multiplication by fermionic operators must preserve the appropriate parity signs on the ket and bra sectors; once these superoperators are defined, they can enter the same Liouvillian and propagator routines presently used by bosonic and spin degrees of freedom.
-A \texttt{FermionicMode} and corresponding fermionic bath container could then expose this construction through the same bath-mode interface used elsewhere in the package, allowing the resulting microscopic propagators to be compressed into PT--MPOs without requiring a separate process-tensor representation.
+A \texttt{FermionicMode} and corresponding fermionic bath container could then expose this construction through the same bath-mode interface used elsewhere in the package, allowing the resulting microscopic propagators to be compressed into PT--MPOs without requiring a separate process tensor representation.
 
 The instrumentation layer can likewise be made more operational.
 The current instrument primitives are sufficient to compose state preparations, observable measurements, projections, and more general maps, and therefore already allow many POVM-based protocols to be represented.
@@ -58,7 +58,7 @@ This separation provides a straightforward route to damped cavity modes, lossy a
 The present ACE backend combines independent mode influences sequentially, following the construction used in the original ACE toolkit~\cite{CygorekGauger2024}.
 A particularly promising extension is the treelike contraction scheme introduced for ACE in Ref.~\cite{Cygorek2024Treelike}, where partial PT--MPOs are combined hierarchically rather than adding every new mode to one continuously growing process tensor.
 The published construction shows that this reordering can substantially reduce the cost of the intermediate contractions, while preselection and additional compression sweeps can control the large temporary bond spaces that appear when two already-compressed PT--MPOs are joined.
-From the perspective of the present API, this is naturally a new contraction strategy rather than a new process-tensor type:
+From the perspective of the present API, this is naturally a new contraction strategy rather than a new process tensor type:
 %
 \begin{juliacode}[
     caption={Prospective tree-like ACE construction through the existing builder interface.},
@@ -168,7 +168,7 @@ The cell-integrated bath correlations, pairwise influence tensors, and full disc
 %
 Thus each influence tensor is obtained by integrating the bath correlation function over a pair of time cells, with time ordering on the diagonal cell \(j=k\). \textcolor{red}{Is this formula too heavy for the readers? Can skip it? }
 TEMPO rewrites this non-local temporal object as a tensor network and repeatedly applies singular-value decompositions to retain only the relevant temporal correlations~\cite{strathearn2018tempo}.
-PT-TEMPO takes the same construction one step further: rather than contracting the network for one chosen reduced-state trajectory, the system input and output legs are retained, so that the compressed influence functional becomes a reusable finite process-tensor MPO~\cite{jorgensen2019pttempo}.
+PT-TEMPO takes the same construction one step further: rather than contracting the network for one chosen reduced-state trajectory, the system input and output legs are retained, so that the compressed influence functional becomes a reusable finite process tensor MPO~\cite{jorgensen2019pttempo}.
 Once constructed, this object can be interrogated with different controls, instruments, and multitime protocols without rebuilding the bath influence, as demonstrated in existing PT-TEMPO software such as OQuPy~\cite{fux2024oqupy}.
 %
 \begin{figure}[t]
@@ -207,7 +207,7 @@ Once constructed, this object can be interrogated with different controls, instr
     \caption{Proposed PT-TEMPO construction in the present package.
     A stationary Gaussian bath is specified directly through its spectral density, temperature, and system--bath coupling.
     The corresponding two-time correlations generate the discretised Feynman--Vernon influence tensors, which are contracted and compressed into a finite environmental PT--MPO.
-    Free-system propagation is then embedded using the same convention as the existing process-tensor builders, producing the standard \texttt{ProcessTensor} object used by the rest of the package.}
+    Free-system propagation is then embedded using the same convention as the existing process tensor builders, producing the standard \texttt{ProcessTensor} object used by the rest of the package.}
     \label{fig:roadmap-pttempo}
 \end{figure}
 %
@@ -226,7 +226,7 @@ The coupling would then be separated internally into its system and bath compone
 A PT-TEMPO method would sit beside the existing dense and ACE constructors as an \texttt{AbstractPTBuilder}, so that a prospective interface could assemble the bath and the process tensor together, as in Listing~\ref{lst:roadmap-pttempo-builder}:
 %
 \begin{juliacode}[
-    caption={Prospective Gaussian-bath constructor and PT-TEMPO process-tensor builder.},
+    caption={Prospective Gaussian-bath constructor and PT-TEMPO process tensor builder.},
     label={lst:roadmap-pttempo-builder},
 ]
 bath = gaussian_bath(J, T; coupling=H_SB)
@@ -244,7 +244,7 @@ process_tensor = build_process_tensor(
 %
 The implementation itself would reside in a new builder file beside the dense and ACE backends.
 Internal helpers in this file would evaluate the bath correlations from $J(\omega)$ and $T$, construct the discretised influence tensors, and perform the TEMPO contractions and SVD compression.
-A corresponding dispatch would return the same finite process-tensor representation used throughout the package.
+A corresponding dispatch would return the same finite process tensor representation used throughout the package.
 The existing ITensor infrastructure supplies the MPO representation and bond compression; the only additional numerical dependency expected at this level is an adaptive quadrature library, such as \texttt{QuadGK.jl}, for the spectral and influence-functional integrals.
 Free-system propagation can then be embedded after the environmental PT--MPO has been constructed, and may be chosen trivial when only the bath influence is required.
 

@@ -201,7 +201,7 @@ More generally, an observable \(O=O^\dagger\) closes the same Liouville leg and 
 \end{equation}
 %
 Leaving the leg unclosed, as in panel~(a), instead retains the state-like object \(\lvert\rho\rangle\!\rangle\).
-These closure rules, visualised in the respective panels of Fig.~\ref{fig:wire-bending-vectorisation}, will reappear when process-tensor outputs are traced, measured, or left open.
+These closure rules, visualised in the respective panels of Fig.~\ref{fig:wire-bending-vectorisation}, will reappear when process tensor outputs are traced, measured, or left open.
 
 Listing~\ref{lst:fig2-vectorisation} realises the four panels of Fig.~\ref{fig:wire-bending-vectorisation} with the package converters: an operator becomes a Liouville vector, the identity becomes the trace-out effect, and traces or expectation values are ordinary inner products.
 
@@ -238,7 +238,7 @@ expect_O = inner(O_L, rho_L) # (d) <O> = <<O|rho>>
 \label{subsec:left-right-actions}
 
 Vectorisation becomes especially useful when we want to describe an operation such as \(A\rho B\) as a linear action on the Liouville-space vector \(\lvert\rho\rangle\!\rangle\), because it brings the opeartions on the bra and ket bases to the same space.
-This allows Hamiltonian evolution, dissipative jumps, and process-tensor contractions to be written as ordinary tensor-network operations or MPOs.
+This allows Hamiltonian evolution, dissipative jumps, and process tensor contractions to be written as ordinary tensor-network operations or MPOs.
 The only small surprise is that multiplication from the right does not look exactly like multiplication from the left after vectorisation.
 The transpose appearing below is the bookkeeping rule that keeps the two descriptions consistent.
 
@@ -327,7 +327,7 @@ A_jump = op("S-_Jump", sL)  # vec(S- * rho * S+)
 
 In this notation, \texttt{Sx\_L} represents multiplication by \(S_x\) from the left, while \texttt{Sz\_R} represents multiplication by \(S_z\) from the right.
 The \texttt{\_Jump} suffix represents the corresponding left-right action, also known as the sandwich action in the context of Local Master Equation (LME) superoperators.
-Together, these local operators provide the elementary building blocks for the Liouville-space dynamics and process-tensor constructions developed below.
+Together, these local operators provide the elementary building blocks for the Liouville-space dynamics and process tensor constructions developed below.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \markedsubsection{\tocboth}{Vectorised many-body MPS and Liouvillian MPOs}
