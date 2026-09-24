@@ -251,11 +251,12 @@ Free-system propagation can then be embedded after the environmental PT--MPO has
 The same Gaussian-bath abstraction could later accept fermionic hybridisation functions in place of bosonic correlation functions.
 An ITensor-native route would order fermionic events along the temporal contour and encode their exchange signs through Jordan--Wigner parity strings, or equivalent parity sectors, producing an ordinary complex-valued but parity-aware influence MPO.
 Fermionic influence-functional MPS calculations using closely related super-fermion and Slater-determinant machinery have already been implemented for quench dynamics of the Anderson impurity model~\cite{Park2024FermionicInfluence}.
-Grassmann TEMPO provides an alternative formulation~\cite{Chen2024GTEMPO}, but incorporating its Grassmann tensor algebra would require substantial changes to the present backend.
+Grassmann TEMPO provides an alternative formulation~\cite{Chen2024GTEMPO,ChenGuo2024KadanoffBaym}, but incorporating its Grassmann tensor algebra would require substantial changes to the present backend.
 
 Our immediate goal would be the standard finite-time PT-TEMPO setting: stationary thermal bosonic Gaussian baths with non-interacting modes, linear system--bath coupling, user-defined or built-in spectral densities, and controlled temporal SVD compression.
 More advanced influence-functional contractions can be incorporated only after this reference implementation is established.
-In particular, divide-and-conquer constructions can reduce the number of SVDs by exploiting self-similarity of Gaussian influence networks~\cite{cygorek2024sublinear}, while time-translationally invariant constructions can build matrix-product representations of the influence functional with substantially fewer tensor-network multiplications~\cite{guo2024influence}.
+In particular, divide-and-conquer constructions can reduce the number of SVDs by exploiting self-similarity of Gaussian influence networks~\cite{cygorek2024sublinear}, while time-translationally invariant finite-time constructions can build bosonic and fermionic matrix-product representations of the influence functional with substantially fewer tensor-network multiplications~\cite{guo2024influence,SunLiGuo2025TTI}.
+The latter tensors still grow with the requested time window, and exponential kernel fitting introduces additional convergence parameters, so fewer multiplications do not imply time-independent total cost.
 These algorithms provide natural future optimisation routes, but are not prerequisites for adding a self-contained PT-TEMPO backend to this package.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
