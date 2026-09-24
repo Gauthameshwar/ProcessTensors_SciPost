@@ -265,7 +265,50 @@ A point worth emphasising is that an individual trajectory selected from a proce
 % add!(seq, nsteps, trace_out())
 % result = evaluate_process(pt, seq)
 % \end{verbatim}
-\textcolor{red}{TODO: Fidel: add the content on the Choi representation of a PT, and connecting it with our theory.}
+The Choi representation recalled in Sec.~\ref{subsec:left-right-actions} extends naturally to multi-time processes. For the construction used below, we consider an initially uncorrelated system and environment and supply the system preparation \(\rho_S(t_0)\) separately. Each dynamical step from \(t_k\) to \(t_{k+1}\) has an input space \(\mathcal{H}_{\mathrm{in},k}\) and an output space \(\mathcal{H}_{\mathrm{out},k}\). The process Choi operator therefore belongs to
+\begin{equation*}
+    \Upsilon_{n:0}
+    \in
+    \mathcal{B}\left[\bigotimes_{k=0}^{n-1}(\mathcal{H}_{\mathrm{in},k} \otimes \mathcal{H}_{\mathrm{out},k})\right].
+\end{equation*}
+The intervention \(\mathcal{A}_k\) connects the output of step \(k-1\) to the input of step \(k\), so its Choi operator \(J(\mathcal{A}_k)\) acts on \(\mathcal H_{\mathrm{out},k-1}\otimes\mathcal H_{\mathrm{in},k}\).
+
+The action of the process tensor in Eq.~\ref{eq:process-tensor-operational-definition} in terms of its Choi operator is expressed as
+\begin{equation}
+    \rho_S(t_n)
+    =
+    \operatorname{Tr}_{\overline{\mathrm{out},n-1}}[\Upsilon_{n:0}(\rho_S(t_0)^T \otimes J(\mathcal{A}_1)^T \otimes \cdots \otimes J(\mathcal{A}_{n-1})^T \otimes I)].
+\end{equation}
+Here \(\operatorname{Tr}_{\overline{\mathrm{out},n-1}}\) traces over all subsystems except the final output space \(\mathcal H_{\mathrm{out},n-1}\), on which \(I\) acts.
+
+The properties discussed in Sec~\ref{subsec:from-channels} translate into conditions on \(\Upsilon_{n:0}\). Complete positivity is equivalent to positive semidefiniteness, and the unnormalized Choi convention gives
+\begin{equation}
+    \Upsilon_{n:0} \succeq 0,
+    \qquad
+    \operatorname{Tr} \Upsilon_{n:0} = d^n_S,
+\end{equation}
+for deterministic dynamics. Causality additionally requires the recursive partial trace conditions
+\begin{equation}
+    \begin{aligned}
+        \operatorname{Tr}_{\mathrm{out},k-1} \Upsilon_{k:0} &= \Upsilon_{k-1:0} \otimes I_{\mathrm{in},k-1},
+        \qquad
+        k = 2, \dots, n,
+        \\
+        \operatorname{Tr}_{\mathrm{out},0} \Upsilon_{1:0} &= I_{\mathrm{in},0}.
+    \end{aligned}
+\end{equation}
+These constraints impose that later interventions cannot affect past statistics and ensure normalization under trace-preserving interventions.
+
+\textcolor{red}{NOTES: I intentionally made this subsection sparse so this section doesn't drag on. You could make the discussion more verbose, or include additional details like how a Markovian process corresponds to a Choi operator that can be written as a tensor product of regular channel Choi operators, etc. There's also relating the Choi representation to the MPS representation, which would be better placed in the next section:}
+\begin{equation*}
+    \left[\Upsilon_{n:0}^\mathrm{Choi}\right]_{(a_0b_0\dots a_{n-1}b_{n-1}),(a_0'b_0'\dots a_{n-1}'b_{n-1}')}
+    =
+    \left[\Upsilon_{n:0}^\mathrm{Liouville}\right]_{(o_0\dots o_{n-1}),(i_0\dots i_{n-1})}
+\end{equation*}
+where we've unpacked the Liouville indices,
+\begin{equation*}
+    i_k = (a_k', a_k), \qquad o_k (b_k', b_k).
+\end{equation*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \markedsubsection{\tocjulia}{Anatomy of a \texttt{ProcessTensor}}

@@ -246,7 +246,9 @@ or by its Choi operator,
         \langle\!\langle I\rvert
     \bigr).
 \]
-The Liouville-space matrix and the Choi operator contain the same map, but organise its input and output indices differently. In this work, we use the Liouville-space representation because it is the form that can be applied directly to tensor-network states. The Choi representation is particularly useful when studying complete positivity and quantum channels; introductory discussions can be found in Refs.~\cite{nielsenchuang2010,watrous2018theory}. \textcolor{red}{Fidel: Check if this para is sound, and see if you need more elaboration/correction.}
+The Liouville-space matrix and the Choi operator are two representations of the same linear map, where one can be obtained from the other via index reshuffling. Here we primarily use the Liouville representation, in which maps act on vectorized operators by ordinary matrix multiplication. The Choi representation is useful because it connects properties of maps to properties of operators, as discussed in Sec.~\ref{subsec:choi-instruments}. Introductory material can be found in Refs.~\cite{nielsenchuang2010,watrous2018theory}.
+
+% The Liouville-space matrix and the Choi operator contain the same map, but organise its input and output indices differently. In this work, we use the Liouville-space representation because it is the form that can be applied directly to tensor-network states. The Choi representation is particularly useful when studying complete positivity and quantum channels; introductory discussions can be found in Refs.~\cite{nielsenchuang2010,watrous2018theory}. \textcolor{red}{Fidel: Check if this para is sound, and see if you need more elaboration/correction.} 
 
 The connection between operator multiplication and Liouville-space action is most easily seen by sliding an operator around the same bend used to vectorise the identity in Fig.~\ref{fig:wire-bending-vectorisation}b. For the vectorised identity,
 %
