@@ -1,0 +1,78 @@
+\markedsection{\toctheory}{Sequential ACE construction}
+\label{app:sequential-ace}
+
+The ACE builder introduced in Sec.~\ref{subsec:pt-builders} constructs the environmental influence by adding one microscopic mode at a time and compressing the resulting temporal bonds.
+Here we describe this update in more detail, following the original ACE construction~\cite{Cygorek2022} and its implementation in the ACE toolkit~\cite{CygorekGauger2024}, 
+The system operations remain open during construction, so the resulting PT-MPO can subsequently be used with different instrument sequences. 
+
+Figure~\ref{fig:sequential-ace} shows the join for four modes and three propagation intervals, with time running from right to left. 
+Each row is one mode, shaded from dark (first bath mode) to light (last bath mode). 
+We assume an initially factorised state $\rho_S(0)\otimes\bigotimes_m\rho_{E_m}(0)$ and the generator decomposition given in Sec.~\ref{subsec:pt-builders}: each $\mathcal L_m\equiv\mathcal L_{E_m+SE_m}$ acts on the system and mode $m$, with no direct interactions between modes. 
+Joining successive bath indices, contracting the first with $|\rho_{E_m}(0)\rangle\rangle$, and closing the last with $\langle\langle I_{E_m}|$ gives a single-mode influence chain. 
+The first step absorbs \(E_1\) and \(E_2\) into a single chain; the same join is then repeated for \(E_3\) and \(E_4\). 
+Its internal bath index has dimensions $d_m^2$, where $d_m$ is the mode Hilbert-space dimension. 
+As we compress the modes, we lose the "double-wire" space and replace it with a compressed influence, with memory bond links taking its place. 
+After every mode has been absorbed and the temporal bonds compressed, the network is the PT-MPO with cores \(Q^{[k]}\). 
+
+%
+\begin{figure}[tbp]
+    \centering
+    \resizebox{\linewidth}{!}{\input{figures/tikz/sequential_ace.tikz}}
+    \caption{Sequential construction of the PT-MPO, illustrated for four bath modes and three propagation intervals, with time running from right to left. 
+    Each bath mode $E_m$ contains an initial state and its propagator across time. 
+    The vertical legs of each bath mode contain the influence of that bath mode on the system. 
+    By merging this leg sequentially for each bath mode with SVD truncation, we can retain only the relevant influence on the system at each timestep. 
+    Repeating this over all bath modes gives the final PT-MPO. 
+    Figure adapted from Lacroix \textit{et al.}~\cite{LacroixReview2026}.}
+    \label{fig:sequential-ace}
+\end{figure}
+%
+
+Let $\mathcal L_{<m}=\sum_{j<m}\mathcal L_j$ denote the contribution of the modes already included. 
+The asymmetric addition of mode $m$ uses
+%
+\begin{equation}
+    e^{\Delta t(\mathcal L_{<m}+\mathcal L_m)}
+    = e^{\Delta t\mathcal L_m}
+      e^{\Delta t\mathcal L_{<m}}
+      +\mathcal O(\Delta t^2).
+    \label{eq:ace-asymmetric-split}
+\end{equation}
+%
+The symmetric addition of mode $m$ uses
+%
+\begin{equation}
+    e^{\Delta t(\mathcal L_{<m}+\mathcal L_m)}
+    = e^{\frac{\Delta t}{2}\mathcal L_m}
+      e^{\Delta t\mathcal L_{<m}}
+      e^{\frac{\Delta t}{2}\mathcal L_m}
+      +\mathcal O(\Delta t^3).
+    \label{eq:ace-symmetric-split}
+\end{equation}
+%
+This decomposition does not matter if we have commuting interaction terms of each bath mode with the system. 
+However, if the bath modes are non-commutative in nature, the latter would lead to a more accurate compression. 
+Compression reduces the enlarged temporal bonds while we merge the two MPO chains. 
+At a sweep step, the appropriate core and any factor carried from its neighbour are reshaped into a matrix and decomposed as
+%
+\begin{equation}
+    M=U\Sigma V^\dagger
+    \;\longrightarrow\;
+    U_r\Sigma_rV_r^\dagger,
+    \qquad
+    \sigma_j>\epsilon\sigma_1,\qquad r\leq\chi_{\max}.
+    \label{eq:ace-appendix-svd}
+\end{equation}
+%
+One factor becomes the updated core, while the remaining factor is absorbed into the next core in the sweep direction. 
+Sweeping through the chain carries information from the initial state and final trace into the intermediate tensors~\cite{Cygorek2022}. 
+Its dimension is determined by how well that influence can be compressed over the chosen time interval. 
+
+The two schedules compared in Sec.~\ref{subsec:ace-compressors} differ in when this truncation is performed. The \texttt{:canonzip} schedule completes the mode join without truncation, canonicalises towards the final time, and then performs a reverse relative-SVD sweep. 
+The zip-up schedule truncates during the forward join and subsequently sweeps backward, reducing intermediate storage but choosing truncation bases before the complete joined chain has been canonicalised. 
+The same numerical cutoff therefore need not give the same accuracy in both schedules. 
+We refer to Sec.~\ref{subsec:ace-compressors} for their measured accuracy and computational cost. 
+
+Driven or dissipative modes modify the first ingredient, while tree-like ACE joins partial influences hierarchically and introduces preselection and further compression sweeps~\cite{Cygorek2024Treelike}.
+These are the extension points described in Sec.~\ref{sec:roadmap} and can retain the same final \texttt{ProcessTensor} representation.
+Initially correlated modes or direct intermode interactions instead require revisiting the independent-mode decomposition used above.

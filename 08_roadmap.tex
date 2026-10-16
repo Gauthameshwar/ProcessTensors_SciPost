@@ -131,42 +131,39 @@ This removes the additional error associated with discretising a continuum spect
 The remaining numerical approximations are instead controlled by the time step, numerical quadrature, any imposed memory cutoff, and tensor-network truncation.
 For Gaussian baths whose temporal correlations remain compressible, this can provide a particularly compact and accurate representation of the environment.
 
-For a linearly coupled Gaussian bath,
+For a thermal Gaussian bath linearly coupled to the system,
 %
 \begin{equation}
-    H_{SB} = S\otimes B,
+    H_{SB}=S\otimes B,
 \end{equation}
 %
-the spectral density and temperature determine the stationary two-time correlation function \(C(\tau)=\langle B(\tau)B(0)\rangle\).
-Let \(s_k^+\) and \(s_k^-\) denote the eigenvalues of \(S\) on the forward and backward histories during the cell \([t_k,t_{k+1}]\).
-The cell-integrated bath correlations, pairwise influence tensors, and full discretised Feynman--Vernon influence functional are then
+the spectral density and temperature determine the bath correlation
+function \(C(\tau)=\langle B(\tau)B(0)\rangle\).
+This function describes how fluctuations of the bath at one time are
+correlated with those at another time, and contains the information
+needed to construct its influence on the system.
+
+To describe this influence on a discrete time grid, we integrate
+\(C(t-t')\) over pairs of time intervals.
+For two distinct intervals, \(j<k\), this gives
 %
-\begin{align}
+\begin{equation}
     \eta_{k-j}
-    &=
+    =
     \int_{t_k}^{t_{k+1}}\!\mathrm{d}t
-    \int_{t_j}^{\min(t,t_{j+1})}\!\mathrm{d}t'\,
-    C(t-t'),
-    \qquad j\leq k,
-    \nonumber\\
-    \mathcal I_{k-j}(s_k^\pm,s_j^\pm)
-    &=
-    \exp\!\left[
-        -(s_k^+-s_k^-)
-        \left(
-            \eta_{k-j}s_j^+
-            -\eta_{k-j}^*s_j^-
-        \right)
-    \right],
-    \nonumber\\
-    \mathcal F[\{s^\pm\}]
-    &=
-    \prod_{k=0}^{N-1}\prod_{j=0}^{k}
-    \mathcal I_{k-j}(s_k^\pm,s_j^\pm).
+    \int_{t_j}^{t_{j+1}}\!\mathrm{d}t'\,
+    C(t-t').
     \label{eq:roadmap-feynman-vernon-influence}
-\end{align}
+\end{equation}
 %
-Thus each influence tensor is obtained by integrating the bath correlation function over a pair of time cells, with time ordering on the diagonal cell \(j=k\). \textcolor{red}{Is this formula too heavy for the readers? Can skip it? }
+For the same interval, \(j=k\), the inner integral instead ends at
+\(t\), retaining the time ordering \(t'\leq t\).
+On a uniform grid, stationarity makes these coefficients depend
+only on the separation \(k-j\).
+Each coefficient determines an influence tensor connecting the system's ket and bra histories in the corresponding intervals.
+Together, these tensors form the discretised Feynman--Vernon influence functional: a tensor network describing how the bath connects the system's evolution at different times.
+PT-TEMPO contracts and compresses this network into a PT--MPO, keeping the system legs available for subsequent insertion of propagators and quantum instruments.
+The explicit influence tensors and their contraction are described in the original TEMPO and PT-TEMPO references.
 TEMPO rewrites this non-local temporal object as a tensor network and repeatedly applies singular-value decompositions to retain only the relevant temporal correlations~\cite{strathearn2018tempo}.
 PT-TEMPO takes the same construction one step further: rather than contracting the network for one chosen reduced-state trajectory, the system input and output legs are retained, so that the compressed influence functional becomes a reusable finite process tensor MPO~\cite{jorgensen2019pttempo}.
 Once constructed, this object can be interrogated with different controls, instruments, and multitime protocols without rebuilding the bath influence, as demonstrated in existing PT-TEMPO software such as OQuPy~\cite{fux2024oqupy}.

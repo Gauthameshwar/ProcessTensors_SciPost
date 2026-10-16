@@ -165,10 +165,10 @@ Several open-source packages already turn these constructions into useful numeri
 \texttt{OQuPy} implements PT-TEMPO for Gaussian bosonic environments and uses the resulting process tensors for dynamics, multi-time correlations, and control, including extensions to coupled systems~\cite{Fux2024}.
 The C++ \texttt{ACE} toolkit provides the independent-mode ACE construction alongside Gaussian-bath PT-MPO algorithms, including divide-and-conquer schemes, with facilities for saving, reusing, and combining environmental tensors~\cite{CygorekGauger2024}.
 \texttt{UniformTEMPO.jl} supplies the uniform construction for infinite process tensors~\cite{Link2024Infinite,UniformTEMPOSoftware}, while \texttt{GTEMPO.jl} implements Grassmann influence-functional methods for fermionic impurity problems~\cite{Chen2024GTEMPO,XuGuoChen2024GTEMPO,GTEMPOSoftware}.
-Within Julia, \texttt{QuantumDynamics.jl} offers a broader collection of influence-functional, tensor-network, and other open-system methods~\cite{Bose2023}, and \texttt{MPSDynamics.jl} provides explicit-environment simulations based on thermalised TEDOPA although it not yet directly uses PT-MPO construction~\cite{Lacroix2024}.
+Within Julia, \texttt{QuantumDynamics.jl} offers a broader collection of influence-functional, tensor-network, and other open-system methods~\cite{Bose2023}, and \texttt{MPSDynamics.jl} provides explicit-environment simulations based on thermalised TEDOPA, although it does not yet directly use PT-MPO construction~\cite{Lacroix2024}.
 Research codes such as \texttt{imcode} provide complementary influence-matrix calculations for lattice and impurity settings~\cite{IMCodeSoftware}.
 Related path-integral tools, such as \texttt{PathSum}, also form part of this wider numerical landscape~\cite{Kundu2023PathSum}.
-For broader comparisons, including methods outside direct PT-MPO construction, we refer readers to the PRX perspective by Keeling, Stoudenmire, Ba\~nuls, and Reichman~\cite{Keeling2026} and the review by Lacroix and collaborators~\cite{LacroixReview2026}.
+For broader comparisons, including methods outside direct PT-MPO construction, we refer readers to the PRX perspective by Keeling, Stoudenmire, Ba\~nuls, and Reichman~\cite{Keeling2026} and the review by Lacroix \textit{et al.}~\cite{LacroixReview2026}.
 
 \texttt{ProcessTensors.jl} brings a particular emphasis to this landscape: constructing finite-time process tensors and making their operational content accessible in an intuitive Julia language.
 We use \texttt{ITensors.jl} and \texttt{ITensorMPS.jl} as the tensor-network foundation~\cite{Fishman2022}.
@@ -178,16 +178,16 @@ The present release centres on direct finite-bath construction and sequential AC
 With the process available, users can explore preparations, instrument sequences, conditional statistics, and temporal correlations through the same representation.
 The contribution is this connection between construction, operational use, and an accessible implementation, building on the established algorithms described above.
 
-The figure also places the present implementation within a development roadmap.
-We describe how alternative constructors can target the same finite-time PT-MPO interface, so that improvements in bath construction can be reused by the existing evaluation routines.
+Figure~\ref{fig:pt-construction-map} also places the present implementation within a development roadmap.
+We describe how alternative constructors can target the same finite-time PT-MPO interface we have, so that improvements in bath construction can be reused by the existing evaluation routines.
 Nearer extensions include time-dependent and dissipative mode propagators, tree-like ACE, and Gaussian PT-TEMPO construction; divide-and-conquer schemes and chain-based constructions require additional algorithmic machinery.
 Fermionic support must also account consistently for parity and operator ordering.
-Uniform and Floquet process tensors, and spatial influence-functional networks, require more substantial changes to the representation or construction infrastructure.
-We provide the details of these extensions in the following sections.
+Floquet process tensors and spatial influence-functional networks require more substantial changes to the representation or construction infrastructure.
+We provide the details of these extensions in Sec.~\ref{sec:roadmap}.
 
 The remainder of this paper develops this connection between theory and use step by step.
-We introduce the Liouville-space and tensor-network conventions, construct process tensors and their compressed representations, and explain how system operations and instruments extract experimentally meaningful quantities from them.
-Worked examples connect these ingredients to numerical workflows, followed by benchmarks and the development roadmap.
+We introduce the Liouville-space and tensor-network conventions in Sec.~\ref{sec:liouville-foundations}, construct process tensors and their compressed representations in Sec.~\ref{sec:process-tensors}, and in Sec.~\ref{sec:quantum-instruments}, explain how system operations and instruments extract experimentally meaningful quantities from them.
+Worked examples in Sec.~\ref{sec:pt-workflows} connect these ingredients to numerical workflows, followed by benchmarks (Sec.~\ref{sec:ace-benchmarks}) and the development roadmap (Sec.~\ref{sec:roadmap}).
 Throughout, equations, tensor diagrams, and Julia code are presented together so that the same operation can be followed in each language.
 The theory and Julia markers in the table of contents indicate the predominant emphasis of each section and help readers choose a route through the material.
-Students can follow the construction from its physical meaning to a working calculation, while experienced readers can move directly to the implementation details, examples, and extension points relevant to their own problems.
+Students can follow the construction from its physical meaning to a working calculation, while experienced readers can move directly to the implementation codes, examples, and extension points relevant to their own problems.

@@ -7,8 +7,8 @@ Moving to the Liouville space does precisely this: density matrices become state
 This change of language is especially natural for tensor networks, because the same ideas can be read in three equivalent ways---as an equation, as a tensor diagram, and as the corresponding \texttt{ITensor} code.
 We develop these three descriptions together below.
 Our graphical conventions are adapted from the open-system tensor calculus of Ref.~\cite{Wood2015}, with time and contractions drawn from right to left to match the convention used throughout this paper.
-In case the readers are not familiar with ITensors and their notations of sites and indices, they are encouraged to read the documentation of the ITensor library [\textcolor{red}{cite ITensor docs, and also the original papers}].
-Alternatively, they can also go through the tutorials in the stable docs of our package [\textcolor{red}{add the link to the stable docs}].
+In case the readers are not familiar with ITensors and their notations of sites and indices, they are encouraged to read the ITensor documentation~\cite{Fishman2022,ITensorsDocs,ITensorMPSDocs}.
+Alternatively, they can also go through the tutorials in the \href{https://gauthameshwar.github.io/ProcessTensors.jl/stable/}{stable documentation} of our package.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \markedsubsection{\tocboth}{A graphical dictionary for tensors}
@@ -56,7 +56,7 @@ Transposing deserves one warning when we implement it in ITensor code.
 For an operator with indices \(s\) and \(s'\), \texttt{swapinds(A, s, prime(s))} exchanges those index identities and therefore implements \(A^{\mathsf T}\).
 An ITensor \texttt{prime} operation, by contrast, only changes the identity of an index; it does not transpose or conjugate the tensor.
 Likewise, \texttt{dag} conjugates the entries (and reverses index directions when applicable) but does not by itself exchange the two operator indices.
-This distinction becomes important when we use an unprimed index for the input and a primed copy for its output when constructing operator ITensors.
+This distinction becomes important when we use an unprimed index for the input and a primed copy for its output when constructing operator ITensors.\footnote{Index priming and the operations \texttt{dag} and \texttt{swapinds} are documented at \url{https://docs.itensor.org/ITensors/stable/IndexType.html} and \url{https://docs.itensor.org/ITensors/stable/ITensorType.html}.}
 
 %
 \begin{juliacode}[
@@ -203,7 +203,7 @@ More generally, an observable \(O=O^\dagger\) closes the same Liouville leg and 
 Leaving the leg unclosed, as in panel~(a), instead retains the state-like object \(\lvert\rho\rangle\!\rangle\).
 These closure rules, visualised in the respective panels of Fig.~\ref{fig:wire-bending-vectorisation}, will reappear when process tensor outputs are traced, measured, or left open.
 
-Listing~\ref{lst:fig2-vectorisation} realises the four panels of Fig.~\ref{fig:wire-bending-vectorisation} with the package converters: an operator becomes a Liouville vector, the identity becomes the trace-out effect, and traces or expectation values are ordinary inner products.
+Listing~\ref{lst:fig2-vectorisation} realises the four panels of Fig.~\ref{fig:wire-bending-vectorisation} with the package converters: an operator becomes a Liouville vector, the identity becomes the trace-out effect, and traces or expectation values are ordinary inner products.\footnote{\texttt{siteinds}, local operators, and \texttt{OpSum} are documented at \url{https://docs.itensor.org/ITensorMPS/stable/SiteType.html} and \url{https://docs.itensor.org/ITensorMPS/stable/OpSum.html}.}
 
 %
 \begin{juliacode}[
@@ -354,7 +354,7 @@ Tensor networks tame this growth by storing the local degrees of freedom in the 
 %
 Neighbouring cores are joined by virtual bonds.
 Their dimensions control how much correlation and entanglement the MPS can represent across each spatial cut, and truncating them provides the compression that makes the calculation practical.
-Standard introductions to MPS and matrix-product operators (MPOs) can be found in Refs.~\cite{Schollwock2011,Orus2014}; the ITensor implementation used here is described in Ref.~\cite{Fishman2022}.
+Standard introductions to MPS and matrix-product operators (MPOs) can be found in Refs.~\cite{Schollwock2011,Orus2014}; the ITensor implementation used here is described in Ref.~\cite{Fishman2022}.\footnote{MPS and MPO representations and inner products are documented at \url{https://docs.itensor.org/ITensorMPS/stable/MPSandMPO.html}.}
 
 A mixed many-body state is described by a density operator on this joint Hilbert space,
 %
@@ -505,7 +505,9 @@ Over a short interval \(\Delta t\), the time-evolution operator is given by
     \label{eq:liouville-time-step}
 \end{equation}
 %
-Knowing \(\mathcal L\), one can approximate the exponent of this MPO by using Suzuki-Trotter decomposition, as in TEBD \textcolor{red}{cite TEBD literature}, or one can variationally optimize the time-evolved state knowing the generator using TDVP \textcolor{red}{cite TDVP literature} to simulate open-quantum dynamics.
+TEBD approximates this propagator by a product of local gates, applied with MPS compression~\cite{Vidal2003,Vidal2004,ZwolakVidal2004,Paeckel2019}.
+TDVP instead projects the evolution equation onto MPS tangent spaces and integrates the resulting dynamics~\cite{Haegeman2011,Haegeman2016,Paeckel2019}.
+Both methods implement Liouville-space evolution under a generally non-Hermitian generator.
 Appendix~\ref{app:time-dynamics} gives minimal examples where we can use the existing algorithms in \texttt{ITensorMPS.jl}, extend it to the Liouville space, and perform open-quantum dynamics.
 
 %
