@@ -165,10 +165,12 @@ A tighter zip-up cutoff can recover the required accuracy, so the appropriate ch
 \subsection{Benchmark against the original C++ ACE toolkit}
 \label{subsec:ace-cpp-comparison}
 
-We finally compare \texttt{ProcessTensors.jl} with the original C++ ACE toolkit of Cygorek and Gauger~\cite{CygorekGauger2024}, available from its public source repository.\footnote{\url{https://github.com/mcygorek/ACE}}
-For both Julia and C++, BLAS, MKL, and OpenMP were restricted to one thread and independent cases were pinned to separate CPUs.
-Julia was warmed before timing to ignore compilation time; C++ was compiled with \texttt{-O3} and Eigen.
-Versions, compiler flags, affinity, thread counts, and model parameters are recorded in the metadata of the runs.
+We finally compare \texttt{ProcessTensors.jl} with the original C++ ACE toolkit of Cygorek and Gauger~\cite{CygorekGauger2024}, following the same sequential ACE algorithm and contraction procedure with \texttt{:zipup\_cpp} matching its compression schedule.\footnote{\url{https://github.com/mcygorek/ACE}}
+C++ ACE was compiled with \texttt{g++}~13.3.0 and \texttt{-O3}, using Eigen~3.4.0 with OpenBLAS~0.3.30 and LAPACKE support, so its \texttt{JacobiSVD} interface calls LAPACK's \texttt{gesvd}.
+Julia~1.12.7 uses OpenBLAS~0.3.29 with ITensors' LAPACK divide-and-conquer SVD, \texttt{gesdd}.
+Both implementations use one application thread and one BLAS/OpenMP thread, with independent cases pinned to separate CPUs.
+Julia timings cover the warmed builder call; C++ timings cover the executable with propagation disabled, including setup and PT-file output.
+Full software versions, compiler flags, and run parameters are recorded with the benchmark scripts in the \texttt{benchmark/} directory of the main repository.
 
 The benchmark covers fully polarised, partially polarised, and unpolarised central-spin baths, together with a Lorentzian spin--boson bath,
 %
@@ -186,21 +188,19 @@ For the partially polarised and unpolarised central-spin cases, the bath-spin or
 \begin{figure*}[h]
     \centering
     \includegraphics[width=0.98\textwidth]{figures/ace_julia_vs_cpp.pdf}
-    \caption{Benchmark of \texttt{ProcessTensors.jl} against the original C++ ACE toolkit.
-    (a) Central-spin baths with fully polarised, partially polarised, and unpolarised initial states.
-    (b) Lorentzian spin--boson baths at four different temperatures.
-    Filled symbols denote Julia and open symbols C++; labels give the number \(N\) of bath modes.
-    The horizontal axis is measured PT-MPO construction time and the vertical axis is the maximum internal bond dimension \(D_{\max}\).
-    Vertical alignment of matched points indicates equal retained bond dimension.}
+    \caption{Runtime and maximum PT-MPO bond dimension for (a) central-spin baths at three polarisations and (b) Lorentzian spin--boson baths at four temperatures.
+    Filled symbols denote Julia and open symbols denote C++; labels indicate the number \(N\) of bath modes.}
     \label{fig:ace-cpp}
 \end{figure*}
 %
 
-Figure~\ref{fig:ace-cpp} compares construction time and \(D_{\max}\) as the number of bath modes is increased for three central-spin polarisations [panel (a)] and four spin--boson temperatures [panel (b)].
-
-Across both model families, matched Julia and C++ points have the same \(D_{\max}\), showing that the two implementations retain the same maximum temporal complexity under the matched cutoff and propagation settings.
-The Julia points lie consistently to the left of their C++ counterparts, corresponding to faster construction times for every tested bath size, polarisation, and temperature.
-The Julia path uses the ITensors LAPACK divide-and-conquer SVD, whereas the C++ implementation uses Eigen's JacobiSVD; contraction order, tensor permutation, allocation, and serialization also differ.
-The comparison therefore demonstrates matched compression and the end-to-end performance obtained by the present workflows to construct the process tensor.
+Figure~\ref{fig:ace-cpp} compares construction time and \(D_{\max}\) as the number of bath modes is increased for three central-spin polarisations (Figure~\ref{fig:ace-cpp}(a)) and four spin--boson temperatures (Figure~\ref{fig:ace-cpp}(b)).
+Across both model families, matched Julia and C++ points have the same \(D_{\max}\), showing that the two implementations retain the same maximum bond dimension under the matched cutoff and propagation settings.
+The central-spin runtimes agree closely, with C++ slightly faster for the larger partially polarised and unpolarised baths.
+For the spin--boson model, Julia remains faster, particularly for cases involving larger intermediate tensors.
+The much closer agreement after enabling LAPACKE in C++ suggests that the numerical SVD backend accounted for much of the earlier runtime difference.
+The remaining difference is plausibly associated with the use of \texttt{gesvd} in C++ and \texttt{gesdd} in Julia; a comparison using the same driver would help isolate this contribution.
+These results therefore reflect the performance of the two implementations with their respective OpenBLAS configurations, rather than an algorithmic speedup over sequential ACE.
+Other numerical libraries, such as MKL on either AMD or Intel hardware, may change the relative timings.
 
 Together these benchmarks establish the hierarchy of controls that should be reported in practical ACE calculations: the timestep and Trotter order determine propagation error; the bath grid determines which environmental correlations are represented; the SVD cutoff and \texttt{maxdim} determine how much of that representation is retained; and the compression schedule determines the intermediate cost.
