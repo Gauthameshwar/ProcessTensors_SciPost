@@ -5,7 +5,7 @@ The previous section placed density operators, quantum operations, and many-body
 We now use that language to describe dynamics in which the system may be intervened upon at several times.
 In this section, we first show why a state-to-state quantum channel is insufficient for such experiments and introduce the process tensor as its multi-time generalisation.
 We then connect its operational and Choi representations to the temporal MPO stored by \texttt{ProcessTensors.jl}, identify the system and memory indices carried by its cores, and assemble the microscopic ingredients required for its construction.
-Finally, we construct the same \texttt{ProcessTensor} representation using the dense and ACE builders with some details on the compression methods used by \texttt{ACE()}.
+Finally, we construct the same \texttt{ProcessTensor} representation using the dense and ACE builders, with some details on the compression methods used by \texttt{ACE()}, and obtain the Choi MPO representation of the constructed process.
 
 \markedsubsection{\toctheory}{From quantum channels to multi-time processes}
 \label{subsec:from-channels}
@@ -678,3 +678,31 @@ pt_ace = build_process_tensor(
 The cutoff is a convergence parameter, not a target observable accuracy: increasing it discards more directions, while a smaller \texttt{maxdim} may force truncation above the cutoff.
 Because generic SVD truncation need not preserve complete positivity or causal normalisation, aggressive compression can cause trace drift, small negative eigenvalues, or unstable observables.
 Convergence therefore requires smaller cutoffs and larger caps while monitoring trace, Hermiticity, minimum eigenvalue, and target observables.
+
+We can obtain the Choi operator defined in Sec.~\ref{subsec:choi-instruments} from a \texttt{ProcessTensor} using the function \texttt{choi\_pt\_mpo}.
+%
+\begin{julialistingpair}[
+    caption={Choi MPO of the dense one-spin process tensor.}, label={lst:choi-pt-mpo},
+    ]
+%
+    \begin{juliacode}[paired]
+W = choi_pt_mpo(pt_dense)
+
+j = 1
+i = only(siteinds(W, j; tags="in", plev=0))
+o = only(siteinds(W, j; tags="out", plev=0))
+println((i, prime(i), o, prime(o)))
+println(tr(W))
+    \end{juliacode}
+%
+    \begin{juliaoutput}[paired]
+((dim=2|id=95|"Choi,Site,in,tstep=0"), (dim=2|id=95|"Choi,Site,in,tstep=0")', (dim=2|id=556|"Choi,Site,out,tstep=0"), (dim=2|id=556|"Choi,Site,out,tstep=0")')
+8.0 + 0.0im
+    \end{juliaoutput}
+%
+\end{julialistingpair}
+%
+Here \(W\) is the unnormalized Choi operator, returned as an \texttt{MPO\{Hilbert\}} with one core for each propagation interval.
+On each core, the are four Hilbert indices of dimension \(d_S\), two for the in/out, and two for the ket/bra.
+The tags \texttt{in} and \texttt{out} label the input and output ports, the unprimed index is ket-facing, and the primed index is bra-facing.
+A point worth noting here is that priming changes its role: on the stored PT-MPO a prime separates the input leg from the output leg, whereas on \(W\) a prime separates the bra-facing index from the ket-facing index.
