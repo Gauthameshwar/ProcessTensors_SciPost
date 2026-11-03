@@ -374,9 +374,11 @@ trajectory = evolve(
     \centering
     \includegraphics[width=\linewidth]{figures/tester_instrument.pdf}
     \caption{%
-        \textbf{(a)~Transverse magnetisation of the SWAP--phase--SWAP protocol.}
-        The first SWAP transfers $\langle X\rangle$ from the noisy processor $S$ to the isolated ancilla $A$, the $Z_A$ gate reverses its sign, and the second SWAP returns it; the uncontrolled system continues to dephase on the processor.
-        \textbf{(b)~System--ancilla correlation.}
+        \textbf{(a)~Schematic of the SWAP--phase--SWAP protocol.}
+        The process tensor acts on the processor qubit; two SWAPs exchange that qubit with the tester, and a $Z$ gate acts on the tester while the logical state is parked away from the bath.
+        \textbf{(b)~Transverse magnetisation.}
+        The first SWAP transfers $\langle X\rangle$ from the noisy processor $S$ to the isolated ancilla $A$, the $Z$ gate reverses its sign, and the second SWAP returns it; without a tester, $S$ continues to dephase.
+        \textbf{(c)~System--ancilla mutual information.}
         The first SWAP parks the logical state in $A$ while the environment retains the processor history; later evolution and the retrieval SWAP convert part of that history into $I(S{:}A)\approx 0.02$ bits.
         The small magnitude reflects the weak-coupling parameters used here.
     }

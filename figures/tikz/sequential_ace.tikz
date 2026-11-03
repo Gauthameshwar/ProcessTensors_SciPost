@@ -1,0 +1,200 @@
+% Sequential ACE construction.  Time runs right to left.
+% (a) independent mode chains, (b) partial join, (c) compressed PT-MPO.
+% System legs stay open.  Bath lines are Liouville wires; left ends are trace-outs.
+% Requires pt_tikz_styles.tex in the preamble.
+\begin{tikzpicture}[PTPicture]
+  \def\ACEBoxW{5.8mm}%
+  \def\ACEBoxH{5.8mm}%
+  \def\ACEdx{1.70}%
+  \def\ACEdy{0.86}%
+  % One red, light for the last mode (top) and dark for the first (bottom).
+  \definecolor{ACERed}{HTML}{E07A4C}
+  \colorlet{ACEMode3}{ACERed!28}
+  \colorlet{ACEMode2}{ACERed!46}
+  \colorlet{ACEMode1}{ACERed!68}
+  \colorlet{ACEMode0}{ACERed}
+  \tikzset{
+    aceidx/.style={
+      font=\scriptsize,
+      text=PTLabel,
+      inner sep=0.4pt,
+      anchor=north,
+      yshift=-1.35mm,
+    },
+    aceenv/.style={
+      font=\small,
+      text=PTLabel,
+      inner sep=0pt,
+      anchor=south west,
+      xshift=-0.55mm,
+      yshift=-0.35mm,
+    },
+    acearrow/.style={
+      draw=PTLabel,
+      line width=0.7pt,
+      -{Stealth[length=2.1mm, width=1.5mm]},
+    },
+    acebond/.style={
+      draw=PTBond,
+      line width=1.7pt,
+      line cap=butt,
+      on background layer,
+    },
+    acemem/.style={
+      draw=PTBond,
+      line width=\PTLinkLW,
+      line cap=butt,
+      line join=round,
+      on background layer,
+    },
+  }
+
+  % Three propagators.  k=0 is the earliest column (right); k=2 is the latest (left).
+  \newcommand{\ACERow}[3]{%
+    \foreach \k [evaluate=\k as \xx using (2-\k)*\ACEdx] in {0,1,2} {%
+      \PTTensor[
+        fill=#3,
+        minimum width=\ACEBoxW,
+        minimum height=\ACEBoxH,
+        font=\scriptsize,
+      ]{#1-\k}{(\xx,#2)}{}%
+    }%
+    \draw[PTLiouvilleLeg] (#1-2.east) -- (#1-1.west);
+    \draw[PTLiouvilleLeg] (#1-1.east) -- (#1-0.west);
+  }
+  % Bath boundaries: short trace-out on the left, labelled initial state on the right.
+  % #2 is the mode index printed as E_{#2}.
+  \newcommand{\ACEBathEnds}[2]{%
+    \PTTraceOut{#1-tr}{($ (#1-2.west)+(-2.7mm,0) $)}%
+    \draw[PTLiouvilleLeg] (#1-2.west) -- (#1-tr-east);
+    \node[
+      name=#1-init,
+      inner sep=0pt,
+      outer sep=0pt,
+      minimum width=3.5mm,
+      minimum height=4.8mm,
+      anchor=west,
+    ] at ($ (#1-0.east)+(2.2mm,0) $) {};
+    \draw[PTLiouvilleLeg] (#1-0.east) -- (#1-init.west);
+    \begin{scope}[on PTforeground layer]
+      \PTSetTriangleRound{3.5mm}{4.8mm}%
+      \filldraw[
+        draw=black,
+        fill=PTLiouville!16,
+        line width=\PTCoreStroke,
+        line join=round,
+        rounded corners=\PTRelRound,
+      ] (#1-init.west |- #1-init.south) -- (#1-init.east)
+        -- (#1-init.west |- #1-init.north) -- cycle;
+      \node[aceenv] at (#1-init.north east) {\(E_{#2}\)};
+    \end{scope}
+  }
+  \newcommand{\ACEVert}[2]{%
+    \foreach \k in {0,1,2} {%
+      \draw[PTLiouvilleLeg] (#1-\k.south) -- (#2-\k.north);
+    }%
+  }
+  % Open system pair on a stacked column. Both open ends sit below the
+  % first (bottom) mode. The input leaves its south edge and bends right;
+  % the output leaves the last (top) mode and is brought down the left side.
+  \newcommand{\ACEStackLegs}[4]{%
+    \coordinate (#1-rail) at ([yshift=-2.8mm]#2.south);
+    \coordinate (#1-idrop) at (#2.south);
+    \coordinate (#1-ibend) at (#1-idrop |- #1-rail);
+    \coordinate (#1-istub) at ($(#1-ibend)+(1.2mm,0)$);
+    \coordinate (#1-iend) at ($(#1-istub)+(2.75mm,0)$);
+    \draw[PTLiouvilleLeg, rounded corners=1.1mm]
+      (#1-idrop) -- (#1-ibend) -- (#1-istub);
+    \draw[PTLiouvilleLeg primed] (#1-istub) -- (#1-iend);
+    \coordinate (#1-rise) at ($(#3.north)+(0,1.5mm)$);
+    \coordinate (#1-side) at ($(#3.north west)+(-1.7mm,1.5mm)$);
+    \coordinate (#1-low) at (#1-side |- #1-rail);
+    \coordinate (#1-oend) at ($(#1-low)+(-1.7mm,0)$);
+    \draw[
+      PTLiouvilleLeg,
+      rounded corners=1.1mm,
+      preaction={draw=white, line width=\PTBridgeHalo, double=none},
+    ] (#3.north) -- (#1-rise) -- (#1-side) -- (#1-low) -- (#1-oend);
+    \node[aceidx] at (#1-oend) {\(o_{#4}\)};
+    \node[aceidx] at (#1-iend) {\(i_{#4}\)};
+  }
+  % Both legs leave the bottom of one PT-MPO core and bend outward.
+  \newcommand{\ACEOpenLegs}[2]{%
+    \coordinate (#1-rail) at ([yshift=-2.8mm]#1.south);
+    \coordinate (#1-odrop) at ([xshift=-1.35mm]#1.south);
+    \coordinate (#1-idrop) at ([xshift=1.35mm]#1.south);
+    \coordinate (#1-obend) at (#1-odrop |- #1-rail);
+    \coordinate (#1-ibend) at (#1-idrop |- #1-rail);
+    \coordinate (#1-ostub) at ($(#1-obend)+(-1.2mm,0)$);
+    \coordinate (#1-istub) at ($(#1-ibend)+(1.2mm,0)$);
+    \coordinate (#1-oend) at ($(#1-ostub)+(-1.5mm,0)$);
+    \coordinate (#1-iend) at ($(#1-istub)+(1.5mm,0)$);
+    \draw[PTLiouvilleLeg, rounded corners=1.1mm]
+      (#1-odrop) -- (#1-obend) -- (#1-ostub);
+    \draw[PTLiouvilleLeg] (#1-ostub) -- (#1-oend);
+    \draw[PTLiouvilleLeg, rounded corners=1.1mm]
+      (#1-idrop) -- (#1-ibend) -- (#1-istub);
+    \draw[PTLiouvilleLeg primed] (#1-istub) -- (#1-iend);
+    \node[aceidx] at (#1-oend) {\(o_{#2}\)};
+    \node[aceidx] at (#1-iend) {\(i_{#2}\)};
+  }
+
+  % ===================================================================== (a)
+  \begin{scope}[shift={(0.15,0.55)}]
+    \ACERow{a3}{3*\ACEdy}{ACEMode3}
+    \ACERow{a2}{2*\ACEdy}{ACEMode2}
+    \ACERow{a1}{\ACEdy}{ACEMode1}
+    \ACERow{a0}{0}{ACEMode0}
+    \ACEBathEnds{a3}{4}
+    \ACEBathEnds{a2}{3}
+    \ACEBathEnds{a1}{2}
+    \ACEBathEnds{a0}{1}
+    \ACEVert{a3}{a2}
+    \ACEVert{a2}{a1}
+    \ACEVert{a1}{a0}
+    \foreach \k in {0,1,2} {%
+      \ACEStackLegs{a-\k}{a0-\k}{a3-\k}{\k}%
+    }
+  \end{scope}
+
+  % ===================================================================== (b)
+  \begin{scope}[shift={(6.91,0.55)}]
+    \ACERow{b2}{2*\ACEdy}{ACEMode3}
+    \ACERow{b1}{\ACEdy}{ACEMode2}
+    \ACEBathEnds{b2}{4}
+    \ACEBathEnds{b1}{3}
+    \ACERow{bj}{0}{ACEMode1}
+    \ACEVert{b2}{b1}
+    \ACEVert{b1}{bj}
+    \draw[acebond] (bj-2.east) -- (bj-1.west);
+    \draw[acebond] (bj-1.east) -- (bj-0.west);
+    \foreach \k in {0,1,2} {%
+      \ACEStackLegs{b-\k}{bj-\k}{b2-\k}{\k}%
+    }
+  \end{scope}
+
+  % ===================================================================== (c)
+  \begin{scope}[shift={(14.00,0.78)}]
+    \foreach \k [evaluate=\k as \xx using (2-\k)*\ACEdx] in {0,1,2} {%
+      \PTTensor[
+        fill=QAMPOcore,
+        minimum width=7.6mm,
+        minimum height=12.4mm,
+        font=\scriptsize,
+      ]{c-\k}{(\xx,0.22)}{\(Q^{[\k]}\)}%
+    }%
+    \draw[acemem] ([yshift=2.4mm]c-2.east) -- ([yshift=2.4mm]c-1.west);
+    \draw[acemem] ([yshift=2.4mm]c-1.east) -- ([yshift=2.4mm]c-0.west);
+    \foreach \k in {0,1,2} {%
+      \ACEOpenLegs{c-\k}{\k}%
+    }
+  \end{scope}
+
+  % Each arrow sits at the vertical midpoint of the panel it points to.
+  \draw[acearrow] (5.04,1.41) -- (5.87,1.41);
+  \draw[acearrow] (11.80,1.00) -- (13.20,1.00);
+  \node[font=\small, text=PTLabel, inner sep=0.5pt, anchor=south]
+    at (12.50,1.04) {Repeat};
+  \node[font=\small, text=PTLabel, inner sep=0.5pt, anchor=north]
+    at (12.50,0.96) {\(E_3,E_4\)};
+\end{tikzpicture}
