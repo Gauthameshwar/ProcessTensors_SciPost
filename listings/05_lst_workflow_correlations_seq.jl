@@ -4,7 +4,7 @@
 
 # ===== PREAMBLE =====
 using Pkg
-Pkg.activate("/Users/gauthameshwar/Documents/VSCode/ProcessTensors.jl"; io=devnull)
+Pkg.activate(get(ENV, "PROCESSTENSORS_JL", "/Users/gauthameshwar/Documents/VSCode/ProcessTensors.jl"); io=devnull)
 
 using ITensors
 using ProcessTensors
@@ -36,7 +36,7 @@ process_tensor = build_process_tensor(
 )
 rho_S0 = to_dm(MPS(system_sites, ["Dn"]))
 sigma_z = OpSum()
-sigma_z += 1.0, "Sz", 1
+sigma_z += 2.0, "Sz", 1
 
 # ===== LISTING =====
 seq = two_time_correlation_seq(

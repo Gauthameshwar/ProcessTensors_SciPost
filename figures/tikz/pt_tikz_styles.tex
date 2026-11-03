@@ -1041,8 +1041,9 @@
 \define@key{ptmpo}{label}{\def\PTMPOlabel{#1}}
 \makeatother
 
-% Draw n time cores W^{[0]} (right, t_0) ... W^{[n-1]} (left).
-% Node names:  <name>-W-<k>
+% Draw n time cores W^{[1]} (right, earliest) ... W^{[n]} (left).
+% Node names stay <name>-W-<k> with k = 0,...,n-1, so the rightmost
+% core is still <name>-W-0.  The printed superscript is k+1.
 % IO tips:     <name>-out-<k>  (process output, RIGHT of pair)
 %              <name>-in-<k>   (process input,  LEFT  of pair)
 % Time arrow:  <name>-t0  (right)  -->  <name>-tn (left)
@@ -1061,12 +1062,14 @@
   \setkeys{ptmpo}{#1}%
   \coordinate (\PTMPOname-origin) at (\PTMPOat);
   \edef\PTMPOlast{\PTMPOname-W-\the\numexpr\PTMPOn-1\relax}%
-  % --- cores, right (k=0) to left ------------------------------------------
-  \foreach \k in {0,...,\the\numexpr\PTMPOn-1\relax} {%
+  % --- cores, right (printed core 1) to left (printed core n) ------------
+  \foreach \k [
+    evaluate=\k as \core using int(\k+1)
+  ] in {0,...,\the\numexpr\PTMPOn-1\relax} {%
     \path (\PTMPOname-origin)
       ++(-\k*\PTMPOspacing,0)
       coordinate (\PTMPOname-c-\k);
-    \PTProcessCore{\PTMPOname-W-\k}{(\PTMPOname-c-\k)}{\(W^{[\k]}\)}%
+    \PTProcessCore{\PTMPOname-W-\k}{(\PTMPOname-c-\k)}{\(W^{[\core]}\)}%
     % Local ports: output on the right, input on the left (local time).
     \coordinate (\PTMPOname-outsrc-\k) at
       ([xshift=\PTIOSep]\PTMPOname-W-\k.south);
@@ -1105,12 +1108,12 @@
           coordinate[midway] (\PTMPOname-link-\k);
         \ifPTMPOchi
           \node[font=\small, text=PTLabel, inner sep=0.5pt, above=1.4pt]
-            at (\PTMPOname-link-\k) {\(\chi_{\k}\)};
+            at (\PTMPOname-link-\k) {\(\chi_{\knext}\)};
         \fi
         \ifPTMPOtags
           \PTIndexLabel[
             anchor=south,
-            tag={PTLink,t-0\k},
+            tag={PTLink,t-0\knext},
             yshift=11.0pt,
           ]{\PTMPOname-link-\k}%
         \fi
@@ -1151,13 +1154,13 @@
     \PTIndexLabel[
       anchor=west,
       math={\ell_{\mathrm{out}}},
-      tag={Output,t-00},
+      tag={Output,t-01},
       xshift=3.0pt,
     ]{\PTMPOname-out-0}%
     \PTIndexLabel[
       anchor=east,
       math={\ell_{\mathrm{in}}},
-      tag={Input,t-00},
+      tag={Input,t-01},
       xshift=-3.0pt,
       yshift=-4.2pt,
     ]{\PTMPOname-in-0}%

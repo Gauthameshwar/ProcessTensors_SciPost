@@ -4,7 +4,7 @@
 
 # ===== PREAMBLE =====
 using Pkg
-Pkg.activate("/Users/gauthameshwar/Documents/VSCode/ProcessTensors.jl"; io=devnull)
+Pkg.activate(get(ENV, "PROCESSTENSORS_JL", "/Users/gauthameshwar/Documents/VSCode/ProcessTensors.jl"); io=devnull)
 
 using ProcessTensors
 

@@ -1,17 +1,19 @@
 # Compare each standalone listing script with the SciPost manuscript.
 #
 # Run from anywhere:
-#   julia --project=/Users/gauthameshwar/Documents/VSCode/ProcessTensors.jl listings/check_listings.jl
+#   PROCESSTENSORS_JL=/path/to/ProcessTensors.jl julia listings/check_listings.jl
 #
 # A mismatch is printed. This file does not edit any tex file.
+# PROCESSTENSORS_JL selects the package checkout. The default is this
+# author's local checkout, so an unset variable still runs here.
 # LISTINGS_TEXT_ONLY=1 skips executing the Julia listings.
 
 using Pkg
-Pkg.activate("/Users/gauthameshwar/Documents/VSCode/ProcessTensors.jl"; io=devnull)
 
 const REPO = dirname(@__DIR__)
 const LISTINGS = @__DIR__
-const PACKAGE = "/Users/gauthameshwar/Documents/VSCode/ProcessTensors.jl"
+const PACKAGE = get(ENV, "PROCESSTENSORS_JL", "/Users/gauthameshwar/Documents/VSCode/ProcessTensors.jl")
+Pkg.activate(PACKAGE; io=devnull)
 
 function trim_blank_edges(text)
     lines = split(replace(text, "\r\n" => "\n"), "\n", keepempty=true)

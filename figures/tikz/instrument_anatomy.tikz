@@ -1,6 +1,6 @@
 % Fig. 8: instrument anatomy.  Time runs right to left.
 % (a) input single leg, (b) output single leg, (c) two-leg map,
-% (d) tester: rho_SA ket, then C_0,C_1,C_2 (no C_3); dual of Fig. 5c.
+% (d) tester: rho_SA ket, then C_1,C_2,C_3; dual of Fig. 5c.
 % Requires pt_tikz_styles.tex in the preamble.
 \begin{tikzpicture}[PTPicture]
   \def\envY{0.96}%  reused as system-rail height in (d)
@@ -177,22 +177,22 @@
     % Yellow comb: high behind every C (covers the block), dipping to
     % half-height in the open i/o gaps. Dual of Fig. 5c with I/O on top.
 
-    % Joint maps C_0 earliest after the initial state (right), C_2 latest (left).
+    % Joint maps C_1 earliest after the initial state (right), C_3 latest (left).
     \PTTensor[fill=PTTensor,minimum width=\Uwid,minimum height=\Uhgt]
-      {d-C2}{(2.15, \midY)}{\(\mathcal C_2\)}
+      {d-C2}{(2.15, \midY)}{\(\mathcal C_3\)}
     \PTTensor[fill=PTTensor,minimum width=\Uwid,minimum height=\Uhgt]
-      {d-C1}{(4.55, \midY)}{\(\mathcal C_1\)}
+      {d-C1}{(4.55, \midY)}{\(\mathcal C_2\)}
     \PTTensor[fill=PTTensor,minimum width=\Uwid,minimum height=\Uhgt]
-      {d-C0}{(6.95, \midY)}{\(\mathcal C_0\)}
+      {d-C0}{(6.95, \midY)}{\(\mathcal C_1\)}
     \GEightRhoSA{d-rho}{(9.35, \midY)}{\(\rho_{SA}\)}
 
     % Ancilla-only operations in the gaps, on the A rail.
     \PTInstrument[fill=PTInstIn,minimum width=\sqSide,minimum height=\sqSide,font=\scriptsize]
-      {d-V2}{(3.35, \ancY)}{\(\mathcal V_2\)}
+      {d-V2}{(3.35, \ancY)}{\(\mathcal V_3\)}
     \PTInstrument[fill=PTInstIn,minimum width=\sqSide,minimum height=\sqSide,font=\scriptsize]
-      {d-V1}{(5.75, \ancY)}{\(\mathcal V_1\)}
+      {d-V1}{(5.75, \ancY)}{\(\mathcal V_2\)}
     \PTInstrument[fill=PTInstIn,minimum width=\sqSide,minimum height=\sqSide,font=\scriptsize]
-      {d-V0}{(8.15, \ancY)}{\(\mathcal V_0\)}
+      {d-V0}{(8.15, \ancY)}{\(\mathcal V_1\)}
 
     \coordinate (d-floor) at ([yshift=-\cPad]d-rho.south);
     \coordinate (d-roof) at ([yshift=\cPad]d-rho.north);

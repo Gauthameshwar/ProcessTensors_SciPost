@@ -15,5 +15,5 @@
   ]
   \node[font=\small, text=PTLabel, inner sep=1pt, above=13pt]
     at ($(pt-W-0.north)!0.5!(pt-W-3.north)$)
-    {\(\Upsilon_{n:0}\simeq W^{[n-1]}W^{[n-2]}\cdots W^{[0]}\)};
+    {\(\Upsilon_{n:0}\simeq W^{[n]}W^{[n-1]}\cdots W^{[1]}\)};
 \end{tikzpicture}

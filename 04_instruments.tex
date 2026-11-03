@@ -136,7 +136,7 @@ As of v0.3.0, complete positivity and trace preservation are not inferred for an
         (b)~An output-only effect occupies the unprimed index \(o_k\).
         (c)~A two-leg map joins \(o_k\) to \(i_{k+1}\) between adjacent cores.
         (d)~A tester \(T_y\): the joint initial state \(\rho_{SA}\) (purple triangle) meets the first process input \(i_1\), and there is no process output before that core; the open process ports are \(i_1,o_1,i_2,o_2,i_3,o_3\).
-        Subsequent joint maps \(\mathcal C_0,\mathcal C_1,\mathcal C_2\) span both rails, while ancilla-only operations \(\mathcal V_k\) sit on the persistent \(A\) wire.
+        Subsequent joint maps \(\mathcal C_1,\mathcal C_2,\mathcal C_3\) span both rails, while ancilla-only operations \(\mathcal V_1,\mathcal V_2,\mathcal V_3\) sit on the persistent \(A\) wire.
         The yellow dashed comb is the dual of Fig.~\ref{fig:channel-to-multitime-process}(c), with open Liouville slots above the boundary.
         Note that the primed and unprimed legs appear in the opposite direction in a tester instrument to match the indices of the PT-MPO.
     }
@@ -307,7 +307,7 @@ A constructive realisation of such a tester is specified by
 %
 \begin{equation}
     \mathbf T
-    = \left( \rho_{SA},\; \{\mathcal C_k^{SA}\}_{k=0}^{N-1},\; \{\mathcal V_k^{A}\}_{k=0}^{N-1} \right),
+    = \left( \rho_{SA},\; \{\mathcal C_k^{SA}\}_{k=1}^{N},\; \{\mathcal V_k^{A}\}_{k=1}^{N} \right),
     \label{eq:tester-sequential-realisation}
 \end{equation}
 %
