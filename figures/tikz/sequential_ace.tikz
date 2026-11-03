@@ -49,7 +49,8 @@
     },
   }
 
-  % Three propagators.  k=0 is the earliest column (right); k=2 is the latest (left).
+  % Three propagators.  Geometry index k=0 is the earliest column (right); k=2 is the latest (left).
+  % Printed core and open-leg labels are k+1.
   \newcommand{\ACERow}[3]{%
     \foreach \k [evaluate=\k as \xx using (2-\k)*\ACEdx] in {0,1,2} {%
       \PTTensor[
@@ -152,8 +153,8 @@
     \ACEVert{a3}{a2}
     \ACEVert{a2}{a1}
     \ACEVert{a1}{a0}
-    \foreach \k in {0,1,2} {%
-      \ACEStackLegs{a-\k}{a0-\k}{a3-\k}{\k}%
+    \foreach \k [evaluate=\k as \lab using int(\k+1)] in {0,1,2} {%
+      \ACEStackLegs{a-\k}{a0-\k}{a3-\k}{\lab}%
     }
   \end{scope}
 
@@ -168,25 +169,25 @@
     \ACEVert{b1}{bj}
     \draw[acebond] (bj-2.east) -- (bj-1.west);
     \draw[acebond] (bj-1.east) -- (bj-0.west);
-    \foreach \k in {0,1,2} {%
-      \ACEStackLegs{b-\k}{bj-\k}{b2-\k}{\k}%
+    \foreach \k [evaluate=\k as \lab using int(\k+1)] in {0,1,2} {%
+      \ACEStackLegs{b-\k}{bj-\k}{b2-\k}{\lab}%
     }
   \end{scope}
 
   % ===================================================================== (c)
   \begin{scope}[shift={(14.00,0.78)}]
-    \foreach \k [evaluate=\k as \xx using (2-\k)*\ACEdx] in {0,1,2} {%
+    \foreach \k [evaluate=\k as \xx using (2-\k)*\ACEdx, evaluate=\k as \lab using int(\k+1)] in {0,1,2} {%
       \PTTensor[
         fill=QAMPOcore,
         minimum width=7.6mm,
         minimum height=12.4mm,
         font=\scriptsize,
-      ]{c-\k}{(\xx,0.22)}{\(Q^{[\k]}\)}%
+      ]{c-\k}{(\xx,0.22)}{\(Q^{[\lab]}\)}%
     }%
     \draw[acemem] ([yshift=2.4mm]c-2.east) -- ([yshift=2.4mm]c-1.west);
     \draw[acemem] ([yshift=2.4mm]c-1.east) -- ([yshift=2.4mm]c-0.west);
-    \foreach \k in {0,1,2} {%
-      \ACEOpenLegs{c-\k}{\k}%
+    \foreach \k [evaluate=\k as \lab using int(\k+1)] in {0,1,2} {%
+      \ACEOpenLegs{c-\k}{\lab}%
     }
   \end{scope}
 

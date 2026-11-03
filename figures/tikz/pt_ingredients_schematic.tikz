@@ -231,7 +231,7 @@
     \coordinate (pt-right) at (ing-Q-0.east);
   \end{scope}
 
-  % ---- Time discretisation: east = Q^{[0]} core, north = Environment ------
+  % ---- Time discretisation: east = Q^{[1]} core, north = Environment ------
   \node[time box, anchor=north east] (time) at (pt-right |- env.north) {%
     \textbf{\normalsize Time discretisation}\\[-0.08em]
     {\small\texttt{dt}, \texttt{nsteps}}%
