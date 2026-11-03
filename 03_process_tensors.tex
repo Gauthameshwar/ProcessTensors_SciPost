@@ -169,7 +169,7 @@ Together, linearity, complete positivity, and causality distinguish a physical t
 
 A point worth emphasising is that an individual trajectory selected from a process tensor need not be deterministic.
 An operation inserted at an intermediate time may represent a probabilistic event, which would then, reduce the trace of the outcome quantum state.
-Unit trace is determined by the choice of instruments, and so, trace-preserving trajectory is not a requirement for a process tensor.
+Unit trace is fixed by the instruments contracted with the process, so a process tensor itself is not required to describe a trace-preserving trajectory.
 We return to this distinction in Sec.~\ref{sec:quantum-instruments}, where instruments are defined as families of completely positive maps that need not preserve the trace individually, while the complete experiment remains CPTP.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -337,14 +337,14 @@ ITensor primes on a PT core distinguish the input leg \(i_k\) from the output le
 \markedsubsection{\tocjulia}{Ingredients to construct a \texttt{ProcessTensor}}
 \label{subsec:pt-ingredients}
 
-Having identified the anatomy of a \texttt{ProcessTensor}, we can now turn to the construction and ask what microscopic data are needed to construct this object.
+Having identified the anatomy of a \texttt{ProcessTensor}, we now specify the microscopic data needed to construct it.
 We introduce these inputs in the same order in which they define the physics: first the accessible system and its free Hamiltonian, then the environment together with its initial state, free Hamiltonian, and coupling to the system, and finally the discrete time grid on which the process is represented.
 Throughout, we use one system spin coupled to one bath spin for three time steps---the smallest running example that exhibits a non-trivial memory bond---so that each ingredient can be followed directly into the dense construction in the next subsection.
 
 \textbf{1.
 System}: The first ingredient is the accessible system.
 The PT-MPO constructor infers the type of particle that the system represents from the site index used to construct it.
-In v0.3.0 of \texttt{ProcessTensors.jl}, we currently have support for \texttt{Spin-1/2}, \texttt{Spin-1}, \texttt{Qubit}, and \texttt{Boson} site-types for the system.
+In v0.3.0 of \texttt{ProcessTensors.jl}, the supported system site types are \texttt{Spin-1/2}, \texttt{Spin-1}, \texttt{Qubit}, and \texttt{Boson}.
 The system's free Hamiltonian is also used by the constructor to append the free evolution of the system to the PT-MPO.
 In our small example, we use a single \texttt{Spin-1/2} system with the Hamiltonian
 %
@@ -388,12 +388,11 @@ An initial system state is intentionally absent: it is an experimental preparati
 
 \textbf{2.
 Environment}: The next ingredient is the non-Markovian environment and its microscopic content that dictates how it influences the system.
-We store these microscopic content of the bath in an \texttt{AbstractBathMode}.
-An environment is built from a collection of individual bath modes in this package.
-In v0.3.0 of \texttt{ProcessTensors.jl}, we currently have support for \texttt{Spin-1/2}, \texttt{Spin-1}, and \texttt{Boson} site-types for the bath modes.
-The environment can also be empty.
+We store this microscopic content in an \texttt{AbstractBathMode}.
+An environment is a collection of individual bath modes, and it may be empty.
+In v0.3.0 of \texttt{ProcessTensors.jl}, the supported bath-mode site types are \texttt{Spin-1/2}, \texttt{Spin-1}, and \texttt{Boson}.
 For each bath mode we need its Liouville site, local Hamiltonian, initial state, and coupling to the system.
-Our current implementation of PTs exclude the scenario where we start with initially correlated bath states.
+The present implementation does not include initially correlated bath states.
 In our example, we take
 %
 \begin{equation}
@@ -644,11 +643,11 @@ The map \(\mathcal C_{\varepsilon,\chi_{\max}}\) then compresses each temporal c
 \end{equation}
 %
 Thus \(\chi_k\) labels an effective temporal state rather than the complete microscopic bath, and ACE is efficient when its dimension remains small.
-A more detailed derivation and applications of the ACE alforithm can be found in Refs.~\cite{Cygorek2022,CygorekGauger2024,LacroixReview2026}.
+A more detailed derivation and applications of the ACE algorithm can be found in Refs.~\cite{Cygorek2022,CygorekGauger2024,LacroixReview2026}.
 
 Two compression schedules are available.
 The default \texttt{:canonzip} first joins a complete mode without truncation, canonicalises towards the final time, and performs a right-to-left relative-SVD sweep, allowing the retained basis to see the mode over the full interval.
-\texttt{:zipup} truncates during the forward join before a backward sweep, reducing intermediate sizes for long chains or tight memory budgets at the cost of greater cutoff sensitivity.
+\texttt{:zipup\_cpp} truncates during the forward join before a backward sweep, reducing intermediate sizes for long chains or tight memory budgets at the cost of greater cutoff sensitivity.
 Tree-like joining is another ACE strategy~\cite{Cygorek2024Treelike}, but is not implemented here.
 
 For a vector \texttt{modes} whose elements were constructed as in the preceding subsection, the many-mode process is built with
@@ -703,6 +702,6 @@ println(tr(W))
 \end{julialistingpair}
 %
 Here \(W\) is the unnormalized Choi operator, returned as an \texttt{MPO\{Hilbert\}} with one core for each propagation interval.
-On each core, the are four Hilbert indices of dimension \(d_S\), two for the in/out, and two for the ket/bra.
+On each core there are four Hilbert indices of dimension \(d_S\): two for the input and output legs, and two for the ket and bra.
 The tags \texttt{in} and \texttt{out} label the input and output ports, the unprimed index is ket-facing, and the primed index is bra-facing.
 A point worth noting here is that priming changes its role: on the stored PT-MPO a prime separates the input leg from the output leg, whereas on \(W\) a prime separates the bra-facing index from the ket-facing index.

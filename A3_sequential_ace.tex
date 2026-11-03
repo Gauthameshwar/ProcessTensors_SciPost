@@ -69,7 +69,7 @@ Sweeping through the chain carries information from the initial state and final 
 Its dimension is determined by how well that influence can be compressed over the chosen time interval. 
 
 The two schedules compared in Sec.~\ref{subsec:ace-compressors} differ in when this truncation is performed. The \texttt{:canonzip} schedule completes the mode join without truncation, canonicalises towards the final time, and then performs a reverse relative-SVD sweep. 
-The zip-up schedule truncates during the forward join and subsequently sweeps backward, reducing intermediate storage but choosing truncation bases before the complete joined chain has been canonicalised. 
+The \texttt{:zipup\_cpp} schedule truncates during the forward join and subsequently sweeps backward, reducing intermediate storage but choosing truncation bases before the complete joined chain has been canonicalised. 
 The same numerical cutoff therefore need not give the same accuracy in both schedules. 
 We refer to Sec.~\ref{subsec:ace-compressors} for their measured accuracy and computational cost. 
 

@@ -24,7 +24,7 @@ For an outcome \(x\), it is a completely positive, trace-non-increasing map
 with
 %
 \begin{equation}
-    \sum_{\mu}K_{x\mu}^{\dagger}K_{x\mu}\leq \mathbb I.
+    \sum_{\mu} K_{x\mu}^{\dagger} K_{x\mu}\preceq \mathbb I.
     \label{eq:instrument-tni}
 \end{equation}
 %
@@ -49,18 +49,21 @@ The inequality in Eq.~\eqref{eq:instrument-tni} then ensures that the trace of t
 A quantum instrument is the complete family of such outcome maps,
 %
 \begin{equation}
-    \mathfrak I=\{\mathcal A_x\}_{x\in\mathsf X}, \qquad \sum_{x\in\mathsf X}\mathcal A_x \text{ is completely positive and trace preserving},
+    \mathfrak I=\{\mathcal A_x\}_{x\in\mathsf X},
+    \qquad
+    \sum_{x\in\mathsf X}\mathcal A_x
+    \text{ is completely positive and trace preserving},
     \label{eq:quantum-instrument-family}
 \end{equation}
 %
 or, equivalently,
 %
 \begin{equation}
-    \sum_{x,\mu}K_{x\mu}^{\dagger}K_{x\mu}=\mathbb I.
+    \sum_{x,\mu} K_{x\mu}^{\dagger} K_{x\mu}=\mathbb I.
     \label{eq:instrument-normalisation}
 \end{equation}
 %
-The selected map \(\mathcal A_x\) is generally probabilistic and trace decreasing, while the non-selective operation \(\sum_x\mathcal A_x\), obtained by forgetting the outcome, is deterministic and trace preserving.
+The selected map \(\mathcal A_x\) is generally probabilistic and trace-non-increasing, while the non-selective operation \(\sum_x\mathcal A_x\), obtained by forgetting the outcome, is deterministic and trace preserving.
 This distinction between an individual event and the complete experiment is the central operational content of the instrument formalism \cite{DaviesLewis1970,Ozawa1984}.
 
 Most familiar laboratory operations fit into this hierarchy.
