@@ -178,23 +178,23 @@ We return to this distinction in Sec.~\ref{sec:quantum-instruments}, where instr
 
 The Choi representation recalled in Sec.~\ref{subsec:left-right-actions} extends naturally to multi-time processes.
 For the construction used below, we consider an initially uncorrelated system and environment and supply the system preparation \(\rho_S(t_0)\) separately.
-Each dynamical step from \(t_k\) to \(t_{k+1}\) has an input space \(\mathcal{H}_{\mathrm{in},k}\) and an output space \(\mathcal{H}_{\mathrm{out},k}\).
+Each dynamical step from \(t_{k-1}\) to \(t_k\), with \(k=1,\ldots,n\), has an input space \(\mathcal{H}_{\mathrm{in},k}\) and an output space \(\mathcal{H}_{\mathrm{out},k}\).
 The process Choi operator therefore belongs to
 %
 \begin{equation*}
-    \Upsilon_{n:0} \in \mathcal{B}\left[\bigotimes_{k=0}^{n-1}(\mathcal{H}_{\mathrm{in},k} \otimes \mathcal{H}_{\mathrm{out},k})\right].
+    \Upsilon_{n:0} \in \mathcal{B}\left[\bigotimes_{k=1}^{n}(\mathcal{H}_{\mathrm{in},k} \otimes \mathcal{H}_{\mathrm{out},k})\right].
 \end{equation*}
 %
-The intervention \(\mathcal{A}_k\) connects the output of step \(k-1\) to the input of step \(k\), so its Choi operator \(J(\mathcal{A}_k)\) acts on \(\mathcal H_{\mathrm{out},k-1}\otimes\mathcal H_{\mathrm{in},k}\).
+The intervention \(\mathcal{A}_k\) connects the output of step \(k\) to the input of step \(k+1\), so its Choi operator \(J(\mathcal{A}_k)\) acts on \(\mathcal H_{\mathrm{out},k}\otimes\mathcal H_{\mathrm{in},k+1}\).
 
 The action of the process tensor in Eq.~\ref{eq:process-tensor-operational-definition} in terms of its Choi operator is expressed as
 %
 \begin{equation}
     \rho_S(t_n)
-    = \operatorname{Tr}_{\overline{\mathrm{out},n-1}}[\Upsilon_{n:0}(\rho_S(t_0)^T \otimes J(\mathcal{A}_1)^T \otimes \cdots \otimes J(\mathcal{A}_{n-1})^T \otimes I)].
+    = \operatorname{Tr}_{\overline{\mathrm{out},n}}[\Upsilon_{n:0}(\rho_S(t_0)^T \otimes J(\mathcal{A}_1)^T \otimes \cdots \otimes J(\mathcal{A}_{n-1})^T \otimes I)].
 \end{equation}
 %
-Here \(\operatorname{Tr}_{\overline{\mathrm{out},n-1}}\) traces over all subsystems except the final output space \(\mathcal H_{\mathrm{out},n-1}\), on which \(I\) acts.
+Here \(\operatorname{Tr}_{\overline{\mathrm{out},n}}\) traces over all subsystems except the final output space \(\mathcal H_{\mathrm{out},n}\), on which \(I\) acts.
 
 The properties discussed in Sec~\ref{subsec:from-channels} translate into conditions on \(\Upsilon_{n:0}\).
 Complete positivity is equivalent to positive semidefiniteness, and the unnormalized Choi convention gives
@@ -208,7 +208,7 @@ Causality additionally requires the recursive partial trace conditions
 %
 \begin{equation}
     \begin{aligned}
-        \operatorname{Tr}_{\mathrm{out},k-1} \Upsilon_{k:0} &= \Upsilon_{k-1:0} \otimes I_{\mathrm{in},k-1}, \qquad k = 2, \dots, n, \\ \operatorname{Tr}_{\mathrm{out},0} \Upsilon_{1:0} &= I_{\mathrm{in},0}.
+        \operatorname{Tr}_{\mathrm{out},k} \Upsilon_{k:0} &= \Upsilon_{k-1:0} \otimes I_{\mathrm{in},k}, \qquad k = 2, \dots, n, \\ \operatorname{Tr}_{\mathrm{out},1} \Upsilon_{1:0} &= I_{\mathrm{in},1}.
     \end{aligned}
 \end{equation}
 %
@@ -243,7 +243,7 @@ The outcome is an MPO whose physical indices are ordered in time rather than in 
 \begin{equation}
     \bigl[\Upsilon_{n:0}\bigr]_%
     {\boldsymbol{o},\boldsymbol{i}}
-    = \sum_{\chi_1,\ldots,\chi_{n-1}} [Q^{[n-1]}]_{o_{n-1} i_{n-1}}^{\chi_{n-1}} [Q^{[n-2]}]_{o_{n-2} i_{n-2}}^{\chi_{n-1} \chi_{n-2}} \cdots [Q^{[1]}]_{o_1 i_1}^{\chi_2 \chi_1} [Q^{[0]}]_{o_0 i_0}^{\chi_1}
+    = \sum_{\chi_1,\ldots,\chi_{n-1}} [Q^{[n]}]_{o_{n} i_{n}}^{\chi_{n-1}} [Q^{[n-1]}]_{o_{n-1} i_{n-1}}^{\chi_{n-1} \chi_{n-2}} \cdots [Q^{[k]}]_{o_{k} i_{k}}^{\chi_{k} \chi_{k-1}} \cdots [Q^{[1]}]_{o_{1} i_{1}}^{\chi_{1}}
     \label{eq:pt-mpo-decomposition}
 \end{equation}
 %
@@ -257,7 +257,8 @@ The outcome is an MPO whose physical indices are ordered in time rather than in 
     \label{fig:process-tensor-anatomy}
 \end{figure}
 %
-Here \(i_k\) and \(o_k\) are the system input and output indices at time step \(k\), while \(\chi_k\) is an internal memory index joining neighbouring cores.
+In the present implementation, core \(Q^{[k]}\), \(k=1,\ldots,n\), propagates the system over \([t_{k-1},t_k]\) and carries input and output legs \(i_k,o_k\), both tagged \texttt{tstep=k}; instruments between consecutive cores connect \(o_k\) to \(i_{k+1}\).
+Here \(i_k\) and \(o_k\) are the system input and output indices of that core, while \(\chi_k\) is an internal memory index joining neighbouring cores.
 The bond dimensions \(D_k=\dim(\chi_k)\) quantify how large an effective space must be carried across each temporal cut.
 A Markovian process factorises into independent channels, so its Choi operator is a tensor product of ordinary single-step Choi operators and the corresponding PT-MPO needs only trivial memory links.
 A non-Markovian process generally has \(D_k>1\).
@@ -276,13 +277,13 @@ siteinds(pt, 1)
 %
     \begin{juliaoutput}[paired]
 2-element Vector{Index{Int64}}:
- (dim=4|id=810|"Liouv,n=1,ptype=S=1/2,tstep=0")'
- (dim=4|id=810|"Liouv,n=1,ptype=S=1/2,tstep=0")
+ (dim=4|id=810|"Liouv,n=1,ptype=S=1/2,tstep=1")'
+ (dim=4|id=810|"Liouv,n=1,ptype=S=1/2,tstep=1")
     \end{juliaoutput}
 %
 \end{julialistingpair}
 %
-The primed index is \(i_0\), the unprimed index is \(o_0\), and their common \texttt{id} shows that they are two prime levels of the same ITensor index.
+The primed index is \(i_1\), the unprimed index is \(o_1\), and their common \texttt{id} shows that they are two prime levels of the same ITensor index.
 The numerical ID is generated at runtime and can change from what is shown above.
 
 The temporal memory indices are equally direct:
@@ -325,9 +326,9 @@ Eq.~\eqref{eq:column-vectorisation} then identifies
 and the two representations of the same process are related by the reshuffling
 %
 \begin{equation}
-    \bigl[\Upsilon_{n:0}^{\mathrm{Choi}}\bigr]_{(a_0 b_0\dots a_{n-1}b_{n-1}),(a_0' b_0'\dots a_{n-1}'b_{n-1}')}
+    \bigl[\Upsilon_{n:0}^{\mathrm{Choi}}\bigr]_{(a_1 b_1\dots a_{n}b_{n}),(a_1' b_1'\dots a_{n}'b_{n}')}
     =
-    \bigl[\Upsilon_{n:0}^{\mathrm{Liouville}}\bigr]_{(o_0\dots o_{n-1}),(i_0\dots i_{n-1})}.
+    \bigl[\Upsilon_{n:0}^{\mathrm{Liouville}}\bigr]_{(o_1\dots o_{n}),(i_1\dots i_{n})}.
     \label{eq:choi-to-liouville}
 \end{equation}
 %
@@ -483,8 +484,8 @@ time grid: dt=0.05, nsteps=3, t_final=0.15
 \end{julialistingpair}
 %
 Process labels count the stored intervention slots, not the number of time stamps.
-An \texttt{nsteps}\(=N\) process contains the cores \(Q^{[0]},\ldots,Q^{[N-1]}\), tagged \(\texttt{tstep}=0,\ldots,N-1\), and is denoted \(\Upsilon_{N-1:0}\); \texttt{t\_final}\(=N\,\Delta t\) is the endpoint of the last propagation interval.
-The present example is therefore \(\texttt{nsteps}=3\Longleftrightarrow Q^{[0]},Q^{[1]},Q^{[2]}\Longleftrightarrow\Upsilon_{2:0}\), with \(t_3=\texttt{t\_final}=0.15\).
+An \texttt{nsteps}\(=N\) process contains the cores \(Q^{[1]},\ldots,Q^{[N]}\), tagged \(\texttt{tstep}=1,\ldots,N\), and is denoted \(\Upsilon_{N:0}\); \texttt{t\_final}\(=N\,\Delta t\) is the endpoint of the last propagation interval.
+The present example is therefore \(\texttt{nsteps}=3\Longleftrightarrow Q^{[1]},Q^{[2]},Q^{[3]}\Longleftrightarrow\Upsilon_{3:0}\), with \(t_3=\texttt{t\_final}=0.15\).
 Fig.~\ref{fig:pt-ingredients-schematic} summarises how these ingredients combine: a single-site system, an environment assembled from bath modes, and the chosen time grid.
 
 %
@@ -695,7 +696,7 @@ println(tr(W))
     \end{juliacode}
 %
     \begin{juliaoutput}[paired]
-((dim=2|id=95|"Choi,Site,in,tstep=0"), (dim=2|id=95|"Choi,Site,in,tstep=0")', (dim=2|id=556|"Choi,Site,out,tstep=0"), (dim=2|id=556|"Choi,Site,out,tstep=0")')
+((dim=2|id=95|"Choi,Site,in,tstep=1"), (dim=2|id=95|"Choi,Site,in,tstep=1")', (dim=2|id=556|"Choi,Site,out,tstep=1"), (dim=2|id=556|"Choi,Site,out,tstep=1")')
 8.0 + 0.0im
     \end{juliaoutput}
 %

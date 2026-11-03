@@ -50,9 +50,9 @@
 
   % ------------------------------------------------------------------ (a)
   \begin{scope}[shift={(0.20,0.15)}]
-    \QACore{a-Q2}{(0.00,0)}{\(Q^{[2]}\)}
-    \QACore{a-Q1}{(2.28,0)}{\(Q^{[1]}\)}
-    \QACore{a-Q0}{(4.56,0)}{\(Q^{[0]}\)}
+    \QACore{a-Q2}{(0.00,0)}{\(Q^{[3]}\)}
+    \QACore{a-Q1}{(2.28,0)}{\(Q^{[2]}\)}
+    \QACore{a-Q0}{(4.56,0)}{\(Q^{[1]}\)}
 
     \draw[qamem] (a-Q2-R) -- (a-Q1-L)
       coordinate[midway] (a-a2);
@@ -68,23 +68,23 @@
     \draw[PTLiouvilleLeg] (a-Q0-o) -- ++(-\QAIOLen,0) coordinate (a-o0);
     \draw[PTLiouvilleLeg primed] (a-Q0-i) -- ++(\QAIOLen,0) coordinate (a-i0);
 
-    \node[qaleg, below=2.8pt] at (a-o2) {\(o_2\)};
-    \node[qaleg, below=2.8pt] at (a-i2) {\(i_2\)};
-    \node[qaleg, below=2.8pt] at (a-o1) {\(o_1\)};
-    \node[qaleg, below=2.8pt] at (a-i1) {\(i_1\)};
-    \node[qaleg, below=2.8pt] at (a-o0) {\(o_0\)};
-    \node[qaleg, below=2.8pt] at (a-i0) {\(i_0\)};
+    \node[qaleg, below=2.8pt] at (a-o2) {\(o_3\)};
+    \node[qaleg, below=2.8pt] at (a-i2) {\(i_3\)};
+    \node[qaleg, below=2.8pt] at (a-o1) {\(o_2\)};
+    \node[qaleg, below=2.8pt] at (a-i1) {\(i_2\)};
+    \node[qaleg, below=2.8pt] at (a-o0) {\(o_1\)};
+    \node[qaleg, below=2.8pt] at (a-i0) {\(i_1\)};
 
     \node[qalab, anchor=south east, inner sep=1.4pt]
       at (a-Q2.north west) {(a)};
 
     \node[qaeq, anchor=north] at (2.28,-1.42) {%
       \(\displaystyle
-        \bigl[\Upsilon_{2:0}\bigr]_{\boldsymbol{o},\boldsymbol{i}}
+        \bigl[\Upsilon_{3:0}\bigr]_{\boldsymbol{o},\boldsymbol{i}}
         =\sum_{\chi_1,\chi_2}
-        [Q^{[2]}]_{o_2 i_2}^{\chi_2}\,
-        [Q^{[1]}]_{o_1 i_1}^{\chi_2\chi_1}\,
-        [Q^{[0]}]_{o_0 i_0}^{\chi_1}
+        [Q^{[3]}]_{o_3 i_3}^{\chi_2}\,
+        [Q^{[2]}]_{o_2 i_2}^{\chi_2\chi_1}\,
+        [Q^{[1]}]_{o_1 i_1}^{\chi_1}
       \)%
     };
   \end{scope}
@@ -94,8 +94,8 @@
     \QACore{b-Qk}{(0,0)}{\(Q^{[k]}\)}
     \draw[qamem] (b-Qk-L) -- ++(-\QAIOLen,0) coordinate (b-akp);
     \draw[qamem] (b-Qk-R) -- ++(\QAIOLen,0) coordinate (b-ak);
-    \node[qaleg, anchor=east, xshift=-1.4pt] at (b-akp) {\(\chi_{k+1}\)};
-    \node[qaleg, anchor=west, xshift=1.4pt] at (b-ak) {\(\chi_k\)};
+    \node[qaleg, anchor=east, xshift=-1.4pt] at (b-akp) {\(\chi_{k}\)};
+    \node[qaleg, anchor=west, xshift=1.4pt] at (b-ak) {\(\chi_{k-1}\)};
 
     \draw[PTLiouvilleLeg] (b-Qk-o) -- ++(-\QAIOLen,0) coordinate (b-ok);
     \draw[PTLiouvilleLeg primed] (b-Qk-i) -- ++(\QAIOLen,0) coordinate (b-ik);
@@ -107,7 +107,7 @@
 
     \node[qaeq, anchor=north] at (0,-1.42) {%
       \(\displaystyle
-        [Q^{[k]}]_{o_k i_k}^{\chi_{k+1}\chi_k}
+        [Q^{[k]}]_{o_k i_k}^{\chi_{k}\chi_{k-1}}
       \)%
     };
   \end{scope}
