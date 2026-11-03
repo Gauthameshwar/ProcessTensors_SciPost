@@ -322,7 +322,52 @@ This direction is more ambitious than the ACE and PT-TEMPO extensions discussed 
 Its efficiency is controlled by the temporal entanglement generated during transverse contraction: the final influence functional may be compact even when intermediate tensors become substantially more entangled, and generic ergodic environments can require rapidly growing temporal bond dimensions~\cite{ye2021influence,cerezo2025spatiotemporal}.
 Nevertheless, if this compression remains favourable, chain mapping would provide a powerful third route to finite PT--MPOs: ACE compresses explicitly separated bath modes, PT-TEMPO compresses analytically obtained Gaussian influence functions, while transverse chain contraction would construct the bath influence directly from an explicit many-body environment evolution.
 
-\subsection{Quantum memory witness and Semi-Definite Programs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Quantum memory witness using semidefinite programs}
 \label{subsec:roadmap-quantum-memory}
 
-\textcolor{red}{To be filled once Aaron's work is published.}
+Non-Markovianity tells us that the environment retains information about the system's history, but not whether this information requires a \emph{quantum} memory.
+Much like an entanglement witness distinguishes entangled states from separable ones, a quantum-memory witness seeks to rule out a specified class of processes explainable by classical memory.
+Giarmatzi and Costa showed how separability criteria on an appropriate process representation can reveal quantum memory~\cite{giarmatzi2021witnessing}.
+More recently, Sander \emph{et al.} developed witness searches based on history--future responses to interventions across a causal break~\cite{sander2026responses}.
+These results motivate extending \texttt{ProcessTensors.jl} from constructing and interrogating non-Markovian processes to certifying the quantum character of their memory.
+Following the witness construction of Sander \emph{et al.}, let $\Lambda$ be a linear map such that $\Lambda(\sigma)\succeq0$ for every process operator $\sigma$ in the specified classical-memory ansatz.
+For a suitably defined history--future Choi operator $\Upsilon_{HF}$, a witness search can then take the semidefinite-program form
+%
+\begin{equation}
+    \label{eq:memory-witness-sdp}
+    \begin{aligned}
+        \min_{P,Q}\quad&
+        \operatorname{Tr}\!\left[W\Upsilon_{HF}\right],
+        \\[-2pt]
+        W&=P+\Lambda^\dagger(Q),\qquad P,Q\succeq0,
+        \\
+        &\operatorname{Tr}(P+Q)=1,
+    \end{aligned}
+\end{equation}
+%
+where $\Lambda^\dagger$ is the adjoint map.
+By construction, $\operatorname{Tr}(W\sigma)\geq0$ for every $\sigma$ in the chosen classical-memory set, so a negative optimum certifies quantum memory relative to that ansatz.
+Partial transposition, $\Lambda=T_F$, is a familiar special case: it yields the decomposable form $W=P+Q^{T_F}$ used in entanglement-witness searches~\cite{giarmatzi2021witnessing}.
+Julia's \texttt{JuMP.jl} modelling interface and semidefinite solvers such as \texttt{Clarabel.jl} offer a direct numerical route~\cite{dunning2017jump,goulart2024clarabel}.
+
+A first implementation could use the existing \texttt{evaluate\_process} interface to contract unwanted temporal legs with specified instruments or deterministic closures, while retaining only the history and future legs of interest.
+The resulting partially contracted dense \texttt{ITensor} can be reshuffled into a reduced Choi operator for the SDP in Eq.~\eqref{eq:memory-witness-sdp}.
+Restricting the search to a small temporal window is important: although the full process is stored as a compressed PT--MPO, the dimension of its dense Choi representation grows exponentially with the number of retained intervention times.
+The selected closures must preserve the intended operational interpretation of the history--future division; a witness on this reduced object certifies the corresponding reduced process, while an inconclusive result does not rule out quantum memory in the full process.
+
+A more ambitious extension would optimise witnesses directly against the Choi PT--MPO, avoiding its dense reconstruction.
+Inspired by locally purified matrix-product representations and matrix-product quantum channels~\cite{Verstraete2004,stucchi2026channels,yauk2026locallypurifiable}, one could parameterise the positive parts of a witness associated with the chosen map $\Lambda$ using auxiliary MPOs $X$ and $Y$,
+%
+\begin{equation}
+    \label{eq:memory-witness-mpo}
+    W=X^\dagger X+\Lambda^\dagger\!\bigl(Y^\dagger Y\bigr),
+    \qquad
+    \operatorname{Tr}(X^\dagger X+Y^\dagger Y)=1.
+\end{equation}
+%
+Provided $\Lambda$ satisfies the classical-memory positivity condition above, this construction preserves the corresponding witness constraint throughout a variational search, while $\operatorname{Tr}(W\Upsilon_{HF})$ can be evaluated by tensor-network contractions.
+The main challenges are choosing sufficiently expressive auxiliary bond dimensions and optimising a non-convex MPO ansatz; moreover, the chosen map and finite-bond ansatz need not detect every form of quantum memory.
+The feasibility of this approach additionally depends on whether the chosen positive map $\Lambda$ admits an efficient tensor-network representation. 
+Local maps such as partial transposition can be represented efficiently, but a generic nonlocal map may require increasing the temporal bond dimensions.
+Nevertheless, a reliably negative expectation value would still provide a valid certificate, making this a promising tensor-network-native counterpart to the small-window dense SDP.
