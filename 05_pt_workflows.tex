@@ -69,13 +69,14 @@ bath_sites_L = liouv_sites(bath_sites)
 modes = SpinMode[]
 for k in 1:N
     rho_k = to_dm(MPS([bath_sites[k]], ["Up"]))
+    rho_k_L = to_liouville(rho_k; sites=[bath_sites_L[k]])
     coupling = OpSum()
     coupling += J / N, "Sx", 1, "Sx", 2
     coupling += J / N, "Sy", 1, "Sy", 2
     coupling += J / N, "Sz", 1, "Sz", 2
     push!(
         modes,
-        spin_mode([bath_sites_L[k]], OpSum(), rho_k; coupling=coupling),
+        spin_mode([bath_sites_L[k]], OpSum(), rho_k_L; coupling=coupling),
     )
 end
 bath = spin_bath(modes)
@@ -172,7 +173,7 @@ instruments = Dict(
 
 for record in Iterators.product((-1, 1), (-1, 1), (-1, 1))
     seq = default_schedule(process_tensor)
-    seq += state_preparation(rho_r), 0
+    seq += state_preparation(rho_r), 1
     for (k, x) in zip(readout_steps, record)
         seq += instruments[x], k
     end
@@ -273,7 +274,9 @@ Czz = [
 %
 
 For \(t_2>t_1\), the helper translates Eq.~\eqref{eq:exact-two-time-correlation} into instruments: \(\rho_S(0)\) is prepared at the first input, \(B\) is inserted as a left action at \(t_1\), \(A\) is inserted as a left action at \(t_2\), and a terminal \texttt{trace\_out} realises the partial trace. 
-On a five-step process with \((n_2,n_1)=(3,1)\), the resulting schedule is
+The arguments of \texttt{two\_time\_correlation\_seq} are snapshot indices in \texttt{1:(pt.nsteps+1)}.
+Snapshot 1 is the initial state, so a correlator that includes \(t_0\) starts at index 1, and \(C_{zz}(t_3,t_1)\) uses snapshots 4 and 2.
+On a five-step process with \((n_2,n_1)=(4,2)\), the resulting schedule is
 %
 \begin{julialistingpair}[
     caption={Instrument sequence for \(C_{zz}(t_3,t_1)\) on a five-step process.},
@@ -281,22 +284,24 @@ On a five-step process with \((n_2,n_1)=(3,1)\), the resulting schedule is
 ]
     \begin{juliacode}[paired]
 seq = two_time_correlation_seq(
-    process_tensor, (sigma_z, 3), (sigma_z, 1);
+    process_tensor, (sigma_z, 4), (sigma_z, 2);
     rho0=rho_S0,
 )
 println(seq)
     \end{juliacode}
     \begin{juliaoutput}[paired]
-InstrumentSeq(default=IdentityOperation, nsteps=5, 4 explicit entries)
-  tstep=0 => StatePreparation{MPO{Hilbert, Nothing}}
-  tstep=2 => LeftRightOperator{MPO{Hilbert, Nothing}, MPO{Hilbert, Nothing}}
-  tstep=4 => LeftRightOperator{MPO{Hilbert, Nothing}, MPO{Hilbert, Nothing}}
-  tstep=5 => TraceOut
+InstrumentSeq(default=IdentityOperation, nsteps=5, 5 explicit entries)
+  (1, :between) => LeftRightOperator{MPO{Hilbert, Nothing}, MPO{Hilbert, Nothing}}
+  (1, :input) => StatePreparation{MPO{Hilbert, Nothing}}
+  (3, :between) => LeftRightOperator{MPO{Hilbert, Nothing}, MPO{Hilbert, Nothing}}
+  (4, :between) => IdentityOperation
+  (5, :output) => TraceOut
     \end{juliaoutput}
 \end{julialistingpair}
 %
-The default identity fills the idle slots \(1\) and \(3\).  
-The left-action at \texttt{tstep=2} is \(B=\sigma_z\) at \(t_1\), and that at \texttt{tstep=4} is \(A=\sigma_z\) at \(t_2\).
+The entry \((1,\texttt{:input})\) prepares \(\rho_S(0)\).
+The left action at \((1,\texttt{:between})\) is \(B=\sigma_z\) at \(t_1\), and the left action at \((3,\texttt{:between})\) is \(A=\sigma_z\) at \(t_3\).
+The schedule also records an identity at \((4,\texttt{:between})\) before the terminal trace at \((5,\texttt{:output})\).
 If \(t_1>t_2\), the early insertion becomes a right action; if \(t_1=t_2\), the two operators are multiplied on the same temporal leg.
 
 Several expectations follow without solving the dynamics.  
