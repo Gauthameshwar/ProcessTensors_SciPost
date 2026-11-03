@@ -152,7 +152,7 @@
         {\(\langle\!\langle E_k\rvert_{o_k}\)};
     \end{scope}
 
-    % (c) two-leg map: primed i_k (left) to unprimed o_{k-1} (right)
+    % (c) two-leg map: primed i_{k+1} (left) to unprimed o_k (right)
     \begin{scope}[shift={(6.55, 0.22)}]
       \PTInstrument[fill=PTInstMap, minimum width=\mapSide, minimum height=\mapSide]
         {c-A}{(1.55, 0.48)}{\(\mathcal A_k\)}
@@ -160,10 +160,10 @@
         (c-A.west) -- ++(-0.52,0) coordinate (c-i);
       \draw[PTLiouvilleLeg]
         (c-A.east) -- ++(0.52,0) coordinate (c-o);
-      \node[g8leg, anchor=east, xshift=-1.6pt] at (c-i) {\(i_k\)};
-      \node[g8leg, anchor=west, xshift=1.6pt] at (c-o) {\(o_{k-1}\)};
+      \node[g8leg, anchor=east, xshift=-1.6pt] at (c-i) {\(i_{k+1}\)};
+      \node[g8leg, anchor=west, xshift=1.6pt] at (c-o) {\(o_k\)};
       \node[g8eq] at (1.55,-0.44)
-        {\([\mathcal A_k]_{i_k o_{k-1}}\)};
+        {\([\mathcal A_k]_{i_{k+1} o_k}\)};
     \end{scope}
   \end{scope}
 
@@ -270,8 +270,8 @@
     \node[g8sub, anchor=west, xshift=1.8pt] at (d-AarrR) {\(A\)};
 
     % Open system slots ABOVE the yellow comb:
-    % in each gap, o_k (unprimed) comes from the earlier (right) block,
-    % i_k (primed) enters the later (left) block.
+    % Process ports from right to left: i_1, o_1, i_2, o_2, i_3, o_3.
+    % The initial state meets i_1. There is no process output o_0.
     \draw[PTLiouvilleLeg]
       (d-rho.west |- d-sy) -- ++(-\cSlot,0) coordinate (d-o0);
     \draw[PTLiouvilleLeg primed]
@@ -285,12 +285,12 @@
     \draw[PTLiouvilleLeg primed]
       (d-C2.east |- d-sy) -- ++(\cSlot,0) coordinate (d-i2);
 
-    \node[g8leg, above=2.6pt] at (d-o0) {\(o_0\)};
-    \node[g8leg, above=2.6pt] at (d-i0) {\(i_0\)};
-    \node[g8leg, above=2.6pt] at (d-o1) {\(o_1\)};
-    \node[g8leg, above=2.6pt] at (d-i1) {\(i_1\)};
-    \node[g8leg, above=2.6pt] at (d-o2) {\(o_2\)};
-    \node[g8leg, above=2.6pt] at (d-i2) {\(i_2\)};
+    \node[g8leg, above=2.6pt] at (d-o0) {\(i_1\)};
+    \node[g8leg, above=2.6pt] at (d-i0) {\(o_1\)};
+    \node[g8leg, above=2.6pt] at (d-o1) {\(i_2\)};
+    \node[g8leg, above=2.6pt] at (d-i1) {\(o_2\)};
+    \node[g8leg, above=2.6pt] at (d-o2) {\(i_3\)};
+    \node[g8leg, above=2.6pt] at (d-i2) {\(o_3\)};
 
     \node[font=\small, text=PTLabel, inner sep=0.4pt, anchor=north]
       at ($(d-BL)!0.5!(d-BR)+(0,-4.4mm)$) {\(T_y\)};

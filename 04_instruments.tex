@@ -134,8 +134,9 @@ As of v0.3.0, complete positivity and trace preservation are not inferred for an
         Anatomy of the instrument objects contracted with a PT-MPO.
         (a)~An input-only preparation occupies the primed system index \(i_k\).
         (b)~An output-only effect occupies the unprimed index \(o_k\).
-        (c)~A two-leg map joins \(o_{k-1}\) to \(i_k\) between adjacent slots.
-        (d)~A tester \(T_y\): the joint initial state \(\rho_{SA}\) (purple triangle) occupies both rails at the earliest time; subsequent joint maps \(\mathcal C_0,\mathcal C_1,\mathcal C_2\) span both rails, while ancilla-only operations \(\mathcal V_k\) sit on the persistent \(A\) wire.
+        (c)~A two-leg map joins \(o_k\) to \(i_{k+1}\) between adjacent cores.
+        (d)~A tester \(T_y\): the joint initial state \(\rho_{SA}\) (purple triangle) meets the first process input \(i_1\), and there is no process output before that core; the open process ports are \(i_1,o_1,i_2,o_2,i_3,o_3\).
+        Subsequent joint maps \(\mathcal C_0,\mathcal C_1,\mathcal C_2\) span both rails, while ancilla-only operations \(\mathcal V_k\) sit on the persistent \(A\) wire.
         The yellow dashed comb is the dual of Fig.~\ref{fig:channel-to-multitime-process}(c), with open Liouville slots above the boundary.
         Note that the primed and unprimed legs appear in the opposite direction in a tester instrument to match the indices of the PT-MPO.
     }
@@ -154,17 +155,17 @@ Their ITensor tags contain the same \texttt{tstep=k}; their prime levels disting
     \label{eq:instrument-prime-convention}
 \end{equation}
 %
-A schedule entry at logical step \(k\geq1\) connects \(o_{k-1}\) to \(i_k\),
+A between-attachment at anchor \(k\) connects \(o_k\) to \(i_{k+1}\),
 %
 \begin{equation}
-    [\mathcal A_k]_{i_k o_{k-1}},
+    [\mathcal A_k]_{i_{k+1} o_k},
     \label{eq:two-leg-instrument-indices}
 \end{equation}
 %
 while the initial preparation and terminal effect have only one leg,
 %
 \begin{equation}
-    [\mathcal P_{\rho_0}]_{i_0}=\lvert\rho_0\rangle\!\rangle_{i_0}, \qquad [\mathcal M]_{o_{N-1}}=\langle\!\langle M\rvert_{o_{N-1}}.
+    [\mathcal P_{\rho_0}]_{i_1}=\lvert\rho_0\rangle\!\rangle_{i_1}, \qquad [\mathcal M]_{o_{N}}=\langle\!\langle M\rvert_{o_{N}}.
     \label{eq:single-leg-instrument-indices}
 \end{equation}
 %
@@ -238,10 +239,11 @@ Its three fields are
     \label{eq:instrument-seq-fields}
 \end{equation}
 %
-The \texttt{default} fills ordinary slots for which no explicit action is given; \texttt{entries} is a sparse dictionary of overrides; and \texttt{nsteps} sets the upper time-step limit within which the instruments will act.
-The initial slot \texttt{tstep=0} is exceptional: it has no default because an initial system state is not part of the process tensor, and only a state preparation may be added there.
-The terminal slot \texttt{tstep=pt.nsteps} acts on the final output \(o_{N-1}\).
-Consequently, an \(N\)-core process materialises \(N+1\) instrument tensors: one preparation, \(N-1\) intermediate operations, and one terminal action.
+The \texttt{default} fills ordinary between-attachments for which no explicit action is given; \texttt{entries} is a sparse dictionary of overrides; and \texttt{nsteps} sets the upper core index within which the instruments will act.
+An attachment is stored by core index and leg role: \((k,\texttt{:input})\), \((k,\texttt{:output})\), or \((k,\texttt{:between})\).
+A preparation is \((1,\texttt{:input})\), a terminal effect is \((N,\texttt{:output})\), and a map between consecutive cores is \((k,\texttt{:between})\), which joins \(o_k\) to \(i_{k+1}\).
+The input of core 1 has no default, because the initial system state is not part of the process tensor.
+An \(N\)-core process therefore materialises one preparation, \(N-1\) between-attachments, and one terminal action.
 
 The three-step process \texttt{pt\_dense} from Sec.~3.5 can be probed by preparing an up spin, applying an additional control Hamiltonian during the second bridge, and reading out \(S^z\) at the final output:
 
@@ -263,7 +265,7 @@ seq = InstrumentSeq(
     default=identity_operation(),
     nsteps=pt_dense.nsteps,
 )
-seq += state_preparation(rho0), 0
+seq += state_preparation(rho0), 1
 seq += unitary_propagation(H_control, system.sites), 2
 seq += observable_measurement(O_final), pt_dense.nsteps
 \end{juliacode}
@@ -275,15 +277,16 @@ The schedule in Listing~\ref{lst:instrument-seq-example} corresponds to the scal
 %
 \begin{equation}
     z
-    = \langle\!\langle S^z\rvert_{o_2}
-    Q^{[2]} \mathcal U_{\mathrm c}
-    Q^{[1]} \mathcal I
-    Q^{[0]} \lvert\rho_0\rangle\!\rangle_{i_0},
+    = \langle\!\langle S^z\rvert_{o_3}
+    Q^{[3]} \mathcal U_{\mathrm c}
+    Q^{[2]} \mathcal I
+    Q^{[1]} \lvert\rho_0\rangle\!\rangle_{i_1},
     \label{eq:instrument-seq-example}
 \end{equation}
 %
 where the tensor contraction over the temporal memory indices \(\chi_1,\chi_2\) and the joined system indices is implicit.
 The default identity supplies \(\mathcal I\) at step 1, the explicit entry at step 2 supplies \(\mathcal U_{\mathrm c}\), and the terminal observable closes the last output.
+A callable control Hamiltonian on a between-attachment at anchor \(k\) is sampled at \((k-\tfrac12)\Delta t\), which is the midpoint of that propagation interval and is not the same statement as the attachment time \(k\Delta t\).
 Replacing the terminal observable by \texttt{open\_output()} turns the same history into a final reduced state; changing an intermediate entry to a measurement and preparation pair implements a causal break.
 The
 PT-MPO itself is unchanged in all three experiments.
@@ -421,7 +424,7 @@ This distinction matters because the returned object no longer carries the PT-MP
 A fully contracted result is a probability only when the terminal and intermediate insertions form a physical instrument; with a general observable or left--right action, the same scalar may instead be an expectation value or correlation function.
 
 The function \texttt{open\_leg\_info} predicts which input and output times remain unresolved before a contraction is attempted.
-In the following schedule, \texttt{open\_inout()} at step 2 leaves \(o_1\) and \(i_2\) independent while the initial preparation and final trace close the remaining boundary legs:
+In the following schedule, \texttt{open\_inout()} at step 2 leaves \(o_2\) and \(i_3\) independent while the initial preparation and final trace close the remaining boundary legs:
 
 %
 \begin{julialistingpair}[
@@ -433,7 +436,7 @@ seq_open = InstrumentSeq(
     default=identity_operation(),
     nsteps=pt_dense.nsteps,
 )
-add!(seq_open, state_preparation(rho0), 0)
+add!(seq_open, state_preparation(rho0), 1)
 add!(seq_open, open_inout(), 2)
 add!(seq_open, trace_out(), pt_dense.nsteps)
 
@@ -448,8 +451,8 @@ println("return type: ", typeof(reduced))
     \end{juliacode}
 %
     \begin{juliaoutput}[paired]
-open input tsteps: [2]
-open output tsteps: [1]
+open input tsteps: [3]
+open output tsteps: [2]
 expected open legs: 2
 open dimensions: [4, 4]
 return type: ITensor
@@ -469,9 +472,9 @@ The helper also reports missing input or output coverage, allowing malformed sch
         Evaluation and evolution of the instrument sequence in Listing~\ref{lst:instrument-seq-example}.
         The dashed comb is the process tensor, while \(\lvert\rho_0\rangle\!\rangle\), \(\mathbb{I}\), \(U\), and \(\langle\!\langle O \rvert\) are the instruments that sit on the open system legs.
         (a)~\texttt{evaluate\_process} with an expectation of an observable: every system leg is closed and the process returns the conditional scalar \(\langle O(t_3\vert U,\mathbb{I},\rho_0)\rangle\).
-        (b)~The same history with \texttt{open\_output()} at the last slot: \(o_2\) remains unresolved and the process returns the conditional Liouville state \(\lvert\rho(t_3\vert U,\mathbb{I},\rho_0)\rangle\!\rangle\).
-        (c)~An \texttt{evolve} snapshot at \(t_2\): past controls are retained, the output \(o_1\) is left open, and the unused future core \(Q^{[2]}\) is closed by a trace-out on \(o_2\) and a preparation \(\lvert\rho_{\mathrm{M}}\rangle\!\rangle^{i_2}
-        =\lvert\mathbb{I}/d\rangle\!\rangle^{i_2}\).
+        (b)~The same history with \texttt{open\_output()} at the last slot: \(o_3\) remains unresolved and the process returns the conditional Liouville state \(\lvert\rho(t_3\vert U,\mathbb{I},\rho_0)\rangle\!\rangle\).
+        (c)~An \texttt{evolve} snapshot at \(t_2\): past controls are retained, the output \(o_2\) is left open, and the unused future core \(Q^{[3]}\) is closed by a trace-out on \(o_3\) and a preparation \(\lvert\rho_{\mathrm{M}}\rangle\!\rangle^{i_3}
+        =\lvert\mathbb{I}/d\rangle\!\rangle^{i_3}\).
     }
     \label{fig:evaluate-evolve-schedules}
 \end{figure}
@@ -515,7 +518,8 @@ rho_liouville = trajectory.states_liouville
 rho_hilbert = trajectory.states_hilbert
 \end{juliacode}
 %
-The returned arrays contain one snapshot for each stored PT core, ordered by the logical times in \texttt{trajectory.times}.
+The returned arrays contain the initial state together with one snapshot after every stored PT core, so an \(N\)-core process yields \(N+1\) states.
+For the three-step example the array index \(j=1,2,3,4\) labels the physical times \(0,\Delta t,2\Delta t,3\Delta t\).
 Later instruments in \texttt{seq} cannot affect an earlier reduced state since they are protected by the causality (no-signalling-from-the-future) property of the process tensor, Eq.~\eqref{eq:process-tensor-causality} in Sec.~\ref{subsec:from-channels}.
 With a tester present, \texttt{states\_liouville} and \texttt{states\_hilbert} still contain the reduced system states; \texttt{tester\_states\_\{liouville,hilbert\}} are returned by default, and the joint fields \texttt{joint\_states\_\{liouville,hilbert\}} can be requested with \texttt{return\_joint=true}.
 

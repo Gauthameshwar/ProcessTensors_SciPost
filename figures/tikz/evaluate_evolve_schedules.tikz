@@ -65,9 +65,9 @@
 
   % Three-core PT-MPO and dashed comb.  #1 = name prefix.
   \newcommand{\GNinePT}[1]{%
-    \QACore{#1-Q2}{(0.00,0)}{\(Q^{[2]}\)}
-    \QACore{#1-Q1}{(\QAdx,0)}{\(Q^{[1]}\)}
-    \QACore{#1-Q0}{(2*\QAdx,0)}{\(Q^{[0]}\)}
+    \QACore{#1-Q2}{(0.00,0)}{\(Q^{[3]}\)}
+    \QACore{#1-Q1}{(\QAdx,0)}{\(Q^{[2]}\)}
+    \QACore{#1-Q0}{(2*\QAdx,0)}{\(Q^{[1]}\)}
     \draw[g9mem] (#1-Q2-R) -- (#1-Q1-L) coordinate[midway] (#1-chi2);
     \draw[g9mem] (#1-Q1-R) -- (#1-Q0-L) coordinate[midway] (#1-chi1);
     \node[g9leg, above=2.8pt] at (#1-chi2) {\(\chi_2\)};
@@ -107,27 +107,27 @@
     \end{scope}
     % i/o tags sit below the comb teeth, not on the instruments.
     \coordinate (#1-iolab) at ([yshift=-2.8mm]#1-Q2SW);
-    \node[g9leg, anchor=north] at (#1-Q2-o |- #1-iolab) {\(o_2\)};
-    \node[g9leg, anchor=north] at (#1-Q2-i |- #1-iolab) {\(i_2\)};
-    \node[g9leg, anchor=north] at (#1-Q1-o |- #1-iolab) {\(o_1\)};
-    \node[g9leg, anchor=north] at (#1-Q1-i |- #1-iolab) {\(i_1\)};
-    \node[g9leg, anchor=north] at (#1-Q0-o |- #1-iolab) {\(o_0\)};
-    \node[g9leg, anchor=north] at (#1-Q0-i |- #1-iolab) {\(i_0\)};
+    \node[g9leg, anchor=north] at (#1-Q2-o |- #1-iolab) {\(o_3\)};
+    \node[g9leg, anchor=north] at (#1-Q2-i |- #1-iolab) {\(i_3\)};
+    \node[g9leg, anchor=north] at (#1-Q1-o |- #1-iolab) {\(o_2\)};
+    \node[g9leg, anchor=north] at (#1-Q1-i |- #1-iolab) {\(i_2\)};
+    \node[g9leg, anchor=north] at (#1-Q0-o |- #1-iolab) {\(o_1\)};
+    \node[g9leg, anchor=north] at (#1-Q0-i |- #1-iolab) {\(i_1\)};
   }
 
-  % rho0 ket on i_0.  #1 = prefix.
+  % rho0 ket on i_1.  #1 = prefix.
   \newcommand{\GNineRho}[1]{%
     \PTInstrumentNode[kind=ket,fill=PTInstIn]
       {#1-rho}{($ (#1-Q0-i)+(\QAoff,0) $)}{\(\rho_0\)}
     \draw[PTLiouvilleLeg primed] (#1-Q0-i) -- (#1-rho.west);
   }
 
-  % Identity: join o_0 to i_1 by a double wire.  #1 = prefix.
+  % Identity: join o_1 to i_2 by a double wire.  #1 = prefix.
   \newcommand{\GNineId}[1]{%
     \draw[PTLiouvilleLeg] (#1-Q0-o) -- (#1-Q1-i);
   }
 
-  % Unitary between Q^{[1]} and Q^{[2]}.  #1 = prefix.
+  % Unitary between Q^{[2]} and Q^{[3]}.  #1 = prefix.
   \newcommand{\GNineU}[1]{%
     \PTTensor[fill=PTInstMap,minimum width=7.2mm,minimum height=7.2mm]
       {#1-U}{($ (#1-Q1-o)!0.5!(#1-Q2-i) $)}{\(U\)}
@@ -159,7 +159,7 @@
     \node[g9lab] at (\GNineLabX, 1.42) {(b)};
     \PTInstrumentNode[kind=ket,fill=PTInstIn]{b-lhs}{(\GNineLhsX,0.08)}{}
     \draw[PTLiouvilleLeg] (b-lhs.west) -- ++(-0.52,0) coordinate (b-lhs-leg);
-    \node[g9leg, anchor=east, xshift=-1.4pt] at (b-lhs-leg) {\(o_2\)};
+    \node[g9leg, anchor=east, xshift=-1.4pt] at (b-lhs-leg) {\(o_3\)};
     \node[g9eq, anchor=north] at ([yshift=-2.8mm]b-lhs.south)
       {\(\lvert\rho(t_3\vert U,\mathbb{I},\rho_0)\rangle\!\rangle\)};
     \begin{scope}[shift={(2.85, 0.12)}]
@@ -178,7 +178,7 @@
     \node[g9lab] at (\GNineLabX, 1.42) {(c)};
     \PTInstrumentNode[kind=ket,fill=PTInstIn]{c-lhs}{(\GNineLhsX,0.08)}{}
     \draw[PTLiouvilleLeg] (c-lhs.west) -- ++(-0.52,0) coordinate (c-lhs-leg);
-    \node[g9leg, anchor=east, xshift=-1.4pt] at (c-lhs-leg) {\(o_1\)};
+    \node[g9leg, anchor=east, xshift=-1.4pt] at (c-lhs-leg) {\(o_2\)};
     \node[g9eq, anchor=north] at ([yshift=-2.8mm]c-lhs.south)
       {\(\lvert\rho(t_2)\rangle\!\rangle\)};
     \begin{scope}[shift={(2.85, 0.12)}]
